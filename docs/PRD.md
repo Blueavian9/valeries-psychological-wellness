@@ -1,5 +1,6 @@
 # PRD.md
-Holistic Psychology Booking Platform
+# Holistic Psychology Booking Platform
+
 1. Product Overview
 
 The Holistic Psychology Booking Platform is a privacy-first, SEO-optimized online booking system for holistic psychologists. It enables practitioners to manage availability and bookings securely, while allowing clients to book sessions without creating accounts.
@@ -316,3 +317,4 @@ Each EPIC can be completed independently, tested locally, and deployed increment
 Rule: Never jump to the final line.
 
 Always validate the state before and after each change.
+
