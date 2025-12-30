@@ -1,5 +1,5 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
+	"$schema": "wrangler.json",
 	"name": "vite-react-template-d1",
 	"main": "./src/worker/index.ts",
 	"compatibility_date": "2025-10-08",
