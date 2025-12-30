@@ -1,5 +1,4 @@
-# PUT YOUR PRD HERE
-PRD.md
+# PRD.md
 Holistic Psychology Booking Platform
 1. Product Overview
 
@@ -315,4 +314,5 @@ This PRD is intentionally modular and junior-friendly.
 Each EPIC can be completed independently, tested locally, and deployed incrementally.
 
 Rule: Never jump to the final line.
+
 Always validate the state before and after each change.
