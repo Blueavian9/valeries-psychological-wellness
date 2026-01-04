@@ -1,8 +1,82 @@
+-- 0002_booking_core.sql
+-- Create booking schema (D1 compatible: no BEGIN/COMMIT)
+
 PRAGMA foreign_keys = ON;
 
-ALTER TABLE practitioners ADD COLUMN email TEXT;
-ALTER TABLE practitioners ADD COLUMN is_active INTEGER NOT NULL DEFAULT 1;
+CREATE TABLE IF NOT EXISTS practitioners (
+  id TEXT PRIMARY KEY,
+  display_name TEXT NOT NULL,
+  public_slug TEXT UNIQUE,
+  timezone TEXT NOT NULL DEFAULT 'America/Los_Angeles',
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_practitioners_email ON practitioners(email);
+CREATE TABLE IF NOT EXISTS service_types (
+  id TEXT PRIMARY KEY,
+  practitioner_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  description TEXT,
+  duration_minutes INTEGER NOT NULL,
+  price_cents INTEGER,
+  currency TEXT NOT NULL DEFAULT 'USD',
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  FOREIGN KEY (practitioner_id) REFERENCES practitioners(id) ON DELETE CASCADE
+);
 
-ALTER TABLE audit_logs ADD COLUMN metadata_json TEXT NOT NULL DEFAULT '{}';
+CREATE INDEX IF NOT EXISTS idx_service_types_practitioner_id
+  ON service_types(practitioner_id);
+
+CREATE TABLE IF NOT EXISTS availability_rules (
+  id TEXT PRIMARY KEY,
+  practitioner_id TEXT NOT NULL,
+  day_of_week INTEGER NOT NULL CHECK(day_of_week BETWEEN 0 AND 6),
+  start_time TEXT NOT NULL,
+  end_time TEXT NOT NULL,
+  is_active INTEGER NOT NULL DEFAULT 1,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  FOREIGN KEY (practitioner_id) REFERENCES practitioners(id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_availability_rules_practitioner_id
+  ON availability_rules(practitioner_id);
+
+CREATE TABLE IF NOT EXISTS bookings (
+  id TEXT PRIMARY KEY,
+  practitioner_id TEXT NOT NULL,
+  service_type_id TEXT NOT NULL,
+  client_name TEXT NOT NULL,
+  client_email TEXT NOT NULL,
+  start_at TEXT NOT NULL,
+  end_at TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'confirmed'
+    CHECK(status IN ('pending','confirmed','cancelled','completed')),
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+  FOREIGN KEY (practitioner_id) REFERENCES practitioners(id) ON DELETE CASCADE,
+  FOREIGN KEY (service_type_id) REFERENCES service_types(id) ON DELETE RESTRICT
+);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_practitioner_start_at
+  ON bookings(practitioner_id, start_at);
+
+CREATE INDEX IF NOT EXISTS idx_bookings_client_email
+  ON bookings(client_email);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id TEXT PRIMARY KEY,
+  actor_type TEXT NOT NULL DEFAULT 'system' CHECK(actor_type IN ('system','practitioner')),
+  actor_id TEXT,
+  action TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT NOT NULL,
+  metadata_json TEXT,
+  created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at
+  ON audit_logs(created_at);
