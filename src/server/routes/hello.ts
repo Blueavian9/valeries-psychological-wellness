@@ -7,6 +7,7 @@ import type { Env } from "../types/env.js";
 import { getDatabase } from "../db/connection.js";
 import { MessageRepository } from "../repositories/messageRepository.js";
 import { HelloService } from "../services/helloService.js";
+import { helloRouter } from "../server/routes/hello.js";
 
 const helloRouter = new Hono<{ Bindings: Env }>();
 

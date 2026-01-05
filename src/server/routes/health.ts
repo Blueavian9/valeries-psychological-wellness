@@ -1,6 +1,7 @@
 import { Hono } from "hono";
+import type { Env } from "../types/env.js";
 
-const healthRouter = new Hono();
+const healthRouter = new Hono<{ Bindings: Env }>();
 
 healthRouter.get("/health", (c) => {
   return c.json({ ok: true, service: "valerie-psych-booking", ts: Date.now() });
