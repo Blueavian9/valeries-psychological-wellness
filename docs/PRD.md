@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-
-# Holistic Psychology Booking Platform (PRD.md)
-=======
-# PRD.md
-# Holistic Psychology Booking Platform
->>>>>>> 5fff434 (created PRD.md file)
+# Holistic Psychology Booking Platform 
+# PRD.md Holistic Psychology Booking Platform
 
 1. Product Overview
 
@@ -333,22 +328,15 @@ Practitioner retention
 
 9. Final Notes
 
-Setup.md = HOW
 
-<<<<<<< HEAD
-Rule: Never jump to the final line.
+# Rule: Never jump to the final line.
 
 Always validate the state before and after each change.
-
-
-=======
-PRD.md = WHAT & WHY
 
 Every EPIC is independently testable
 
 Junior developers should complete EPICS sequentially
 
-Rule:
+# Rule:
 Never jump to the final line.
 Always confirm the state before and after.
->>>>>>> 5fff434 (created PRD.md file)
