@@ -18,8 +18,7 @@
 		{
 			"binding": "DB",
 			"database_name": "valeries-wellness-db",
-			"database_id": "23e03c18-16dd-4821-8295-7d05abab9d2c",
-			"remote": true,
+			"database_id": "23e03c18-16dd-4821-8295-7d05abab9d2c"
 		}
 	]
 }
