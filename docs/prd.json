@@ -1,55 +1,226 @@
 {
-  "name": "vite-react-template-d1",
-  "description": "A template for building a React application with Vite, Hono, and Cloudflare Workers",
-  "cloudflare": {
-    "label": "Vite React Template",
-    "products": ["Workers"],
-    "categories": [],
-    "preview_icon_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/532a5378-9717-4964-385b-5fafd2160200/public",
-    "preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/ec7f4be5-d1d6-4e94-0851-126341745400/preview",
-    "publish": true
+  "meta": {
+    "product": "Holistic Psychology Booking Platform",
+    "repoName": "valerie-psych-booking",
+    "branchName": "prd/holistic-psych-booking",
+    "maxIterations": 50,
+    "progressFile": "progress.txt",
+    "rules": {
+      "chainingPromptStandard": [
+        "State Now",
+        "Change State",
+        "Verify State"
+      ],
+      "neverJumpToFinalLine": true,
+      "validateLocallyFirst": true
+    }
   },
-  "dependencies": {
-    "hono": "^4.11.3",
-    "react": "19.2.1",
-    "react-dom": "19.2.1"
+  "quality": {
+    "checks": [
+      {
+        "name": "check_local",
+        "cmd": "npm run check:local"
+      },
+      {
+        "name": "check_cf",
+        "cmd": "npm run check:cf"
+      }
+    ]
   },
-  "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.15.3",
-    "@cloudflare/workers-types": "^4.20260103.0",
-    "@eslint/js": "9.39.1",
-    "@types/node": "24.10.1",
-    "@types/react": "19.2.7",
-    "@types/react-dom": "19.2.3",
-    "@vitejs/plugin-react": "5.1.1",
-    "eslint": "9.39.2",
-    "eslint-plugin-react-hooks": "7.0.1",
-    "eslint-plugin-react-refresh": "0.4.24",
-    "globals": "16.5.0",
-    "typescript": "5.8.3",
-    "typescript-eslint": "8.48.0",
-    "vite": "^6.0.0",
-    "wrangler": "^4.56.0"
-  },
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "preview": "npm run build && vite preview",
-    "lint": "eslint . --ignore-pattern worker-configuration.d.ts",
-    "typecheck": "tsc -b --pretty false",
-    "cf-typegen": "wrangler types",
-    "check:local": "npm run typecheck && npm run lint && vite build",
-    "check:cf": "wrangler deploy --dry-run",
-    "check": "npm run check:local && npm run check:cf",
-    "deploy": "wrangler deploy"
-  },
-  "type": "module"
-},
-"quality": {
-  "checks": [
-    { "name": "check_local", "cmd": "npm run check:local" }, 
-    { "name": "check_cf", "cmd": "npm run check:cf" }
+  "stories": [
+    {
+      "id": "E0-S1",
+      "epic": "EPIC 0",
+      "title": "Baseline dev server and API health checks",
+      "priority": 1,
+      "passes": true,
+      "stateNow": [
+        "Project installs",
+        "Vite dev server starts",
+        "Worker routes exist for /api/health and /api/hello"
+      ],
+      "changeState": [
+        "Ensure worker mounts hello and health routes under /api",
+        "Ensure imports use TS-friendly paths (no .js extensions in TS source)"
+      ],
+      "verifyState": [
+        {
+          "cmd": "npm run dev",
+          "note": "Starts local server (manual stop after verification)"
+        },
+        {
+          "cmd": "curl -s http://localhost:5173/api/health",
+          "expectContains": "\"ok\":true"
+        },
+        {
+          "cmd": "curl -s http://localhost:5173/api/hello",
+          "expectContains": "\"message\""
+        }
+      ],
+      "files": [
+        "src/worker/index.ts",
+        "src/server/routes/health.ts",
+        "src/server/routes/hello.ts"
+      ],
+      "notes": [
+        "Already completed and verified locally."
+      ]
+    },
+    {
+      "id": "E1-S1",
+      "epic": "EPIC 1",
+      "title": "Create initial D1 schema migration for core tables",
+      "priority": 2,
+      "passes": true,
+      "stateNow": [
+        "wrangler.json has D1 binding DB configured",
+        "No guaranteed migrations exist for practitioners/availability/appointments/audit_logs"
+      ],
+      "changeState": [
+        "Create migrations/0001_initial.sql",
+        "Define tables: practitioners, availability, appointments, audit_logs",
+        "Create essential indexes"
+      ],
+      "verifyState": [
+        {
+          "cmd": "test -f migrations/0001_initial.sql",
+          "expectExitCode": 0
+        },
+        {
+          "cmd": "npx wrangler d1 execute valeries-wellness-db --local --file=migrations/0001_initial.sql",
+          "expectExitCode": 0
+        },
+        {
+          "cmd": "npx wrangler d1 execute valeries-wellness-db --local --command \"SELECT name FROM sqlite_master WHERE type=\"table\" ORDER BY name;\"",
+          "expectContainsAll": [
+            "appointments",
+            "audit_logs",
+            "availability",
+            "practitioners"
+          ]
+        }
+      ],
+      "files": [
+        "migrations/0001_initial.sql"
+      ],
+      "constraints": [
+        "No PHI in URLs",
+        "No client passwords",
+        "All writes must be auditable via audit_logs"
+      ],
+      "notes": [
+        "Migration file repaired, applied locally, and verified tables exist."
+      ]
+    },
+    {
+      "id": "E1-S2",
+      "epic": "EPIC 1",
+      "title": "Add minimal audit logging helper (DB write logging)",
+      "priority": 3,
+      "passes": false,
+      "stateNow": [
+        "audit_logs table exists",
+        "No shared helper to write audit rows"
+      ],
+      "changeState": [
+        "Create a small helper that writes audit log rows for DB writes",
+        "Helper should take: actor_type, actor_id(optional), action, entity, entity_id(optional), metadata_json(optional)"
+      ],
+      "verifyState": [
+        {
+          "cmd": "npm run check",
+          "expectExitCode": 0
+        }
+      ],
+      "files": [
+        "src/server/db/audit.ts"
+      ],
+      "constraints": [
+        "Do not log PHI",
+        "metadata_json must be safe/minimal"
+      ]
+    },
+    {
+      "id": "E2-S1",
+      "epic": "EPIC 2",
+      "title": "Add GET /api/availability (public read)",
+      "priority": 4,
+      "passes": false,
+      "stateNow": [
+        "No availability endpoint exists",
+        "availability table exists"
+      ],
+      "changeState": [
+        "Implement GET /api/availability?practitioner_id=:id&from=:iso&to=:iso",
+        "Return public slots only (no client data)",
+        "Validate inputs"
+      ],
+      "verifyState": [
+        {
+          "cmd": "npm run check",
+          "expectExitCode": 0
+        }
+      ],
+      "files": [
+        "src/server/routes/availability.ts",
+        "src/worker/index.ts"
+      ]
+    },
+    {
+      "id": "E2-S2",
+      "epic": "EPIC 2",
+      "title": "Add POST /api/appointments (create booking)",
+      "priority": 5,
+      "passes": false,
+      "stateNow": [
+        "No booking create endpoint exists",
+        "appointments table exists",
+        "audit_logs exists"
+      ],
+      "changeState": [
+        "Implement POST /api/appointments with input validation",
+        "Prevent double booking (slot conflict check)",
+        "Write an audit_logs entry for the create"
+      ],
+      "verifyState": [
+        {
+          "cmd": "npm run check",
+          "expectExitCode": 0
+        }
+      ],
+      "files": [
+        "src/server/routes/appointments.ts",
+        "src/worker/index.ts"
+      ],
+      "constraints": [
+        "No PHI in URLs",
+        "Minimize stored client data for MVP"
+      ]
+    },
+    {
+      "id": "E2-S3",
+      "epic": "EPIC 2",
+      "title": "Add GET /api/appointments/:id (read booking confirmation)",
+      "priority": 6,
+      "passes": false,
+      "stateNow": [
+        "No appointment read endpoint exists"
+      ],
+      "changeState": [
+        "Implement GET /api/appointments/:id",
+        "Return minimal confirmation payload (no sensitive details)",
+        "Validate ID param"
+      ],
+      "verifyState": [
+        {
+          "cmd": "npm run check",
+          "expectExitCode": 0
+        }
+      ],
+      "files": [
+        "src/server/routes/appointments.ts",
+        "src/worker/index.ts"
+      ]
+    }
   ]
 }
-
