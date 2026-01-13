@@ -117,7 +117,7 @@
       "epic": "EPIC 1",
       "title": "Add minimal audit logging helper (DB write logging)",
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "stateNow": [
         "audit_logs table exists",
         "No shared helper to write audit rows"
@@ -138,6 +138,9 @@
       "constraints": [
         "Do not log PHI",
         "metadata_json must be safe/minimal"
+      ],
+      "notes": [
+        "E1-S2 passing: audit helper present and lint clean (catch without variable)."
       ]
     },
     {
