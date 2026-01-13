@@ -1,2 +1,3 @@
 # Progress Log — Holistic Psychology Booking Platform
 - Initialized.
+- E1-S1 complete: added migrations/0001_initial.sql; applied locally; verified tables (appointments, audit_logs, availability, practitioners).
