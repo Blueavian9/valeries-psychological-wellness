@@ -4,3 +4,4 @@
 - E1-S1 complete: created migrations/0001_initial.sql (practitioners, availability, appointments, audit_logs + indexes). Applied locally and verified tables.
 - E1-S2 complete: added audit logging helper (src/server/db/audit.ts). Best-effort DB insert into audit_logs with safe metadata JSON.
 - E1-S2 passing: fixed lint (unused catch var) and confirmed npm run check:local.
+- E1-S2 passing: audit logging helper lint-clean (catch without variable).
