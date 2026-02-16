@@ -17,10 +17,19 @@ export default function Header() {
           </div>
 
           {/* Desktop Navigation */}
-          <Link to="/booking">Booking</Link>
-          <Link to="/dashboard">Dashboard</Link>
-
-          <div className="hidden md:flex space-x-8">
+          <div className="hidden md:flex space-x-8 items-center">
+            <Link
+              to="/booking"
+              className="text-gray-700 hover:text-green-600 transition font-medium"
+            >
+              Book
+            </Link>
+            <Link
+              to="/dashboard"
+              className="text-gray-700 hover:text-green-600 transition font-medium"
+            >
+              Dashboard
+            </Link>
             <a
               href="#features"
               className="text-gray-700 hover:text-green-600 transition"
@@ -49,9 +58,12 @@ export default function Header() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-              <Link to="/booking">Get Started</Link>
-            </button>
+            <Link
+              to="/booking"
+              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition inline-block"
+            >
+              Get Started
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -68,30 +80,55 @@ export default function Header() {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden py-4 space-y-4">
+            <Link
+              to="/booking"
+              className="block text-gray-700 hover:text-green-600"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Book
+            </Link>
+            <Link
+              to="/dashboard"
+              className="block text-gray-700 hover:text-green-600"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Dashboard
+            </Link>
             <a
               href="#features"
               className="block text-gray-700 hover:text-green-600"
+              onClick={() => setIsMenuOpen(false)}
             >
               Features
             </a>
             <a
               href="#compare"
               className="block text-gray-700 hover:text-green-600"
+              onClick={() => setIsMenuOpen(false)}
             >
               Compare
             </a>
-            <a href="#faq" className="block text-gray-700 hover:text-green-600">
+            <a
+              href="#faq"
+              className="block text-gray-700 hover:text-green-600"
+              onClick={() => setIsMenuOpen(false)}
+            >
               FAQ
             </a>
             <a
               href="#contact"
               className="block text-gray-700 hover:text-green-600"
+              onClick={() => setIsMenuOpen(false)}
             >
               Contact
             </a>
-            <button className="w-full bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+            <Link
+              to="/booking"
+              className="block w-full bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
               Get Started
-            </button>
+            </Link>
           </div>
         )}
       </nav>
