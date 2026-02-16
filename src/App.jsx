@@ -11,6 +11,7 @@ import FAQ from "./components/FAQ";
 import ContactCTA from "./components/ContactCTA";
 import BookingPage from "./pages/BookingPage";
 import Dashboard from "./pages/Dashboard";
+import TherapistFinder from "./components/TherapistFinder";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
                           <Testimonials />
                           <FAQ />
                           <ContactCTA />
+                          <TherapistFinder />
                         </>
                       }
                     />
