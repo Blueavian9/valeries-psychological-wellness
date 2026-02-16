@@ -11,13 +11,13 @@ export default function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <a href="/" className="text-2xl font-bold text-green-600">
+            <Link to="/" className="text-2xl font-bold text-green-600">
               Holistic Therapy
-            </a>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
-          <Link to="/book">Book</Link>
+          <Link to="/booking">Booking</Link>
           <Link to="/dashboard">Dashboard</Link>
 
           <div className="hidden md:flex space-x-8">
@@ -50,7 +50,7 @@ export default function Header() {
           {/* CTA Button */}
           <div className="hidden md:block">
             <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">
-              Get Started
+              <Link to="/booking">Get Started</Link>
             </button>
           </div>
 
