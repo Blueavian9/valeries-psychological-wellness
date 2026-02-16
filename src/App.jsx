@@ -5,39 +5,53 @@ import Hero from "./components/Hero";
 import Stats from "./components/Stats";
 import Features from "./components/Features";
 import PlatformComparison from "./components/PlatformComparison";
+import WellnessResources from "./components/WellnessResources";
 import Testimonials from "./components/Testimonials";
 import FAQ from "./components/FAQ";
 import ContactCTA from "./components/ContactCTA";
-import BookingPage from './pages/BookingPage'
-import Dashboard from './pages/Dashboard'
-
+import BookingPage from "./pages/BookingPage";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   return (
     <Router>
       <div className="min-h-screen bg-white">
-        <Header />
-        <main>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <Hero />
-                  <Stats />
-                  <Features />
-                  <PlatformComparison />
-                  <Testimonials />
-                  <FAQ />
-                  <ContactCTA />
-                </>
-              }
-            />
-            <Route path="/book" element={<BookingPage />} />
-            <Route path="/book/:serviceId" element={<BookingPage />} />
-          </Routes>
-        </main>
-        <Footer />
+        <Routes>
+          {/* Dashboard has its own full-screen layout — no Header/Footer */}
+          <Route path="/dashboard/*" element={<Dashboard />} />
+
+          {/* All public-facing pages share Header + Footer */}
+          <Route
+            path="/*"
+            element={
+              <>
+                <Header />
+                <main>
+                  <Routes>
+                    <Route
+                      path="/"
+                      element={
+                        <>
+                          <Hero />
+                          <Stats />
+                          <Features />
+                          <PlatformComparison />
+                          <WellnessResources />
+                          <Testimonials />
+                          <FAQ />
+                          <ContactCTA />
+                        </>
+                      }
+                    />
+                    <Route path="/book" element={<BookingPage />} />
+                    <Route path="/book/:serviceId" element={<BookingPage />} />
+                  </Routes>
+                </main>
+                <Footer />
+              </>
+            }
+          />
+        </Routes>
       </div>
     </Router>
   );
