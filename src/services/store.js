@@ -1,391 +1,319 @@
-// ─────────────────────────────────────────────────────────────────────────────
-// services/store.js
-// In-memory data store with localStorage persistence.
-// Future: replace read/write calls with real API fetch() calls.
-// ─────────────────────────────────────────────────────────────────────────────
+// ─── In-Memory Data Store ─────────────────────────────────────────────────────
+// Simple client-side state management for demo purposes
+// In production, replace with API calls to a backend
 
-const STORAGE_KEYS = {
-  APPOINTMENTS: "hf_appointments",
-  CLIENTS: "hf_clients",
-  SERVICES: "hf_services",
-};
-
-// ─── Default seed data ────────────────────────────────────────────────────────
-
-const DEFAULT_SERVICES = [
+// ─── Services Data ────────────────────────────────────────────────────────────
+const SERVICES = [
   {
-    id: "s1",
-    name: "Individual Therapy",
-    duration: 50,
-    price: 120,
-    deposit: 0,
-    color: "#3a6d77",
-    description: "One-on-one holistic therapy session",
-    bufferBefore: 10,
-    bufferAfter: 10,
-    intakeQuestions: [
-      "What brings you here today?",
-      "Any relevant medical history?",
-    ],
-  },
-  {
-    id: "s2",
-    name: "Couples Counseling",
-    duration: 80,
-    price: 180,
-    deposit: 50,
-    color: "#c4b5e2",
-    description: "Therapy for couples using Gottman Method",
-    bufferBefore: 10,
-    bufferAfter: 15,
-    intakeQuestions: [
-      "How long have you been together?",
-      "What is your main concern?",
-    ],
-  },
-  {
-    id: "s3",
-    name: "Mindfulness Session",
-    duration: 45,
-    price: 80,
-    deposit: 0,
-    color: "#a8b5a2",
-    description: "Guided breathwork, meditation and somatic grounding",
-    bufferBefore: 5,
-    bufferAfter: 10,
-    intakeQuestions: ["Do you have a meditation practice?"],
-  },
-  {
-    id: "s4",
-    name: "Somatic / Trauma",
-    duration: 60,
-    price: 140,
-    deposit: 40,
-    color: "#b8a88f",
-    description: "Body-based trauma processing using somatic experiencing",
-    bufferBefore: 15,
-    bufferAfter: 15,
-    intakeQuestions: [
-      "Do you have a trauma history you would like to share?",
-      "Any physical conditions?",
-    ],
-  },
-  {
-    id: "s5",
-    name: "Free Consultation",
+    id: 'free-consultation',
+    name: 'Free Consultation',
+    description: 'A 15-minute introductory session to discuss your needs and see if we\'re a good fit.',
     duration: 15,
     price: 0,
     deposit: 0,
-    color: "#e8b4bc",
-    description: "15-minute intro call to see if we are a good fit",
-    bufferBefore: 0,
-    bufferAfter: 5,
-    intakeQuestions: ["What are you hoping to work on?"],
+    color: '#16a34a',
+    intakeQuestions: [],
+  },
+  {
+    id: 'individual-therapy',
+    name: 'Individual Therapy',
+    description: 'One-on-one holistic therapy session addressing anxiety, depression, trauma, or personal growth.',
+    duration: 60,
+    price: 120,
+    deposit: 30,
+    color: '#3a6d77',
+    intakeQuestions: [
+      'What brings you to therapy at this time?',
+      'Have you participated in therapy before?',
+    ],
+  },
+  {
+    id: 'couples-therapy',
+    name: 'Couples Therapy',
+    description: 'Relationship counseling for couples seeking deeper connection, communication, or conflict resolution.',
+    duration: 90,
+    price: 180,
+    deposit: 50,
+    color: '#c4b5e2',
+    intakeQuestions: [
+      'What are your primary goals for couples therapy?',
+      'How long have you been together?',
+    ],
+  },
+  {
+    id: 'group-session',
+    name: 'Group Wellness Session',
+    description: 'Join a small group (max 6) for guided mindfulness, breathwork, and holistic wellness practices.',
+    duration: 90,
+    price: 45,
+    deposit: 0,
+    color: '#a8b5a2',
+    intakeQuestions: [
+      'What are you hoping to gain from the group experience?',
+    ],
   },
 ];
 
-const today = new Date();
-const fmt = (d) => d.toISOString();
-const addDays = (d, n) => {
-  const x = new Date(d);
-  x.setDate(x.getDate() + n);
-  return x;
-};
-const setHour = (d, h, m = 0) => {
-  const x = new Date(d);
-  x.setHours(h, m, 0, 0);
-  return x;
-};
-
-const DEFAULT_APPOINTMENTS = [
+// ─── Appointments Storage ─────────────────────────────────────────────────────
+let appointments = [
+  // Pre-populated sample data for Dashboard
   {
-    id: "a1",
-    serviceId: "s1",
-    serviceName: "Individual Therapy",
-    clientName: "Maya Rodriguez",
-    clientEmail: "maya@example.com",
-    clientPhone: "555-0101",
-    start: fmt(setHour(addDays(today, 1), 10)),
-    end: fmt(setHour(addDays(today, 1), 11)),
-    status: "confirmed",
-    paymentStatus: "paid",
-    notes: "First session. Anxiety focus.",
-    intakeAnswers: { "What brings you here today?": "Anxiety and work stress" },
-    color: "#3a6d77",
-  },
-  {
-    id: "a2",
-    serviceId: "s2",
-    serviceName: "Couples Counseling",
-    clientName: "Jordan & Alex Kim",
-    clientEmail: "jordan@example.com",
-    clientPhone: "555-0202",
-    start: fmt(setHour(addDays(today, 1), 14)),
-    end: fmt(setHour(addDays(today, 1), 15, 20)),
-    status: "confirmed",
-    paymentStatus: "deposit",
-    notes: "",
-    intakeAnswers: { "How long have you been together?": "4 years" },
-    color: "#c4b5e2",
-  },
-  {
-    id: "a3",
-    serviceId: "s3",
-    serviceName: "Mindfulness Session",
-    clientName: "Priya Sharma",
-    clientEmail: "priya@example.com",
-    clientPhone: "555-0303",
-    start: fmt(setHour(addDays(today, 2), 9)),
-    end: fmt(setHour(addDays(today, 2), 9, 45)),
-    status: "confirmed",
-    paymentStatus: "pending",
-    notes: "Returning client",
+    id: 'apt-001',
+    serviceId: 'free-consultation',
+    clientName: 'Chris Nguyen',
+    clientEmail: 'chris@example.com',
+    clientPhone: '(555) 123-4567',
+    start: '2026-02-16T15:00:00.000Z', // 3:00 PM today
+    end: '2026-02-16T15:15:00.000Z',
+    status: 'confirmed',
+    notes: '',
     intakeAnswers: {},
-    color: "#a8b5a2",
   },
   {
-    id: "a4",
-    serviceId: "s4",
-    serviceName: "Somatic / Trauma",
-    clientName: "Sam Torres",
-    clientEmail: "sam@example.com",
-    clientPhone: "555-0404",
-    start: fmt(setHour(addDays(today, 3), 11)),
-    end: fmt(setHour(addDays(today, 3), 12)),
-    status: "confirmed",
-    paymentStatus: "paid",
-    notes: "",
-    intakeAnswers: {},
-    color: "#b8a88f",
+    id: 'apt-002',
+    serviceId: 'individual-therapy',
+    clientName: 'Maya Rodriguez',
+    clientEmail: 'maya@example.com',
+    clientPhone: '(555) 234-5678',
+    start: '2026-02-17T10:00:00.000Z', // Tomorrow 10 AM
+    end: '2026-02-17T11:00:00.000Z',
+    status: 'confirmed',
+    notes: '',
+    intakeAnswers: {
+      'What brings you to therapy at this time?': 'Dealing with work stress and anxiety',
+      'Have you participated in therapy before?': 'Yes, about 2 years ago',
+    },
   },
   {
-    id: "a5",
-    serviceId: "s1",
-    serviceName: "Individual Therapy",
-    clientName: "Leila Hassan",
-    clientEmail: "leila@example.com",
-    clientPhone: "555-0505",
-    start: fmt(setHour(addDays(today, 5), 13)),
-    end: fmt(setHour(addDays(today, 5), 14)),
-    status: "confirmed",
-    paymentStatus: "paid",
-    notes: "Depression + grief",
-    intakeAnswers: {},
-    color: "#3a6d77",
+    id: 'apt-003',
+    serviceId: 'couples-therapy',
+    clientName: 'Jordan & Alex Kim',
+    clientEmail: 'jordan.kim@example.com',
+    clientPhone: '(555) 345-6789',
+    start: '2026-02-17T14:00:00.000Z', // Tomorrow 2 PM
+    end: '2026-02-17T15:30:00.000Z',
+    status: 'confirmed',
+    notes: '',
+    intakeAnswers: {
+      'What are your primary goals for couples therapy?': 'Improve communication and rebuild trust',
+      'How long have you been together?': '5 years, married for 2',
+    },
   },
   {
-    id: "a6",
-    serviceId: "s5",
-    serviceName: "Free Consultation",
-    clientName: "Chris Nguyen",
-    clientEmail: "chris@example.com",
-    clientPhone: "555-0606",
-    start: fmt(setHour(addDays(today, 0), 15)),
-    end: fmt(setHour(addDays(today, 0), 15, 15)),
-    status: "confirmed",
-    paymentStatus: "free",
-    notes: "",
+    id: 'apt-004',
+    serviceId: 'individual-therapy',
+    clientName: 'Rita Chen',
+    clientEmail: 'rita.chen@example.com',
+    clientPhone: '(555) 456-7890',
+    start: '2026-02-18T09:00:00.000Z', // Feb 18, 9 AM
+    end: '2026-02-18T10:00:00.000Z',
+    status: 'confirmed',
+    notes: '',
     intakeAnswers: {},
-    color: "#e8b4bc",
+  },
+  {
+    id: 'apt-005',
+    serviceId: 'free-consultation',
+    clientName: 'David Park',
+    clientEmail: 'david.park@example.com',
+    clientPhone: '',
+    start: '2026-02-19T16:00:00.000Z', // Feb 19, 4 PM
+    end: '2026-02-19T16:15:00.000Z',
+    status: 'pending',
+    notes: '',
+    intakeAnswers: {},
   },
 ];
 
-const DEFAULT_CLIENTS = [
-  {
-    id: "c1",
-    name: "Maya Rodriguez",
-    email: "maya@example.com",
-    phone: "555-0101",
-    notes:
-      "Anxiety + work stress. Responds well to somatic grounding exercises.",
-    tags: ["anxiety", "ongoing"],
-  },
-  {
-    id: "c2",
-    name: "Jordan & Alex Kim",
-    email: "jordan@example.com",
-    phone: "555-0202",
-    notes: 'Communication issues. Good progress with "I" statements.',
-    tags: ["couples"],
-  },
-  {
-    id: "c3",
-    name: "Priya Sharma",
-    email: "priya@example.com",
-    phone: "555-0303",
-    notes: "Mindfulness focus. Returning client from 2023.",
-    tags: ["mindfulness", "returning"],
-  },
-  {
-    id: "c4",
-    name: "Sam Torres",
-    email: "sam@example.com",
-    phone: "555-0404",
-    notes: "Trauma history. Move slowly and with care.",
-    tags: ["trauma", "somatic"],
-  },
-  {
-    id: "c5",
-    name: "Leila Hassan",
-    email: "leila@example.com",
-    phone: "555-0505",
-    notes: "Grief + depression. Recently lost a parent.",
-    tags: ["grief", "depression"],
-  },
-  {
-    id: "c6",
-    name: "Chris Nguyen",
-    email: "chris@example.com",
-    phone: "555-0606",
-    notes: "New lead via website.",
-    tags: ["new"],
-  },
-];
+// ─── Export Functions ─────────────────────────────────────────────────────────
 
-// ─── Storage helpers ──────────────────────────────────────────────────────────
-
-function load(key, fallback) {
-  try {
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function save(key, data) {
-  try {
-    localStorage.setItem(key, JSON.stringify(data));
-  } catch (e) {
-    console.warn("localStorage write failed", e);
-  }
-}
-
-// ─── Appointments ─────────────────────────────────────────────────────────────
-
-export function getAppointments() {
-  return load(STORAGE_KEYS.APPOINTMENTS, DEFAULT_APPOINTMENTS);
-}
-
-export function saveAppointment(appt) {
-  const all = getAppointments();
-  const existing = all.findIndex((a) => a.id === appt.id);
-  if (existing >= 0) {
-    all[existing] = appt;
-  } else {
-    all.push(appt);
-  }
-  save(STORAGE_KEYS.APPOINTMENTS, all);
-  return appt;
-}
-
-export function cancelAppointment(id) {
-  const all = getAppointments().map((a) =>
-    a.id === id ? { ...a, status: "cancelled" } : a,
-  );
-  save(STORAGE_KEYS.APPOINTMENTS, all);
-}
-
-export function createAppointment(data) {
-  const service = getServices().find((s) => s.id === data.serviceId);
-  const appt = {
-    id: "a" + Date.now(),
-    serviceId: data.serviceId,
-    serviceName: service?.name || "",
-    clientName: data.clientName,
-    clientEmail: data.clientEmail,
-    clientPhone: data.clientPhone || "",
-    start: data.start,
-    end: data.end,
-    status: "confirmed",
-    paymentStatus:
-      service?.price === 0
-        ? "free"
-        : service?.deposit > 0
-          ? "deposit"
-          : "pending",
-    notes: data.notes || "",
-    intakeAnswers: data.intakeAnswers || {},
-    color: service?.color || "#3a6d77",
-  };
-  saveAppointment(appt);
-  // Also upsert client
-  upsertClient({
-    name: data.clientName,
-    email: data.clientEmail,
-    phone: data.clientPhone || "",
-  });
-  return appt;
-}
-
-// ─── Services ────────────────────────────────────────────────────────────────
-
+/**
+ * Get all available services
+ * @returns {Array} Array of service objects
+ */
 export function getServices() {
-  return load(STORAGE_KEYS.SERVICES, DEFAULT_SERVICES);
+  return [...SERVICES]; // Return copy to prevent mutation
 }
 
-export function saveService(svc) {
-  const all = getServices();
-  const existing = all.findIndex((s) => s.id === svc.id);
-  if (existing >= 0) {
-    all[existing] = svc;
+/**
+ * Get a specific service by ID
+ * @param {string} serviceId
+ * @returns {Object|undefined} Service object or undefined if not found
+ */
+export function getServiceById(serviceId) {
+  return SERVICES.find((s) => s.id === serviceId);
+}
+
+/**
+ * Get all appointments
+ * @returns {Array} Array of appointment objects
+ */
+export function getAppointments() {
+  return [...appointments]; // Return copy
+}
+
+/**
+ * Create a new appointment
+ * @param {Object} appointmentData - { serviceId, clientName, clientEmail, clientPhone, start, end, notes, intakeAnswers }
+ * @returns {Object} The created appointment
+ */
+export function createAppointment(appointmentData) {
+  const newAppointment = {
+    id: `apt-${Date.now()}`, // Simple ID generation
+    ...appointmentData,
+    status: 'confirmed',
+    createdAt: new Date().toISOString(),
+  };
+
+  appointments.push(newAppointment);
+  
+  // In production, this would make an API call:
+  // await fetch('/api/appointments', { method: 'POST', body: JSON.stringify(newAppointment) })
+  
+  console.log('✅ Appointment created:', newAppointment);
+  return newAppointment;
+}
+
+/**
+ * Update an existing appointment
+ * @param {string} appointmentId
+ * @param {Object} updates - Partial appointment object with fields to update
+ * @returns {Object|null} Updated appointment or null if not found
+ */
+export function updateAppointment(appointmentId, updates) {
+  const index = appointments.findIndex((apt) => apt.id === appointmentId);
+  
+  if (index === -1) {
+    console.error('Appointment not found:', appointmentId);
+    return null;
+  }
+
+  appointments[index] = {
+    ...appointments[index],
+    ...updates,
+    updatedAt: new Date().toISOString(),
+  };
+
+  console.log('✅ Appointment updated:', appointments[index]);
+  return appointments[index];
+}
+
+/**
+ * Delete an appointment
+ * @param {string} appointmentId
+ * @returns {boolean} True if deleted, false if not found
+ */
+export function deleteAppointment(appointmentId) {
+  const initialLength = appointments.length;
+  appointments = appointments.filter((apt) => apt.id !== appointmentId);
+  
+  const deleted = appointments.length < initialLength;
+  if (deleted) {
+    console.log('✅ Appointment deleted:', appointmentId);
   } else {
-    all.push({ ...svc, id: "s" + Date.now() });
+    console.error('Appointment not found:', appointmentId);
   }
-  save(STORAGE_KEYS.SERVICES, all);
+  
+  return deleted;
 }
 
-export function deleteService(id) {
-  const all = getServices().filter((s) => s.id !== id);
-  save(STORAGE_KEYS.SERVICES, all);
-}
-
-// ─── Clients ─────────────────────────────────────────────────────────────────
-
-export function getClients() {
-  return load(STORAGE_KEYS.CLIENTS, DEFAULT_CLIENTS);
-}
-
-export function upsertClient(data) {
-  const all = getClients();
-  const existing = all.find((c) => c.email === data.email);
-  if (!existing) {
-    all.push({
-      id: "c" + Date.now(),
-      name: data.name,
-      email: data.email,
-      phone: data.phone || "",
-      notes: "",
-      tags: ["new"],
-    });
-    save(STORAGE_KEYS.CLIENTS, all);
-  }
-}
-
-export function saveClientNote(clientId, notes) {
-  const all = getClients().map((c) =>
-    c.id === clientId ? { ...c, notes } : c,
-  );
-  save(STORAGE_KEYS.CLIENTS, all);
-}
-
-// ─── Revenue helpers ──────────────────────────────────────────────────────────
-
-export function getRevenueThisMonth() {
-  const now = new Date();
-  const appts = getAppointments().filter((a) => {
-    const d = new Date(a.start);
-    return (
-      d.getMonth() === now.getMonth() &&
-      d.getFullYear() === now.getFullYear() &&
-      a.status !== "cancelled" &&
-      (a.paymentStatus === "paid" || a.paymentStatus === "deposit")
-    );
+/**
+ * Get appointments for a specific date range
+ * @param {Date} startDate
+ * @param {Date} endDate
+ * @returns {Array} Filtered appointments
+ */
+export function getAppointmentsByDateRange(startDate, endDate) {
+  return appointments.filter((apt) => {
+    const aptStart = new Date(apt.start);
+    return aptStart >= startDate && aptStart <= endDate;
   });
-  const svcs = getServices();
-  return appts.reduce((sum, a) => {
-    const svc = svcs.find((s) => s.id === a.serviceId);
-    if (!svc) return sum;
-    return sum + (a.paymentStatus === "deposit" ? svc.deposit : svc.price);
+}
+
+/**
+ * Get today's appointments
+ * @returns {Array} Today's appointments
+ */
+export function getTodaysAppointments() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  
+  return getAppointmentsByDateRange(today, tomorrow);
+}
+
+/**
+ * Get upcoming appointments (next 7 days)
+ * @returns {Array} Upcoming appointments
+ */
+export function getUpcomingAppointments() {
+  const now = new Date();
+  const sevenDaysFromNow = new Date();
+  sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+  
+  return getAppointmentsByDateRange(now, sevenDaysFromNow)
+    .sort((a, b) => new Date(a.start) - new Date(b.start));
+}
+
+// ─── Client Data (for Dashboard) ──────────────────────────────────────────────
+const CLIENTS = [
+  { id: 'c1', name: 'Chris Nguyen', email: 'chris@example.com', status: 'active' },
+  { id: 'c2', name: 'Maya Rodriguez', email: 'maya@example.com', status: 'active' },
+  { id: 'c3', name: 'Jordan & Alex Kim', email: 'jordan.kim@example.com', status: 'active' },
+  { id: 'c4', name: 'Rita Chen', email: 'rita.chen@example.com', status: 'active' },
+  { id: 'c5', name: 'David Park', email: 'david.park@example.com', status: 'pending' },
+  { id: 'c6', name: 'Emma Wilson', email: 'emma.w@example.com', status: 'active' },
+];
+
+/**
+ * Get all active clients
+ * @returns {Array} Array of client objects
+ */
+export function getClients() {
+  return [...CLIENTS];
+}
+
+/**
+ * Get active clients count
+ * @returns {number} Count of active clients
+ */
+export function getActiveClientsCount() {
+  return CLIENTS.filter((c) => c.status === 'active').length;
+}
+
+// ─── Revenue Tracking (for Dashboard) ────────────────────────────────────────
+
+/**
+ * Calculate revenue for current month
+ * @returns {number} Total revenue in dollars
+ */
+export function getMonthlyRevenue() {
+  const now = new Date();
+  const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  
+  const monthAppointments = getAppointmentsByDateRange(firstDayOfMonth, lastDayOfMonth);
+  
+  return monthAppointments.reduce((total, apt) => {
+    const service = getServiceById(apt.serviceId);
+    return total + (service?.price || 0);
   }, 0);
+}
+
+/**
+ * Get dashboard statistics
+ * @returns {Object} Dashboard stats
+ */
+export function getDashboardStats() {
+  const today = getTodaysAppointments();
+  const upcoming = getUpcomingAppointments();
+  
+  return {
+    todaySessions: today.length,
+    activeClients: getActiveClientsCount(),
+    monthlyRevenue: getMonthlyRevenue(),
+    upcomingCount: upcoming.length,
+  };
 }
