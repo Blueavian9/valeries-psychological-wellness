@@ -405,4 +405,3 @@ npx live-server
 - Design system classes are reusable → component library later
 ```
 
-Let me know which part you would like to expand first (e.g. more detailed user stories, calendar logic, Stripe integration steps, CSS design tokens, etc.).
