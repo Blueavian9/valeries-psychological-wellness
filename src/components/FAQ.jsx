@@ -1,175 +1,251 @@
-import { useState } from 'react'
-import { ChevronDown, HelpCircle } from 'lucide-react'
+import { useState } from "react";
+import { ChevronDown, HelpCircle } from "lucide-react";
+
+const categories = [
+  {
+    id: "about",
+    emoji: "🌿",
+    title: "About Holistic Therapy",
+    color: "#3a6d77",
+    items: [
+      {
+        q: "What is holistic therapy?",
+        a: "Holistic therapy is an integrative approach to mental health that treats the whole person — mind, body, and spirit — rather than focusing only on symptoms. It combines evidence-based psychological methods like CBT and DBT with complementary practices such as mindfulness, somatic experiencing, breathwork, yoga therapy, and energy work to address root causes and support lasting wellness.",
+      },
+      {
+        q: "How does holistic therapy differ from traditional therapy?",
+        a: "Traditional therapy typically focuses on thought patterns and behaviors. Holistic therapy expands this to include the physical body (nervous system regulation, somatic work), lifestyle factors (sleep, nutrition, movement), spiritual or existential wellbeing, and community connection. The goal is whole-person healing rather than symptom management alone.",
+      },
+      {
+        q: "What modalities are typically included?",
+        a: "Holistic therapy platforms may offer: Cognitive Behavioral Therapy (CBT), Dialectical Behavior Therapy (DBT), Somatic Experiencing, EMDR (Eye Movement Desensitization and Reprocessing), Mindfulness-Based Stress Reduction (MBSR), Yoga Therapy, Breathwork, Narrative Therapy, and Acceptance & Commitment Therapy (ACT). Your therapist will tailor the approach to your specific needs.",
+      },
+    ],
+  },
+  {
+    id: "platform",
+    emoji: "💻",
+    title: "Platform Usage",
+    color: "#a8b5a2",
+    items: [
+      {
+        q: "How does online holistic therapy work?",
+        a: "Online therapy works through secure video calls, phone sessions, or asynchronous messaging depending on the platform and your preferences. After matching with a therapist, you'll schedule sessions, complete any intake forms, and connect at your chosen time — from the comfort and privacy of your own space. Many clients find the home environment actually enhances the holistic experience.",
+      },
+      {
+        q: "What technology do I need?",
+        a: "Any modern device with a camera and microphone works — smartphone, tablet, or laptop. You'll need a reliable internet connection and a private space for sessions. No special software downloads are typically required; most platforms run entirely in your browser. We recommend a quiet space with good lighting for the best experience.",
+      },
+      {
+        q: "Is my information secure and private?",
+        a: "Yes. All platforms we compare use end-to-end encryption for video sessions and HIPAA-compliant data storage for your personal and health information. Your therapist is bound by professional confidentiality (with limited legal exceptions). We never sell or share your personal data. You can also choose audio-only sessions if you prefer not to be on camera.",
+      },
+    ],
+  },
+  {
+    id: "pricing",
+    emoji: "💳",
+    title: "Pricing & Insurance",
+    color: "#b8a88f",
+    items: [
+      {
+        q: "How much does holistic therapy cost?",
+        a: "Costs vary by platform and service type. Individual sessions typically range from $65–$150 per session, with subscription plans starting around $79/month for unlimited messaging and weekly video sessions. A free 15-minute consultation is available on most platforms to ensure it's the right fit before you commit.",
+      },
+      {
+        q: "Do the platforms accept insurance?",
+        a: "Many platforms accept major insurance plans including Aetna, Cigna, United Healthcare, and Blue Cross Blue Shield. Insurance coverage for holistic or integrative therapy is expanding. We recommend using the insurance checker tool during signup to verify your specific coverage before your first session. Flexible Spending Accounts (FSA) and Health Savings Accounts (HSA) are also accepted.",
+      },
+      {
+        q: "Are there affordable options for those on a budget?",
+        a: "Yes — several options exist: (1) Sliding scale fees based on income are available on most platforms; (2) Group therapy sessions are significantly less expensive than individual sessions; (3) Some platforms offer financial assistance programs; (4) Many employers offer EAP (Employee Assistance Programs) that include free therapy sessions. Our free consultation helps identify the most cost-effective option for your situation.",
+      },
+    ],
+  },
+  {
+    id: "started",
+    emoji: "🚀",
+    title: "Getting Started",
+    color: "#c4b5e2",
+    items: [
+      {
+        q: "How do I choose the right platform?",
+        a: "Use our comparison table to evaluate platforms based on: the therapy modalities offered (especially holistic/integrative), price range, insurance compatibility, therapist qualifications, session format (video/phone/text), and user reviews. We recommend prioritizing therapist-client fit over platform features — the relationship matters most.",
+      },
+      {
+        q: "What's the therapist matching process like?",
+        a: "Most platforms start with a brief intake questionnaire covering your concerns, goals, preferred therapy style, scheduling needs, and any preferences about therapist background. You're then matched with 1–3 compatible therapists. You can often preview their profiles and choose before your first session. Our upcoming Therapist Finder tool will make this even easier.",
+      },
+      {
+        q: "Can I switch therapists if we're not a good fit?",
+        a: "Absolutely — and you should. Therapeutic fit is one of the strongest predictors of outcomes. Every major platform allows you to switch therapists at any time, often within 24–48 hours, with no penalty or awkwardness. Finding the right match may take 1–2 attempts and that's completely normal. Your wellbeing matters more than avoiding a conversation.",
+      },
+    ],
+  },
+];
+
+function FAQItem({ question, answer, isOpen, onToggle }) {
+  return (
+    <div
+      className="rounded-2xl overflow-hidden transition-all duration-200"
+      style={{
+        border: "1.5px solid",
+        borderColor: isOpen ? "#d1fae5" : "#f0ede8",
+        background: isOpen ? "#fafffe" : "white",
+      }}
+    >
+      <button
+        onClick={onToggle}
+        className="w-full flex items-start justify-between gap-4 px-5 py-4 text-left transition-colors"
+        aria-expanded={isOpen}
+        style={{ background: "transparent" }}
+      >
+        <span
+          className="font-semibold text-sm leading-relaxed"
+          style={{ color: "#333645" }}
+        >
+          {question}
+        </span>
+        <div
+          className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300"
+          style={{
+            background: isOpen ? "#16a34a" : "#f0ede8",
+            transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+          }}
+        >
+          <ChevronDown
+            className="w-3.5 h-3.5"
+            style={{ color: isOpen ? "white" : "#a8b5a2" }}
+          />
+        </div>
+      </button>
+
+      {/* Answer — CSS max-height transition for smooth expand */}
+      <div
+        className="overflow-hidden transition-all duration-300 ease-in-out"
+        style={{ maxHeight: isOpen ? "400px" : "0px" }}
+      >
+        <div
+          className="px-5 pb-5 pt-1 text-sm leading-relaxed"
+          style={{ color: "#6b7b6a", borderTop: "1px solid #f0ede8" }}
+        >
+          {answer}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FAQCategory({ category, openId, setOpenId }) {
+  return (
+    <div>
+      {/* Category header */}
+      <div className="flex items-center gap-2.5 mb-4">
+        <div
+          className="w-8 h-8 rounded-xl flex items-center justify-center text-base"
+          style={{ background: `${category.color}20` }}
+        >
+          {category.emoji}
+        </div>
+        <h3
+          className="font-bold text-sm uppercase tracking-wider"
+          style={{ color: category.color }}
+        >
+          {category.title}
+        </h3>
+      </div>
+
+      <div className="space-y-2.5">
+        {category.items.map((item, i) => {
+          const id = `${category.id}-${i}`;
+          return (
+            <FAQItem
+              key={id}
+              question={item.q}
+              answer={item.a}
+              isOpen={openId === id}
+              onToggle={() => setOpenId(openId === id ? null : id)}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState(null)
+  const [openId, setOpenId] = useState("about-0"); // first item open by default
 
-  const faqs = [
-    {
-      category: "About Holistic Therapy",
-      icon: "🌿",
-      questions: [
-        {
-          question: "What is holistic therapy?",
-          answer: "Holistic therapy is an integrative approach that treats the whole person—mind, body, and spirit. It combines traditional psychotherapy with complementary practices like meditation, yoga, nutrition guidance, and mindfulness to address the root causes of mental health challenges."
-        },
-        {
-          question: "How does holistic therapy differ from traditional therapy?",
-          answer: "While traditional therapy focuses primarily on mental health through talk therapy, holistic therapy takes a comprehensive approach. It recognizes the interconnection between mental, physical, emotional, and spiritual well-being, incorporating various healing modalities to support overall wellness."
-        },
-        {
-          question: "What modalities are included in holistic therapy?",
-          answer: "Holistic therapy platforms typically offer cognitive behavioral therapy (CBT), mindfulness-based therapy, meditation guidance, yoga therapy, breathwork, nutrition counseling, stress management techniques, and spiritual counseling—all tailored to your individual needs."
-        }
-      ]
-    },
-    {
-      category: "Platform Usage",
-      icon: "💻",
-      questions: [
-        {
-          question: "How does online therapy work?",
-          answer: "Online therapy connects you with licensed therapists through secure video calls, phone sessions, or messaging. You can schedule live sessions or send messages to your therapist, who responds within 24 hours. All platforms use HIPAA-compliant technology to ensure your privacy."
-        },
-        {
-          question: "What technology do I need?",
-          answer: "You'll need a smartphone, tablet, or computer with internet access, a camera (for video sessions), and a microphone. Most platforms have user-friendly apps for iOS and Android, as well as web-based access."
-        },
-        {
-          question: "Is my information secure and private?",
-          answer: "Yes. All reputable online therapy platforms use bank-level encryption and are HIPAA-compliant. Your sessions and messages are completely confidential, just like in-person therapy. Therapists are bound by the same ethical and legal privacy standards."
-        }
-      ]
-    },
-    {
-      category: "Pricing & Insurance",
-      icon: "💳",
-      questions: [
-        {
-          question: "How much does holistic therapy cost?",
-          answer: "Costs vary by platform and plan. Text-based therapy starts around $35-40/week, while plans with live video sessions range from $65-120/week. Many platforms offer financial aid and sliding scale fees based on income."
-        },
-        {
-          question: "Do these platforms accept insurance?",
-          answer: "Some platforms like Talkspace and Grow Therapy accept certain insurance plans. Coverage varies by provider and plan. Many platforms can provide you with documentation (superbills) to submit to your insurance for potential reimbursement."
-        },
-        {
-          question: "Are there affordable options available?",
-          answer: "Yes! Platforms like Calmerry offer text-based therapy starting at $35/week. Many platforms also provide financial aid programs, sliding scale fees, and payment plans to make therapy accessible regardless of budget."
-        }
-      ]
-    },
-    {
-      category: "Getting Started",
-      icon: "🚀",
-      questions: [
-        {
-          question: "How do I choose the right platform?",
-          answer: "Consider your budget, insurance coverage, preferred session type (video, phone, text), specific needs (holistic vs. traditional focus), and therapist specialties. Our comparison table above helps you evaluate options based on these criteria."
-        },
-        {
-          question: "How does the matching process work?",
-          answer: "Most platforms use a questionnaire to understand your needs, preferences, and goals. Based on your answers, they match you with therapists who specialize in your concerns and fit your communication style. You can usually request a different therapist if the first match isn't quite right."
-        },
-        {
-          question: "Can I switch therapists if needed?",
-          answer: "Absolutely. Most platforms make it easy to switch therapists at no additional cost. Finding the right therapeutic relationship is crucial for success, and platforms understand this. You can usually request a new match through your account dashboard."
-        }
-      ]
-    }
-  ]
-
-  const toggleQuestion = (categoryIndex, questionIndex) => {
-    const index = `${categoryIndex}-${questionIndex}`
-    setOpenIndex(openIndex === index ? null : index)
-  }
+  const totalQuestions = categories.reduce((sum, c) => sum + c.items.length, 0);
 
   return (
-    <section id="faq" className="py-24 bg-white">
+    <section
+      className="py-20"
+      style={{ background: "white" }}
+      // SEO: FAQ schema markup
+      itemScope
+      itemType="https://schema.org/FAQPage"
+    >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-20 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl mb-6 shadow-lg">
-            <HelpCircle className="text-white" size={32} />
-          </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-14">
+          <span
+            className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
+            style={{ background: "#f0fdf4", color: "#16a34a" }}
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            Have Questions?
+          </span>
+          <h2
+            className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight"
+            style={{ color: "#333645" }}
+          >
             Frequently Asked Questions
           </h2>
-          <p className="text-xl text-gray-600">
-            Everything you need to know about holistic online therapy
+          <p
+            className="max-w-xl mx-auto text-base"
+            style={{ color: "#a8b5a2" }}
+          >
+            Everything you need to know before starting your holistic wellness
+            journey. {totalQuestions} answers below.
           </p>
         </div>
 
-        {/* FAQ Categories */}
-        <div className="space-y-12">
-          {faqs.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="animate-fade-in" style={{ animationDelay: `${categoryIndex * 100}ms` }}>
-              {/* Category Header */}
-              <div className="flex items-center gap-3 mb-6">
-                <span className="text-3xl">{category.icon}</span>
-                <h3 className="text-2xl font-bold text-gray-900">
-                  {category.category}
-                </h3>
-              </div>
-
-              {/* Questions */}
-              <div className="space-y-4">
-                {category.questions.map((faq, questionIndex) => {
-                  const index = `${categoryIndex}-${questionIndex}`
-                  const isOpen = openIndex === index
-
-                  return (
-                    <div 
-                      key={questionIndex}
-                      className="group border-2 border-gray-200 rounded-xl overflow-hidden hover:border-green-300 transition-all duration-300"
-                    >
-                      {/* Question */}
-                      <button
-                        onClick={() => toggleQuestion(categoryIndex, questionIndex)}
-                        className="w-full px-6 py-5 text-left bg-gradient-to-r from-gray-50 to-white hover:from-green-50 hover:to-blue-50 transition-all duration-300 flex justify-between items-center gap-4"
-                      >
-                        <span className="font-semibold text-gray-900 pr-8 text-lg">
-                          {faq.question}
-                        </span>
-                        <ChevronDown 
-                          className={`text-green-600 flex-shrink-0 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
-                          size={24}
-                        />
-                      </button>
-
-                      {/* Answer */}
-                      <div 
-                        className={`overflow-hidden transition-all duration-300 ${
-                          isOpen ? 'max-h-96' : 'max-h-0'
-                        }`}
-                      >
-                        <div className="px-6 py-5 bg-white border-t-2 border-gray-100">
-                          <p className="text-gray-700 leading-relaxed">
-                            {faq.answer}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
+        {/* Categories */}
+        <div className="space-y-10">
+          {categories.map((category) => (
+            <FAQCategory
+              key={category.id}
+              category={category}
+              openId={openId}
+              setOpenId={setOpenId}
+            />
           ))}
         </div>
 
         {/* Bottom CTA */}
-        <div className="mt-16 text-center p-8 bg-gradient-to-r from-green-50 to-blue-50 rounded-2xl shadow-lg">
-          <p className="text-lg text-gray-700 mb-6">
+        <div
+          className="mt-14 rounded-3xl p-7 text-center"
+          style={{
+            background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)",
+            border: "1.5px solid #d1fae5",
+          }}
+        >
+          <p className="font-bold text-base mb-2" style={{ color: "#333645" }}>
             Still have questions?
           </p>
-          <a 
-            href="#contact" 
-            className="inline-block bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          <p className="text-sm mb-5" style={{ color: "#a8b5a2" }}>
+            Our team responds within 2 hours during business hours.
+          </p>
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm text-white shadow-sm hover:shadow-md hover:opacity-90 transition-all"
+            style={{ background: "linear-gradient(135deg, #16a34a, #3a6d77)" }}
           >
-            Contact Us
+            Ask Us Anything →
           </a>
         </div>
       </div>
     </section>
-  )
+  );
 }

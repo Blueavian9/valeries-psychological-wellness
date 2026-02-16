@@ -1,295 +1,548 @@
-import { useState } from 'react'
-import { Mail, Phone, Send, CheckCircle, MapPin } from 'lucide-react'
+import { useState } from "react";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  Check,
+  AlertCircle,
+  Facebook,
+  Instagram,
+  Linkedin,
+  Twitter,
+  Heart,
+} from "lucide-react";
+
+// Simple email validation
+const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+const CONTACT_METHODS = [
+  { id: "email", label: "Email" },
+  { id: "phone", label: "Phone" },
+  { id: "either", label: "Either" },
+];
+
+const SOCIAL_LINKS = [
+  { icon: Facebook, href: "#", label: "Facebook" },
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Linkedin, href: "#", label: "LinkedIn" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+];
+
+const TRUST_BADGES = [
+  { emoji: "🔒", text: "HIPAA Aware" },
+  { emoji: "⭐", text: "4.9 / 5 Rating" },
+  { emoji: "✅", text: "Licensed Therapists" },
+  { emoji: "💬", text: "Reply in < 2 hrs" },
+];
+
+function FieldError({ message }) {
+  if (!message) return null;
+  return (
+    <p
+      className="flex items-center gap-1 text-xs mt-1.5"
+      style={{ color: "#dc2626" }}
+    >
+      <AlertCircle className="w-3 h-3" />
+      {message}
+    </p>
+  );
+}
+
+function Input({ label, required, error, children, ...props }) {
+  return (
+    <div>
+      <label
+        className="block text-xs font-bold uppercase tracking-wide mb-1.5"
+        style={{ color: "#333645" }}
+      >
+        {label} {required && <span style={{ color: "#16a34a" }}>*</span>}
+      </label>
+      {children || (
+        <input
+          className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
+          style={{
+            borderColor: error ? "#fca5a5" : "#e0ddd6",
+            background: error ? "#fff7f7" : "white",
+            color: "#333645",
+          }}
+          onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
+          onBlur={(e) =>
+            (e.target.style.borderColor = error ? "#fca5a5" : "#e0ddd6")
+          }
+          {...props}
+        />
+      )}
+      <FieldError message={error} />
+    </div>
+  );
+}
 
 export default function ContactCTA() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    message: '',
-    contactMethod: 'email'
-  })
-  const [submitted, setSubmitted] = useState(false)
-  const [errors, setErrors] = useState({})
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    message: "",
+    contactMethod: "email",
+    newsletter: false,
+    privacy: false,
+  });
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }))
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: '' }))
+  const set = (key, val) => {
+    setForm((f) => ({ ...f, [key]: val }));
+    if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
+  };
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim()) e.name = "Your name is required";
+    if (!form.email.trim()) e.email = "Email address is required";
+    else if (!isValidEmail(form.email))
+      e.email = "Please enter a valid email address";
+    if (!form.message.trim())
+      e.message = "Please share your question or message";
+    else if (form.message.trim().length < 10)
+      e.message = "Message must be at least 10 characters";
+    if (!form.privacy)
+      e.privacy = "Please accept the privacy policy to continue";
+    return e;
+  };
+
+  const handleSubmit = () => {
+    const e = validate();
+    if (Object.keys(e).length > 0) {
+      setErrors(e);
+      return;
     }
-  }
-
-  const validateForm = () => {
-    const newErrors = {}
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required'
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email'
-    }
-
-    if (!formData.message.trim()) {
-      newErrors.message = 'Message is required'
-    } else if (formData.message.trim().length < 10) {
-      newErrors.message = 'Message must be at least 10 characters'
-    }
-
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    if (validateForm()) {
-      console.log('Form submitted:', formData)
-      setSubmitted(true)
-      
-      setTimeout(() => {
-        setSubmitted(false)
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          message: '',
-          contactMethod: 'email'
-        })
-      }, 3000)
-    }
-  }
+    setSubmitting(true);
+    // Simulate API call — Future: replace with real fetch()
+    setTimeout(() => {
+      setSubmitting(false);
+      setSubmitted(true);
+    }, 1200);
+  };
 
   return (
-    <section id="contact" className="relative py-24 overflow-hidden">
-      {/* Gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-green-600 via-green-700 to-blue-700"></div>
-      
-      {/* Decorative elements */}
-      <div className="absolute inset-0 overflow-hidden opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white rounded-full filter blur-3xl"></div>
-      </div>
+    <section
+      id="contact"
+      className="py-20"
+      style={{
+        background: "linear-gradient(180deg, #fdfcf7 0%, #f0f7f0 100%)",
+      }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Section header */}
+        <div className="text-center mb-14">
+          <span
+            className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
+            style={{ background: "#f0fdf4", color: "#16a34a" }}
+          >
+            Start Your Journey
+          </span>
+          <h2
+            className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight"
+            style={{ color: "#333645" }}
+          >
+            Ready to Begin Healing?
+          </h2>
+          <p
+            className="max-w-xl mx-auto text-base"
+            style={{ color: "#a8b5a2" }}
+          >
+            Take the first step. Our team will match you with the right
+            therapist and platform within 24 hours — no pressure, no commitment.
+          </p>
+        </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Side - CTA */}
-          <div className="text-white animate-slide-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Ready to Start Your Healing Journey?
-            </h2>
-            <p className="text-xl mb-8 text-green-50 leading-relaxed">
-              Take the first step towards holistic wellness. Our team is here to help you find the perfect therapy platform for your unique needs.
-            </p>
-
-            {/* Contact Info Cards */}
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl hover:bg-white/20 transition-all">
-                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Mail className="text-white" size={24} />
-                </div>
-                <div>
-                  <div className="font-semibold text-sm text-green-100">Email Us</div>
-                  <a href="mailto:info@holistictherapy.com" className="text-white hover:text-green-100 transition">
-                    info@holistictherapy.com
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl hover:bg-white/20 transition-all">
-                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                  <Phone className="text-white" size={24} />
-                </div>
-                <div>
-                  <div className="font-semibold text-sm text-green-100">Call Us</div>
-                  <a href="tel:+15551234567" className="text-white hover:text-green-100 transition">
-                    (555) 123-4567
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-sm p-4 rounded-xl hover:bg-white/20 transition-all">
-                <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center">
-                  <MapPin className="text-white" size={24} />
-                </div>
-                <div>
-                  <div className="font-semibold text-sm text-green-100">Available Nationwide</div>
-                  <p className="text-white">Serving all 50 states</p>
-                </div>
+        <div className="grid lg:grid-cols-5 gap-10">
+          {/* ── Left: info panel ─────────────────────────────────────── */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* CTA card */}
+            <div
+              className="rounded-3xl p-7 text-white"
+              style={{
+                background: "linear-gradient(135deg, #3a6d77 0%, #16a34a 100%)",
+              }}
+            >
+              <Heart className="w-8 h-8 mb-4 opacity-80" />
+              <h3 className="text-xl font-bold mb-3 leading-snug">
+                Your first consultation is always free
+              </h3>
+              <p className="text-sm opacity-80 leading-relaxed mb-5">
+                No credit card required. No commitment. Just a 15-minute
+                conversation to see if holistic therapy is right for you.
+              </p>
+              <div className="space-y-3 text-sm">
+                {[
+                  { icon: Phone, text: "+1 (800) 555-0100" },
+                  { icon: Mail, text: "hello@valeriemunozpsyc.com" },
+                  {
+                    icon: MapPin,
+                    text: "Los Angeles, CA (Telehealth Nationwide)",
+                  },
+                ].map(({ icon: Icon, text }) => (
+                  <div
+                    key={text}
+                    className="flex items-start gap-2.5 opacity-90"
+                  >
+                    <Icon className="w-4 h-4 shrink-0 mt-0.5" />
+                    <span>{text}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
-            {/* Trust Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
-              <div>
-                <div className="text-3xl font-bold mb-1">10,000+</div>
-                <div className="text-green-100 text-sm">Happy Clients</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold mb-1">95%</div>
-                <div className="text-green-100 text-sm">Satisfaction</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold mb-1">24/7</div>
-                <div className="text-green-100 text-sm">Support</div>
+            {/* Trust badges */}
+            <div className="grid grid-cols-2 gap-3">
+              {TRUST_BADGES.map(({ emoji, text }) => (
+                <div
+                  key={text}
+                  className="rounded-2xl p-4 text-center shadow-sm"
+                  style={{ background: "white", border: "1.5px solid #f0ede8" }}
+                >
+                  <div className="text-2xl mb-1">{emoji}</div>
+                  <p
+                    className="text-xs font-semibold"
+                    style={{ color: "#333645" }}
+                  >
+                    {text}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* Social links */}
+            <div
+              className="rounded-2xl p-5 shadow-sm"
+              style={{ background: "white", border: "1.5px solid #f0ede8" }}
+            >
+              <p
+                className="text-xs font-bold uppercase tracking-wide mb-4"
+                style={{ color: "#a8b5a2" }}
+              >
+                Follow Our Wellness Journey
+              </p>
+              <div className="flex gap-3">
+                {SOCIAL_LINKS.map(({ icon: Icon, href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    aria-label={label}
+                    className="w-10 h-10 rounded-xl flex items-center justify-center border-2 hover:shadow-md transition-all"
+                    style={{ borderColor: "#e0ddd6", color: "#a8b5a2" }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "#16a34a";
+                      e.currentTarget.style.color = "#16a34a";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "#e0ddd6";
+                      e.currentTarget.style.color = "#a8b5a2";
+                    }}
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
               </div>
             </div>
           </div>
 
-          {/* Right Side - Contact Form */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 animate-scale-in">
-            {submitted ? (
-              // Success Message
-              <div className="text-center py-12">
-                <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                  <CheckCircle className="text-white" size={40} />
+          {/* ── Right: contact form ───────────────────────────────────── */}
+          <div className="lg:col-span-3">
+            <div
+              className="rounded-3xl shadow-sm p-8"
+              style={{ background: "white", border: "1.5px solid #f0ede8" }}
+            >
+              {submitted ? (
+                /* ── Success state ── */
+                <div className="py-10 text-center">
+                  <div
+                    className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg"
+                    style={{
+                      background: "linear-gradient(135deg, #16a34a, #3a6d77)",
+                    }}
+                  >
+                    <Check className="w-10 h-10 text-white" />
+                  </div>
+                  <h3
+                    className="text-2xl font-bold mb-3"
+                    style={{ color: "#333645" }}
+                  >
+                    Message sent! 🌿
+                  </h3>
+                  <p className="text-sm mb-2" style={{ color: "#a8b5a2" }}>
+                    We'll be in touch within 2 hours at{" "}
+                    <strong style={{ color: "#16a34a" }}>{form.email}</strong>
+                  </p>
+                  <p className="text-xs mb-8" style={{ color: "#c4bdb3" }}>
+                    {form.newsletter
+                      ? "You're also subscribed to our wellness newsletter."
+                      : ""}
+                  </p>
+                  <button
+                    onClick={() => {
+                      setSubmitted(false);
+                      setForm({
+                        name: "",
+                        email: "",
+                        phone: "",
+                        message: "",
+                        contactMethod: "email",
+                        newsletter: false,
+                        privacy: false,
+                      });
+                      setErrors({});
+                    }}
+                    className="px-6 py-3 rounded-2xl border-2 font-semibold text-sm transition-all hover:shadow-md"
+                    style={{ borderColor: "#16a34a", color: "#16a34a" }}
+                  >
+                    Send Another Message
+                  </button>
                 </div>
-                <h3 className="text-3xl font-bold text-gray-900 mb-3">
-                  Thank You!
-                </h3>
-                <p className="text-gray-600 text-lg">
-                  We've received your message and will get back to you within 24 hours.
-                </p>
-              </div>
-            ) : (
-              // Contact Form
-              <>
-                <h3 className="text-3xl font-bold text-gray-900 mb-2">
-                  Send Us a Message
-                </h3>
-                <p className="text-gray-600 mb-8">We typically respond within 24 hours</p>
+              ) : (
+                /* ── Form ── */
+                <div className="space-y-5">
+                  <h3
+                    className="text-xl font-bold"
+                    style={{ color: "#333645" }}
+                  >
+                    Send Us a Message
+                  </h3>
 
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Name */}
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Name *
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition ${
-                        errors.name ? 'border-red-500' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="Your full name"
-                    />
-                    {errors.name && (
-                      <p className="mt-2 text-sm text-red-600">{errors.name}</p>
-                    )}
+                  {/* Name + Phone row */}
+                  <div className="grid sm:grid-cols-2 gap-5">
+                    <Input label="Full Name" required error={errors.name}>
+                      <input
+                        type="text"
+                        placeholder="Jane Doe"
+                        value={form.name}
+                        onChange={(e) => set("name", e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
+                        style={{
+                          borderColor: errors.name ? "#fca5a5" : "#e0ddd6",
+                          color: "#333645",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#16a34a")
+                        }
+                        onBlur={(e) =>
+                          (e.target.style.borderColor = errors.name
+                            ? "#fca5a5"
+                            : "#e0ddd6")
+                        }
+                      />
+                    </Input>
+                    <div>
+                      <label
+                        className="block text-xs font-bold uppercase tracking-wide mb-1.5"
+                        style={{ color: "#333645" }}
+                      >
+                        Phone{" "}
+                        <span
+                          className="font-normal normal-case"
+                          style={{ color: "#c4bdb3" }}
+                        >
+                          (optional)
+                        </span>
+                      </label>
+                      <input
+                        type="tel"
+                        placeholder="+1 (555) 000-0000"
+                        value={form.phone}
+                        onChange={(e) => set("phone", e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
+                        style={{ borderColor: "#e0ddd6", color: "#333645" }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#16a34a")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e0ddd6")}
+                      />
+                    </div>
                   </div>
 
                   {/* Email */}
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Email *
-                    </label>
+                  <Input label="Email Address" required error={errors.email}>
                     <input
                       type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition ${
-                        errors.email ? 'border-red-500' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="your@email.com"
+                      placeholder="you@example.com"
+                      value={form.email}
+                      onChange={(e) => set("email", e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
+                      style={{
+                        borderColor: errors.email ? "#fca5a5" : "#e0ddd6",
+                        color: "#333645",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
+                      onBlur={(e) =>
+                        (e.target.style.borderColor = errors.email
+                          ? "#fca5a5"
+                          : "#e0ddd6")
+                      }
                     />
-                    {errors.email && (
-                      <p className="mt-2 text-sm text-red-600">{errors.email}</p>
-                    )}
-                  </div>
+                    <FieldError message={errors.email} />
+                  </Input>
 
-                  {/* Phone (Optional) */}
+                  {/* Preferred Contact Method */}
                   <div>
-                    <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Phone <span className="text-gray-400 font-normal">(Optional)</span>
+                    <label
+                      className="block text-xs font-bold uppercase tracking-wide mb-2"
+                      style={{ color: "#333645" }}
+                    >
+                      Preferred Contact Method
                     </label>
-                    <input
-                      type="tel"
-                      id="phone"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition hover:border-gray-300"
-                      placeholder="(555) 123-4567"
-                    />
+                    <div className="flex gap-2">
+                      {CONTACT_METHODS.map(({ id, label }) => (
+                        <button
+                          key={id}
+                          type="button"
+                          onClick={() => set("contactMethod", id)}
+                          className="flex-1 py-2.5 rounded-xl border-2 text-xs font-semibold transition-all"
+                          style={{
+                            borderColor:
+                              form.contactMethod === id ? "#16a34a" : "#e0ddd6",
+                            background:
+                              form.contactMethod === id ? "#f0fdf4" : "white",
+                            color:
+                              form.contactMethod === id ? "#16a34a" : "#a8b5a2",
+                          }}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Message */}
                   <div>
-                    <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
-                      Message *
+                    <label
+                      className="block text-xs font-bold uppercase tracking-wide mb-1.5"
+                      style={{ color: "#333645" }}
+                    >
+                      Message / Question{" "}
+                      <span style={{ color: "#16a34a" }}>*</span>
                     </label>
                     <textarea
-                      id="message"
-                      name="message"
-                      value={formData.message}
-                      onChange={handleChange}
                       rows={4}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:ring-2 focus:ring-green-600 focus:border-transparent outline-none transition resize-none ${
-                        errors.message ? 'border-red-500' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                      placeholder="How can we help you?"
+                      placeholder="Tell us a little about what you're looking for, or ask us anything..."
+                      value={form.message}
+                      onChange={(e) => set("message", e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all resize-none"
+                      style={{
+                        borderColor: errors.message ? "#fca5a5" : "#e0ddd6",
+                        background: errors.message ? "#fff7f7" : "white",
+                        color: "#333645",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
+                      onBlur={(e) =>
+                        (e.target.style.borderColor = errors.message
+                          ? "#fca5a5"
+                          : "#e0ddd6")
+                      }
                     />
-                    {errors.message && (
-                      <p className="mt-2 text-sm text-red-600">{errors.message}</p>
-                    )}
-                  </div>
-
-                  {/* Preferred Contact Method */}
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-3">
-                      Preferred Contact Method
-                    </label>
-                    <div className="flex gap-4">
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="contactMethod"
-                          value="email"
-                          checked={formData.contactMethod === 'email'}
-                          onChange={handleChange}
-                          className="w-4 h-4 text-green-600 focus:ring-green-600"
-                        />
-                        <span className="ml-2 text-gray-700">Email</span>
-                      </label>
-                      <label className="flex items-center cursor-pointer">
-                        <input
-                          type="radio"
-                          name="contactMethod"
-                          value="phone"
-                          checked={formData.contactMethod === 'phone'}
-                          onChange={handleChange}
-                          className="w-4 h-4 text-green-600 focus:ring-green-600"
-                        />
-                        <span className="ml-2 text-gray-700">Phone</span>
-                      </label>
+                    <div className="flex justify-between items-start">
+                      <FieldError message={errors.message} />
+                      <span
+                        className="text-xs mt-1 ml-auto"
+                        style={{ color: "#c4bdb3" }}
+                      >
+                        {form.message.length}/500
+                      </span>
                     </div>
                   </div>
 
-                  {/* Submit Button */}
+                  {/* Checkboxes */}
+                  <div className="space-y-3">
+                    {/* Newsletter */}
+                    <label className="flex items-start gap-3 cursor-pointer group">
+                      <div
+                        className="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all"
+                        style={{
+                          borderColor: form.newsletter ? "#16a34a" : "#e0ddd6",
+                          background: form.newsletter ? "#16a34a" : "white",
+                        }}
+                        onClick={() => set("newsletter", !form.newsletter)}
+                      >
+                        {form.newsletter && (
+                          <Check className="w-3 h-3 text-white" />
+                        )}
+                      </div>
+                      <span className="text-sm" style={{ color: "#6b7b6a" }}>
+                        Subscribe to our weekly wellness newsletter — tips,
+                        resources, and mindfulness practices.
+                      </span>
+                    </label>
+
+                    {/* Privacy */}
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <div
+                        className="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all"
+                        style={{
+                          borderColor: errors.privacy
+                            ? "#fca5a5"
+                            : form.privacy
+                              ? "#16a34a"
+                              : "#e0ddd6",
+                          background: form.privacy ? "#16a34a" : "white",
+                        }}
+                        onClick={() => set("privacy", !form.privacy)}
+                      >
+                        {form.privacy && (
+                          <Check className="w-3 h-3 text-white" />
+                        )}
+                      </div>
+                      <span className="text-sm" style={{ color: "#6b7b6a" }}>
+                        I agree to the{" "}
+                        <a
+                          href="#"
+                          style={{ color: "#16a34a" }}
+                          className="underline hover:opacity-70"
+                        >
+                          Privacy Policy
+                        </a>{" "}
+                        and understand my information will be handled with care.{" "}
+                        <span style={{ color: "#16a34a" }}>*</span>
+                      </span>
+                    </label>
+                    <FieldError message={errors.privacy} />
+                  </div>
+
+                  {/* Submit */}
                   <button
-                    type="submit"
-                    className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-4 rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                    className="w-full py-4 rounded-2xl font-bold text-sm text-white shadow-md hover:shadow-lg hover:opacity-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
+                    style={{
+                      background: "linear-gradient(135deg, #16a34a, #3a6d77)",
+                    }}
                   >
-                    Send Message
-                    <Send size={20} />
+                    {submitting ? (
+                      <>
+                        <div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Send Message
+                      </>
+                    )}
                   </button>
-                </form>
-              </>
-            )}
+
+                  <p
+                    className="text-center text-xs"
+                    style={{ color: "#c4bdb3" }}
+                  >
+                    🔒 Your message is encrypted and confidential
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }

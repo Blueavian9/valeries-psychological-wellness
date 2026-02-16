@@ -1,4 +1,5 @@
-import { ArrowRight, Sparkles } from 'lucide-react'
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
@@ -14,7 +15,9 @@ export default function Hero() {
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm mb-8">
             <Sparkles className="text-green-600" size={18} />
-            <span className="text-sm font-medium text-gray-700">Mind • Body • Spirit Integration</span>
+            <span className="text-sm font-medium text-gray-700">
+              Mind • Body • Spirit Integration
+            </span>
           </div>
 
           {/* Main Headline */}
@@ -24,18 +27,22 @@ export default function Hero() {
               Holistic Wellness
             </span>
           </h1>
-          
+
           {/* Subtitle */}
           <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Experience transformative therapy that treats the whole person—mind, body, and spirit. 
-            Find the perfect online platform for your holistic healing journey.
+            Experience transformative therapy that treats the whole person—mind,
+            body, and spirit. Find the perfect online platform for your holistic
+            healing journey.
           </p>
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="group bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2">
               Start Your Journey
-              <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
+              <ArrowRight
+                size={20}
+                className="group-hover:translate-x-1 transition-transform"
+              />
             </button>
             <button className="bg-white/80 backdrop-blur-sm text-green-600 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-green-600 hover:bg-green-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               Compare Platforms
@@ -58,7 +65,8 @@ export default function Hero() {
             </div>
           </div>
         </div>
+        <Link to="/book">Book a Session</Link>
       </div>
     </section>
-  )
+  );
 }
