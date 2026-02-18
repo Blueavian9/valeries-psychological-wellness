@@ -42,6 +42,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/booking" element={<BookingPage />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/find-therapist" element={<TherapistFinder />} />
         </Routes>
         <Footer />
       </div>
