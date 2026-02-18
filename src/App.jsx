@@ -9,13 +9,13 @@ import PlatformComparison from "./components/PlatformComparison";
 import Testimonials from "./components/Testimonials";
 import FAQ from "./components/FAQ";
 import WellnessResources from "./components/WellnessResources";
-import TherapistFinder from "./components/TherapistFinder";
 import ContactCTA from "./components/ContactCTA";
 import Footer from "./components/Footer";
 
 // Pages
 import BookingPage from "./pages/BookingPage";
 import Dashboard from "./pages/Dashboard";
+import TherapistFinder from "./components/TherapistFinder";
 
 function HomePage() {
   return (
