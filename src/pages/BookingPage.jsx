@@ -10,7 +10,7 @@ import {
   Leaf,
   Calendar,
 } from "lucide-react";
-import { getServices, createAppointment } from "../services/store.jsx";
+import { getServices, createAppointment } from "../services/store.js";
 
 // ─── Palette from HarmonyFlow PRD ─────────────────────────────────────────────
 const palette = {

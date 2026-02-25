@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node node_modules/vite/bin/vite.js",
-    "build": "node node_modules/vite/bin/vite.js build",
-    "preview": "node node_modules/vite/bin/vite.js preview",
-    "lint": "eslint ."
-  },
+  "dev": "set ESBUILD_BINARY_PATH=node_modules\\@esbuild\\win32-x64\\esbuild.exe && node node_modules/vite/bin/vite.js",
+  "build": "set ESBUILD_BINARY_PATH=node_modules\\@esbuild\\win32-x64\\esbuild.exe && node node_modules/vite/bin/vite.js build",
+  "preview": "set ESBUILD_BINARY_PATH=node_modules\\@esbuild\\win32-x64\\esbuild.exe && node node_modules/vite/bin/vite.js preview",
+  "lint": "eslint ."
+},
   "dependencies": {
     "@esbuild/win32-x64": "^0.27.3",
     "@supabase/supabase-js": "^2.97.0",
@@ -24,11 +24,11 @@
     "@eslint/js": "^9.39.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.1",
+    "@vitejs/plugin-react": "^4.7.0",
     "eslint": "^9.39.1",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "vite": "^7.3.1"
+    "vite": "^5.4.21"
   }
 }
