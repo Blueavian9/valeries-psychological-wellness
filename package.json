@@ -4,16 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "dev": "set ESBUILD_BINARY_PATH=node_modules\\@esbuild\\win32-x64\\esbuild.exe && node node_modules/vite/bin/vite.js",
-  "build": "set ESBUILD_BINARY_PATH=node_modules\\@esbuild\\win32-x64\\esbuild.exe && node node_modules/vite/bin/vite.js build",
-  "preview": "set ESBUILD_BINARY_PATH=node_modules\\@esbuild\\win32-x64\\esbuild.exe && node node_modules/vite/bin/vite.js preview",
-  "lint": "eslint ."
-},
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint ."
+  },
   "dependencies": {
     "@esbuild/win32-x64": "^0.27.3",
     "@supabase/supabase-js": "^2.97.0",
     "@tailwindcss/vite": "^4.1.18",
     "esbuild": "^0.27.3",
+    "install": "^0.13.0",
     "lucide-react": "^0.563.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
