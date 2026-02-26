@@ -1,7 +1,8 @@
-# PRD Status Tracker — Holistic Therapy Platform
+# PRD.md Status Tracker — Holistic Therapy Platform
 Updated: February 2026
 
 ## Files to copy into: `src/components/`
+
 
 | File | Destination |
 |------|-------------|
@@ -12,6 +13,7 @@ Updated: February 2026
 Your `App.jsx` already imports all three — no changes needed there.
 
 ---
+.
 
 ## EPIC Status
 
@@ -26,11 +28,12 @@ Your `App.jsx` already imports all three — no changes needed there.
 | 7 | FAQ Accordion | ✅ **Built now** | `FAQ.jsx` ← copy this |
 | 8 | Contact / CTA Section | ✅ **Built now** | `ContactCTA.jsx` ← copy this |
 | 9 | Wellness Resources Library | ✅ **Built now** | `WellnessResources.jsx` ← copy this |
-| 10 | Therapist Finder / Matching Quiz | 📋 Backlog | Not started |
+| 10 | Therapist Finder / Matching Quiz | ✅ **Built now** | `TherapistFinder.jsx` ← copy this |
 | 11 | Blog / Articles | 📋 Future | Not started |
 
 **Booking System** | ✅ Built | `src/pages/BookingPage.jsx`
 **Admin Dashboard** | ✅ Built | `src/pages/Dashboard.jsx`
+**Therapist Finder Quiz** | ✅ Built | `src/pages/TherapistFinder.jsx` — route: `/find-therapist`
 **Data Store** | ✅ Built | `src/services/store.js`
 
 ---
@@ -61,17 +64,46 @@ Your `App.jsx` already imports all three — no changes needed there.
 - Left panel: gradient info card, 4 trust badges, social media links
 - Anchor ID: `id="contact"` — FAQ CTA links here
 
+### TherapistFinder.jsx (EPIC 10)
+- 5-step matching quiz with smooth progress bar
+- Step 1: What brings you? (8 multi-select options: Anxiety, Depression, Trauma, Relationships, etc.)
+- Step 2: Therapeutic approach (4 single-select: Traditional, Holistic, Mind-Body, Spiritual)
+- Step 3: Session format (4 multi-select: Video, Phone, Chat, In-Person)
+- Step 4: Budget range (4 single-select: $0-50, $50-100, $100-150, $150+)
+- Step 5: Special preferences (6 multi-select: LGBTQ+, POC, Female, Male, Bilingual, Faith-Based)
+- Smart matching algorithm scores therapists based on all answers
+- Results page with filtered therapist cards (score ≥ 3)
+- Each card: Avatar, rating/reviews, bio, tags, price, next available time, Book + View Profile buttons
+- "Retake Quiz" and "Talk to Coordinator" CTAs
+- Route: `/find-therapist`
+
 ---
 
-## Up Next: EPIC 9 (Wellness Resources)
+## Phase 2 Complete: EPICs 1-10 ✅
 
-When you're ready, run:
-```
+All core platform features are built:
+- Landing page with 8 sections
+- Wellness Resources library
+- Full booking system
+- Admin dashboard
+- Therapist matching quiz
+
+## Optional: EPIC 11 (Blog/Articles)
+
+When you're ready to add a blog, we can build:
+- Article grid with categories
+- Article detail pages with rich text
+- Search functionality
+- Related articles sidebar
+- Author profiles
+- RSS feed
+
+---
+
+```bash
 git add .
-git commit -m "feat: EPICs 6-8 — Testimonials, FAQ, Contact"
+git commit -m "feat: EPIC 10 — Therapist Finder matching quiz"
 git push origin main
 ```
-Vercel auto-deploys to valeriemunozpsyc.com.
 
-Then we build EPIC 9: Wellness Resources grid with categories
-(Meditation, Yoga, Nutrition, Sleep, Stress) and download/access buttons.
+Access the quiz at: **valeriemunozpsyc.com/find-therapist**
