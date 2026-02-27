@@ -10,9 +10,9 @@ import {
   Leaf,
   Calendar,
 } from "lucide-react";
-import { getServices, createAppointment } from "../services/store.js";
+import { supabase } from "../lib/supabase"; // ← your supabase client
 
-// ─── Palette from HarmonyFlow PRD ─────────────────────────────────────────────
+// ─── Palette ──────────────────────────────────────────────────────────────────
 const palette = {
   cream: "#fdfcf7",
   sage: "#a8b5a2",
@@ -22,6 +22,14 @@ const palette = {
   charcoal: "#333645",
   coral: "#e8b4bc",
 };
+
+// Fallback colors cycled per service index (DB has no color column yet)
+const SERVICE_COLORS = [
+  palette.teal,
+  palette.sage,
+  palette.lavender,
+  palette.coral,
+];
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = [
@@ -39,8 +47,7 @@ const MONTHS = [
   "December",
 ];
 
-function generateTimeSlots(date, service) {
-  // Mon–Fri: 9am–6pm  Sat: 10am–2pm  Sun: closed
+function generateTimeSlots(date) {
   const day = date.getDay();
   if (day === 0) return [];
   const [startH, endH] = day === 6 ? [10, 14] : [9, 18];
@@ -53,14 +60,11 @@ function generateTimeSlots(date, service) {
       );
     }
   }
-  // Fake-remove a few as "taken"
   return slots.filter((_, i) => ![1, 4, 7, 10].includes(i));
 }
 
 // ─── Step 1: Service Selector ─────────────────────────────────────────────────
-function ServiceStep({ selectedId, onSelect }) {
-  const services = getServices();
-
+function ServiceStep({ services, selectedId, onSelect }) {
   return (
     <div>
       <h2
@@ -74,67 +78,73 @@ function ServiceStep({ selectedId, onSelect }) {
       </p>
 
       <div className="grid sm:grid-cols-2 gap-4">
-        {services.map((svc) => (
-          <button
-            key={svc.id}
-            onClick={() => onSelect(svc.id)}
-            className="text-left rounded-2xl p-5 border-2 transition-all hover:shadow-md hover:-translate-y-0.5"
-            style={{
-              borderColor: selectedId === svc.id ? svc.color : "#e8e4dd",
-              background:
-                selectedId === svc.id ? `${svc.color}12` : palette.cream,
-            }}
-          >
-            <div className="flex justify-between items-start mb-3">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ background: `${svc.color}25` }}
-              >
-                <Leaf className="w-5 h-5" style={{ color: svc.color }} />
-              </div>
-              {selectedId === svc.id && (
-                <div
-                  className="w-6 h-6 rounded-full flex items-center justify-center"
-                  style={{ background: svc.color }}
-                >
-                  <Check className="w-3.5 h-3.5 text-white" />
-                </div>
-              )}
-            </div>
-            <p
-              className="font-bold text-sm mb-1"
-              style={{ color: palette.charcoal }}
+        {services.map((svc, idx) => {
+          const color =
+            svc.color ?? SERVICE_COLORS[idx % SERVICE_COLORS.length];
+          return (
+            <button
+              key={svc.id}
+              onClick={() => onSelect(svc.id)}
+              className="text-left rounded-2xl p-5 border-2 transition-all hover:shadow-md hover:-translate-y-0.5"
+              style={{
+                borderColor: selectedId === svc.id ? color : "#e8e4dd",
+                background:
+                  selectedId === svc.id ? `${color}12` : palette.cream,
+              }}
             >
-              {svc.name}
-            </p>
-            <p className="text-xs mb-3" style={{ color: "#8a9490" }}>
-              {svc.description}
-            </p>
-            <div className="flex items-center gap-4 text-xs">
-              <span
-                className="flex items-center gap-1"
-                style={{ color: palette.teal }}
-              >
-                <Clock className="w-3.5 h-3.5" /> {svc.duration} min
-              </span>
-              <span
-                className="flex items-center gap-1 font-bold"
-                style={{ color: svc.color }}
-              >
-                <DollarSign className="w-3.5 h-3.5" />
-                {svc.price === 0 ? "Free" : `$${svc.price}`}
-              </span>
-              {svc.deposit > 0 && (
-                <span
-                  className="text-xs px-2 py-0.5 rounded-full"
-                  style={{ background: `${svc.color}20`, color: svc.color }}
+              <div className="flex justify-between items-start mb-3">
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: `${color}25` }}
                 >
-                  ${svc.deposit} deposit
-                </span>
+                  <Leaf className="w-5 h-5" style={{ color }} />
+                </div>
+                {selectedId === svc.id && (
+                  <div
+                    className="w-6 h-6 rounded-full flex items-center justify-center"
+                    style={{ background: color }}
+                  >
+                    <Check className="w-3.5 h-3.5 text-white" />
+                  </div>
+                )}
+              </div>
+              <p
+                className="font-bold text-sm mb-1"
+                style={{ color: palette.charcoal }}
+              >
+                {svc.name}
+              </p>
+              {svc.description && (
+                <p className="text-xs mb-3" style={{ color: "#8a9490" }}>
+                  {svc.description}
+                </p>
               )}
-            </div>
-          </button>
-        ))}
+              <div className="flex items-center gap-4 text-xs">
+                <span
+                  className="flex items-center gap-1"
+                  style={{ color: palette.teal }}
+                >
+                  <Clock className="w-3.5 h-3.5" /> {svc.duration_minutes} min
+                </span>
+                <span
+                  className="flex items-center gap-1 font-bold"
+                  style={{ color }}
+                >
+                  <DollarSign className="w-3.5 h-3.5" />
+                  {svc.price === 0 ? "Free" : `$${svc.price}`}
+                </span>
+                {svc.deposit > 0 && (
+                  <span
+                    className="text-xs px-2 py-0.5 rounded-full"
+                    style={{ background: `${color}20`, color }}
+                  >
+                    ${svc.deposit} deposit
+                  </span>
+                )}
+              </div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
@@ -148,9 +158,7 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
 
   const firstDay = new Date(viewYear, viewMonth, 1).getDay();
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const timeSlots = selectedDate
-    ? generateTimeSlots(selectedDate, service)
-    : [];
+  const timeSlots = selectedDate ? generateTimeSlots(selectedDate) : [];
 
   const prevMonth = () => {
     if (viewMonth === 0) {
@@ -173,14 +181,11 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
     d.setHours(23, 59, 59);
     return d < today;
   };
-  const isSelected = (day) => {
-    if (!selectedDate) return false;
-    return (
-      selectedDate.getFullYear() === viewYear &&
-      selectedDate.getMonth() === viewMonth &&
-      selectedDate.getDate() === day
-    );
-  };
+  const isSelected = (day) =>
+    selectedDate &&
+    selectedDate.getFullYear() === viewYear &&
+    selectedDate.getMonth() === viewMonth &&
+    selectedDate.getDate() === day;
 
   return (
     <div>
@@ -192,11 +197,10 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
       </h2>
       <p className="text-sm mb-6" style={{ color: palette.sage }}>
         Session: <strong style={{ color: palette.teal }}>{service.name}</strong>{" "}
-        · {service.duration} min
+        · {service.duration_minutes} min
       </p>
 
       <div className="grid lg:grid-cols-5 gap-6">
-        {/* Calendar */}
         <div
           className="lg:col-span-3 rounded-2xl border p-5"
           style={{ background: palette.cream, borderColor: "#e8e4dd" }}
@@ -248,7 +252,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
                 today.getDate() === day &&
                 today.getMonth() === viewMonth &&
                 today.getFullYear() === viewYear;
-
               return (
                 <button
                   key={day}
@@ -299,7 +302,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
           </div>
         </div>
 
-        {/* Time Slots */}
         <div className="lg:col-span-2">
           {!selectedDate ? (
             <div
@@ -453,37 +455,6 @@ function DetailsStep({ service, form, onChange }) {
           />
         </div>
 
-        {/* Intake questions */}
-        {service.intakeQuestions?.map((q, i) => (
-          <div key={i}>
-            <label
-              className="block text-xs font-bold uppercase tracking-wider mb-1.5"
-              style={{ color: palette.charcoal }}
-            >
-              {q}
-            </label>
-            <textarea
-              rows={2}
-              value={form.intakeAnswers?.[q] || ""}
-              onChange={(e) =>
-                onChange("intakeAnswers", {
-                  ...form.intakeAnswers,
-                  [q]: e.target.value,
-                })
-              }
-              placeholder="Your answer (optional)"
-              className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all resize-none"
-              style={{
-                borderColor: "#e0ddd6",
-                background: "white",
-                color: palette.charcoal,
-              }}
-              onFocus={(e) => (e.target.style.borderColor = palette.teal)}
-              onBlur={(e) => (e.target.style.borderColor = "#e0ddd6")}
-            />
-          </div>
-        ))}
-
         <div
           className="p-4 rounded-2xl text-sm"
           style={{ background: `${palette.sage}20`, color: palette.charcoal }}
@@ -502,6 +473,7 @@ function DetailsStep({ service, form, onChange }) {
 
 // ─── Step 4: Confirmation ─────────────────────────────────────────────────────
 function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
+  const color = service.color ?? palette.teal;
   return (
     <div>
       <h2
@@ -516,12 +488,12 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
 
       <div
         className="rounded-2xl border-2 overflow-hidden"
-        style={{ borderColor: `${service.color}40` }}
+        style={{ borderColor: `${color}40` }}
       >
-        <div className="p-5" style={{ background: `${service.color}15` }}>
+        <div className="p-5" style={{ background: `${color}15` }}>
           <p
             className="text-xs font-bold uppercase tracking-wider mb-1"
-            style={{ color: service.color }}
+            style={{ color }}
           >
             Session
           </p>
@@ -529,7 +501,7 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
             {service.name}
           </p>
           <p className="text-sm" style={{ color: "#6b7b6a" }}>
-            {service.duration} min ·{" "}
+            {service.duration_minutes} min ·{" "}
             {service.price === 0 ? "Free" : `$${service.price}`}
           </p>
         </div>
@@ -661,7 +633,6 @@ function SuccessScreen({ service, selectedDate, selectedTime, form, onReset }) {
 // ─── Main Booking Page ────────────────────────────────────────────────────────
 export default function BookingPage() {
   const { serviceId } = useParams();
-  const navigate = useNavigate();
   const [step, setStep] = useState(serviceId ? 2 : 1);
   const [selectedServiceId, setSelectedServiceId] = useState(serviceId || null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -670,11 +641,34 @@ export default function BookingPage() {
     clientName: "",
     clientEmail: "",
     clientPhone: "",
-    intakeAnswers: {},
   });
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  const services = getServices();
+  // ── Supabase: load services ──────────────────────────────────────────────
+  const [services, setServices] = useState([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+  const [servicesError, setServicesError] = useState(null);
+
+  useEffect(() => {
+    async function fetchServices() {
+      setLoadingServices(true);
+      const { data, error } = await supabase
+        .from("services")
+        .select("*")
+        .order("price", { ascending: true });
+
+      if (error) {
+        setServicesError(error.message);
+      } else {
+        setServices(data);
+      }
+      setLoadingServices(false);
+    }
+    fetchServices();
+  }, []);
+
   const service = services.find((s) => s.id === selectedServiceId);
 
   const steps = [
@@ -691,8 +685,12 @@ export default function BookingPage() {
     return true;
   };
 
-  const handleSubmit = () => {
+  // ── Supabase: create appointment ─────────────────────────────────────────
+  const handleSubmit = async () => {
     if (!service || !selectedDate || !selectedTime) return;
+    setSubmitting(true);
+    setSubmitError(null);
+
     const [timePart, meridiem] = selectedTime.split(" ");
     const [hStr, mStr] = timePart.split(":");
     let h = parseInt(hStr);
@@ -700,19 +698,25 @@ export default function BookingPage() {
     if (meridiem === "AM" && h === 12) h = 0;
     const start = new Date(selectedDate);
     start.setHours(h, parseInt(mStr), 0, 0);
-    const end = new Date(start.getTime() + service.duration * 60000);
+    const end = new Date(start.getTime() + service.duration_minutes * 60000);
 
-    createAppointment({
-      serviceId: service.id,
-      clientName: form.clientName,
-      clientEmail: form.clientEmail,
-      clientPhone: form.clientPhone,
-      start: start.toISOString(),
-      end: end.toISOString(),
-      notes: "",
-      intakeAnswers: form.intakeAnswers,
+    const { error } = await supabase.from("appointments").insert({
+      service_id: service.id,
+      client_name: form.clientName,
+      client_email: form.clientEmail,
+      client_phone: form.clientPhone || null,
+      start_time: start.toISOString(),
+      end_time: end.toISOString(),
+      status: "pending",
+      notes: null,
     });
-    setSubmitted(true);
+
+    if (error) {
+      setSubmitError(error.message);
+    } else {
+      setSubmitted(true);
+    }
+    setSubmitting(false);
   };
 
   const reset = () => {
@@ -720,13 +724,9 @@ export default function BookingPage() {
     setSelectedServiceId(null);
     setSelectedDate(null);
     setSelectedTime(null);
-    setForm({
-      clientName: "",
-      clientEmail: "",
-      clientPhone: "",
-      intakeAnswers: {},
-    });
+    setForm({ clientName: "", clientEmail: "", clientPhone: "" });
     setSubmitted(false);
+    setSubmitError(null);
   };
 
   if (submitted && service) {
@@ -749,7 +749,6 @@ export default function BookingPage() {
       }}
     >
       <div className="max-w-3xl mx-auto">
-        {/* Back */}
         <Link
           to="/"
           className="inline-flex items-center gap-1.5 text-sm mb-8 hover:opacity-70 transition-opacity"
@@ -799,8 +798,23 @@ export default function BookingPage() {
           className="rounded-3xl shadow-sm border p-8"
           style={{ background: "white", borderColor: "#e8e4dd" }}
         >
-          {step === 1 && (
+          {/* Loading / error state for services */}
+          {step === 1 && loadingServices && (
+            <div className="text-center py-16" style={{ color: palette.sage }}>
+              <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+              <p className="text-sm">Loading services…</p>
+            </div>
+          )}
+          {step === 1 && servicesError && (
+            <div className="text-center py-16">
+              <p className="text-sm text-red-500">
+                Failed to load services: {servicesError}
+              </p>
+            </div>
+          )}
+          {step === 1 && !loadingServices && !servicesError && (
             <ServiceStep
+              services={services}
               selectedId={selectedServiceId}
               onSelect={(id) => setSelectedServiceId(id)}
             />
@@ -832,6 +846,13 @@ export default function BookingPage() {
             />
           )}
 
+          {/* Submit error */}
+          {submitError && (
+            <div className="mt-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200">
+              ⚠️ Booking failed: {submitError}
+            </div>
+          )}
+
           {/* Navigation */}
           <div
             className="flex justify-between mt-8 pt-6 border-t"
@@ -858,13 +879,13 @@ export default function BookingPage() {
             ) : (
               <button
                 onClick={handleSubmit}
-                disabled={!canNext()}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 hover:shadow-md"
+                disabled={!canNext() || submitting}
+                className="px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all hover:opacity-90 hover:shadow-md disabled:opacity-60"
                 style={{
                   background: `linear-gradient(135deg, ${palette.teal}, ${palette.sage})`,
                 }}
               >
-                Confirm Booking ✓
+                {submitting ? "Confirming…" : "Confirm Booking ✓"}
               </button>
             )}
           </div>
