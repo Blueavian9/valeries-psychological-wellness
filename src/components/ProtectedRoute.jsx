@@ -1,9 +1,9 @@
-import { Navigate, useLocation } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export default function ProtectedRoute({ children, requiredRole }) {
-  const { user, loading } = useAuth()
-  const location = useLocation()
+  const { user, role, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -13,16 +13,18 @@ export default function ProtectedRoute({ children, requiredRole }) {
           <p className="text-gray-500 text-sm">Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (!user) {
-    return <Navigate to="/login" state={{ from: location }} replace />
+    return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  if (requiredRole && user.user_metadata?.role !== requiredRole) {
-    return <Navigate to="/" replace />
+  if (requiredRole && role !== requiredRole) {
+    if (role === "admin") return <Navigate to="/admin" replace />;
+    if (role === "therapist") return <Navigate to="/therapist" replace />;
+    return <Navigate to="/" replace />;
   }
 
-  return children
+  return children;
 }
