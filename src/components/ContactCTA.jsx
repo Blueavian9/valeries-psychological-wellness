@@ -12,9 +12,19 @@ import {
   Twitter,
   Heart,
 } from "lucide-react";
+import { supabase } from "../lib/supabase";
 
-// Simple email validation
 const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+
+const INITIAL_FORM = {
+  name: "",
+  email: "",
+  phone: "",
+  message: "",
+  contactMethod: "email",
+  newsletter: false,
+  privacy: false,
+};
 
 const CONTACT_METHODS = [
   { id: "email", label: "Email" },
@@ -49,52 +59,17 @@ function FieldError({ message }) {
   );
 }
 
-function Input({ label, required, error, children, ...props }) {
-  return (
-    <div>
-      <label
-        className="block text-xs font-bold uppercase tracking-wide mb-1.5"
-        style={{ color: "#333645" }}
-      >
-        {label} {required && <span style={{ color: "#16a34a" }}>*</span>}
-      </label>
-      {children || (
-        <input
-          className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
-          style={{
-            borderColor: error ? "#fca5a5" : "#e0ddd6",
-            background: error ? "#fff7f7" : "white",
-            color: "#333645",
-          }}
-          onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
-          onBlur={(e) =>
-            (e.target.style.borderColor = error ? "#fca5a5" : "#e0ddd6")
-          }
-          {...props}
-        />
-      )}
-      <FieldError message={error} />
-    </div>
-  );
-}
-
 export default function ContactCTA() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-    contactMethod: "email",
-    newsletter: false,
-    privacy: false,
-  });
+  const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const set = (key, val) => {
     setForm((f) => ({ ...f, [key]: val }));
     if (errors[key]) setErrors((e) => ({ ...e, [key]: "" }));
+    if (submitError) setSubmitError(null);
   };
 
   const validate = () => {
@@ -112,19 +87,39 @@ export default function ContactCTA() {
     return e;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const e = validate();
     if (Object.keys(e).length > 0) {
       setErrors(e);
       return;
     }
     setSubmitting(true);
-    // Simulate API call — Future: replace with real fetch()
-    setTimeout(() => {
-      setSubmitting(false);
+    setSubmitError(null);
+
+    // ✅ Column names match schema.sql exactly
+    const { error } = await supabase.from("contact_submissions").insert([
+      {
+        full_name: form.name.trim(),
+        email: form.email.trim().toLowerCase(),
+        phone: form.phone.trim() || null,
+        message: form.message.trim(),
+        preferred_contact: form.contactMethod, // schema: preferred_contact
+        newsletter_opt_in: form.newsletter, // schema: newsletter_opt_in
+      },
+    ]);
+
+    setSubmitting(false);
+    if (error) {
+      setSubmitError(
+        "Couldn't send your message. Please email us directly at hello@valeriemunozpsyc.com.",
+      );
+    } else {
       setSubmitted(true);
-    }, 1200);
+    }
   };
+
+  const borderColor = (hasErr) => (hasErr ? "#fca5a5" : "#e0ddd6");
+  const bgColor = (hasErr) => (hasErr ? "#fff7f7" : "white");
 
   return (
     <section
@@ -135,7 +130,6 @@ export default function ContactCTA() {
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section header */}
         <div className="text-center mb-14">
           <span
             className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
@@ -154,14 +148,13 @@ export default function ContactCTA() {
             style={{ color: "#a8b5a2" }}
           >
             Take the first step. Our team will match you with the right
-            therapist and platform within 24 hours — no pressure, no commitment.
+            therapist within 24 hours — no pressure, no commitment.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-10">
-          {/* ── Left: info panel ─────────────────────────────────────── */}
+          {/* ── Left panel ── */}
           <div className="lg:col-span-2 space-y-6">
-            {/* CTA card */}
             <div
               className="rounded-3xl p-7 text-white"
               style={{
@@ -196,7 +189,6 @@ export default function ContactCTA() {
               </div>
             </div>
 
-            {/* Trust badges */}
             <div className="grid grid-cols-2 gap-3">
               {TRUST_BADGES.map(({ emoji, text }) => (
                 <div
@@ -215,7 +207,6 @@ export default function ContactCTA() {
               ))}
             </div>
 
-            {/* Social links */}
             <div
               className="rounded-2xl p-5 shadow-sm"
               style={{ background: "white", border: "1.5px solid #f0ede8" }}
@@ -250,14 +241,13 @@ export default function ContactCTA() {
             </div>
           </div>
 
-          {/* ── Right: contact form ───────────────────────────────────── */}
+          {/* ── Right: form ── */}
           <div className="lg:col-span-3">
             <div
               className="rounded-3xl shadow-sm p-8"
               style={{ background: "white", border: "1.5px solid #f0ede8" }}
             >
               {submitted ? (
-                /* ── Success state ── */
                 <div className="py-10 text-center">
                   <div
                     className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg"
@@ -277,33 +267,25 @@ export default function ContactCTA() {
                     We'll be in touch within 2 hours at{" "}
                     <strong style={{ color: "#16a34a" }}>{form.email}</strong>
                   </p>
-                  <p className="text-xs mb-8" style={{ color: "#c4bdb3" }}>
-                    {form.newsletter
-                      ? "You're also subscribed to our wellness newsletter."
-                      : ""}
-                  </p>
+                  {form.newsletter && (
+                    <p className="text-xs mb-8" style={{ color: "#c4bdb3" }}>
+                      You're also subscribed to our wellness newsletter.
+                    </p>
+                  )}
                   <button
                     onClick={() => {
                       setSubmitted(false);
-                      setForm({
-                        name: "",
-                        email: "",
-                        phone: "",
-                        message: "",
-                        contactMethod: "email",
-                        newsletter: false,
-                        privacy: false,
-                      });
+                      setForm(INITIAL_FORM);
                       setErrors({});
+                      setSubmitError(null);
                     }}
-                    className="px-6 py-3 rounded-2xl border-2 font-semibold text-sm transition-all hover:shadow-md"
+                    className="px-6 py-3 rounded-2xl border-2 font-semibold text-sm hover:shadow-md transition-all"
                     style={{ borderColor: "#16a34a", color: "#16a34a" }}
                   >
                     Send Another Message
                   </button>
                 </div>
               ) : (
-                /* ── Form ── */
                 <div className="space-y-5">
                   <h3
                     className="text-xl font-bold"
@@ -312,9 +294,28 @@ export default function ContactCTA() {
                     Send Us a Message
                   </h3>
 
-                  {/* Name + Phone row */}
+                  {submitError && (
+                    <div
+                      className="px-4 py-3 rounded-xl flex items-start gap-2.5 text-sm"
+                      style={{
+                        background: "#fff7f7",
+                        border: "1.5px solid #fca5a5",
+                        color: "#dc2626",
+                      }}
+                    >
+                      <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                      {submitError}
+                    </div>
+                  )}
+
                   <div className="grid sm:grid-cols-2 gap-5">
-                    <Input label="Full Name" required error={errors.name}>
+                    <div>
+                      <label
+                        className="block text-xs font-bold uppercase tracking-wide mb-1.5"
+                        style={{ color: "#333645" }}
+                      >
+                        Full Name <span style={{ color: "#16a34a" }}>*</span>
+                      </label>
                       <input
                         type="text"
                         placeholder="Jane Doe"
@@ -322,19 +323,21 @@ export default function ContactCTA() {
                         onChange={(e) => set("name", e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
                         style={{
-                          borderColor: errors.name ? "#fca5a5" : "#e0ddd6",
+                          borderColor: borderColor(errors.name),
+                          background: bgColor(errors.name),
                           color: "#333645",
                         }}
                         onFocus={(e) =>
                           (e.target.style.borderColor = "#16a34a")
                         }
                         onBlur={(e) =>
-                          (e.target.style.borderColor = errors.name
-                            ? "#fca5a5"
-                            : "#e0ddd6")
+                          (e.target.style.borderColor = borderColor(
+                            errors.name,
+                          ))
                         }
                       />
-                    </Input>
+                      <FieldError message={errors.name} />
+                    </div>
                     <div>
                       <label
                         className="block text-xs font-bold uppercase tracking-wide mb-1.5"
@@ -363,8 +366,13 @@ export default function ContactCTA() {
                     </div>
                   </div>
 
-                  {/* Email */}
-                  <Input label="Email Address" required error={errors.email}>
+                  <div>
+                    <label
+                      className="block text-xs font-bold uppercase tracking-wide mb-1.5"
+                      style={{ color: "#333645" }}
+                    >
+                      Email Address <span style={{ color: "#16a34a" }}>*</span>
+                    </label>
                     <input
                       type="email"
                       placeholder="you@example.com"
@@ -372,20 +380,18 @@ export default function ContactCTA() {
                       onChange={(e) => set("email", e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
                       style={{
-                        borderColor: errors.email ? "#fca5a5" : "#e0ddd6",
+                        borderColor: borderColor(errors.email),
+                        background: bgColor(errors.email),
                         color: "#333645",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
                       onBlur={(e) =>
-                        (e.target.style.borderColor = errors.email
-                          ? "#fca5a5"
-                          : "#e0ddd6")
+                        (e.target.style.borderColor = borderColor(errors.email))
                       }
                     />
                     <FieldError message={errors.email} />
-                  </Input>
+                  </div>
 
-                  {/* Preferred Contact Method */}
                   <div>
                     <label
                       className="block text-xs font-bold uppercase tracking-wide mb-2"
@@ -415,7 +421,6 @@ export default function ContactCTA() {
                     </div>
                   </div>
 
-                  {/* Message */}
                   <div>
                     <label
                       className="block text-xs font-bold uppercase tracking-wide mb-1.5"
@@ -426,20 +431,20 @@ export default function ContactCTA() {
                     </label>
                     <textarea
                       rows={4}
-                      placeholder="Tell us a little about what you're looking for, or ask us anything..."
                       value={form.message}
+                      placeholder="Tell us a little about what you're looking for, or ask us anything..."
                       onChange={(e) => set("message", e.target.value)}
                       className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all resize-none"
                       style={{
-                        borderColor: errors.message ? "#fca5a5" : "#e0ddd6",
-                        background: errors.message ? "#fff7f7" : "white",
+                        borderColor: borderColor(errors.message),
+                        background: bgColor(errors.message),
                         color: "#333645",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
                       onBlur={(e) =>
-                        (e.target.style.borderColor = errors.message
-                          ? "#fca5a5"
-                          : "#e0ddd6")
+                        (e.target.style.borderColor = borderColor(
+                          errors.message,
+                        ))
                       }
                     />
                     <div className="flex justify-between items-start">
@@ -453,10 +458,8 @@ export default function ContactCTA() {
                     </div>
                   </div>
 
-                  {/* Checkboxes */}
                   <div className="space-y-3">
-                    {/* Newsletter */}
-                    <label className="flex items-start gap-3 cursor-pointer group">
+                    <label className="flex items-start gap-3 cursor-pointer">
                       <div
                         className="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all"
                         style={{
@@ -475,7 +478,6 @@ export default function ContactCTA() {
                       </span>
                     </label>
 
-                    {/* Privacy */}
                     <label className="flex items-start gap-3 cursor-pointer">
                       <div
                         className="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all"
@@ -509,7 +511,6 @@ export default function ContactCTA() {
                     <FieldError message={errors.privacy} />
                   </div>
 
-                  {/* Submit */}
                   <button
                     onClick={handleSubmit}
                     disabled={submitting}
@@ -521,7 +522,7 @@ export default function ContactCTA() {
                     {submitting ? (
                       <>
                         <div className="w-4 h-4 rounded-full border-2 border-white/40 border-t-white animate-spin" />
-                        Sending...
+                        Sending…
                       </>
                     ) : (
                       <>
