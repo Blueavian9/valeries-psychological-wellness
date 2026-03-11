@@ -9,8 +9,11 @@ import {
   ArrowLeft,
   Leaf,
   Calendar,
+  CreditCard,
+  Lock,
 } from "lucide-react";
-import { supabase } from "../lib/supabase"; // ← your supabase client
+import { supabase } from "../lib/supabase";
+import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const palette = {
@@ -23,7 +26,6 @@ const palette = {
   coral: "#e8b4bc",
 };
 
-// Fallback colors cycled per service index (DB has no color column yet)
 const SERVICE_COLORS = [
   palette.teal,
   palette.sage,
@@ -76,7 +78,6 @@ function ServiceStep({ services, selectedId, onSelect }) {
       <p className="text-sm mb-8" style={{ color: palette.sage }}>
         Select the type of session that feels right for you.
       </p>
-
       <div className="grid sm:grid-cols-2 gap-4">
         {services.map((svc, idx) => {
           const color =
@@ -199,7 +200,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
         Session: <strong style={{ color: palette.teal }}>{service.name}</strong>{" "}
         · {service.duration_minutes} min
       </p>
-
       <div className="grid lg:grid-cols-5 gap-6">
         <div
           className="lg:col-span-3 rounded-2xl border p-5"
@@ -227,7 +227,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-
           <div className="grid grid-cols-7 mb-1">
             {DAYS.map((d) => (
               <div
@@ -239,7 +238,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
               </div>
             ))}
           </div>
-
           <div className="grid grid-cols-7 gap-1">
             {Array.from({ length: firstDay }).map((_, i) => (
               <div key={`e${i}`} />
@@ -284,7 +282,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
               );
             })}
           </div>
-
           <div
             className="mt-3 flex gap-4 text-xs"
             style={{ color: palette.sage }}
@@ -301,7 +298,6 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
             </span>
           </div>
         </div>
-
         <div className="lg:col-span-2">
           {!selectedDate ? (
             <div
@@ -385,7 +381,6 @@ function DetailsStep({ service, form, onChange }) {
       <p className="text-sm mb-8" style={{ color: palette.sage }}>
         Almost there — just a few details so we can prepare for your session.
       </p>
-
       <div className="space-y-5">
         <div className="grid sm:grid-cols-2 gap-5">
           <div>
@@ -431,7 +426,6 @@ function DetailsStep({ service, form, onChange }) {
             />
           </div>
         </div>
-
         <div>
           <label
             className="block text-xs font-bold uppercase tracking-wider mb-1.5"
@@ -454,7 +448,6 @@ function DetailsStep({ service, form, onChange }) {
             onBlur={(e) => (e.target.style.borderColor = "#e0ddd6")}
           />
         </div>
-
         <div
           className="p-4 rounded-2xl text-sm"
           style={{ background: `${palette.sage}20`, color: palette.charcoal }}
@@ -474,6 +467,9 @@ function DetailsStep({ service, form, onChange }) {
 // ─── Step 4: Confirmation ─────────────────────────────────────────────────────
 function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
   const color = service.color ?? palette.teal;
+  const chargeAmount = service.deposit > 0 ? service.deposit : service.price;
+  const isFree = chargeAmount === 0;
+
   return (
     <div>
       <h2
@@ -485,7 +481,6 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
       <p className="text-sm mb-8" style={{ color: palette.sage }}>
         Please check your booking details before confirming.
       </p>
-
       <div
         className="rounded-2xl border-2 overflow-hidden"
         style={{ borderColor: `${color}40` }}
@@ -540,7 +535,7 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
         </div>
       </div>
 
-      {service.deposit > 0 && (
+      {!isFree && (
         <div
           className="mt-4 p-4 rounded-2xl text-sm"
           style={{
@@ -549,13 +544,134 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
           }}
         >
           <p className="font-semibold">
-            💳 Deposit required: ${service.deposit}
+            💳{" "}
+            {service.deposit > 0
+              ? `Deposit required: $${service.deposit}`
+              : `Payment required: $${service.price}`}
           </p>
           <p className="text-xs mt-1" style={{ color: "#6b7b6a" }}>
-            Secure payment via Stripe. You will be redirected after confirming.
+            You'll enter your card details on the next step. Secure payment via
+            Stripe.
           </p>
         </div>
       )}
+
+      {isFree && (
+        <div
+          className="mt-4 p-4 rounded-2xl text-sm"
+          style={{ background: `${palette.sage}20`, color: palette.charcoal }}
+        >
+          <p className="font-semibold">✅ No payment required</p>
+          <p className="text-xs mt-1" style={{ color: "#6b7b6a" }}>
+            This session is free. Click confirm to book your appointment.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Step 5: Payment ──────────────────────────────────────────────────────────
+function PaymentStep({ service, paymentError }) {
+  const chargeAmount = service.deposit > 0 ? service.deposit : service.price;
+  const isDeposit = service.deposit > 0;
+
+  const cardElementOptions = {
+    style: {
+      base: {
+        fontSize: "15px",
+        color: palette.charcoal,
+        fontFamily: "system-ui, sans-serif",
+        "::placeholder": { color: "#b0b8b0" },
+        iconColor: palette.teal,
+      },
+      invalid: { color: "#e05252", iconColor: "#e05252" },
+    },
+    hidePostalCode: false,
+  };
+
+  return (
+    <div>
+      <h2
+        className="text-2xl font-bold mb-2"
+        style={{ color: palette.charcoal }}
+      >
+        Secure Payment
+      </h2>
+      <p className="text-sm mb-8" style={{ color: palette.sage }}>
+        {isDeposit
+          ? `A deposit of $${chargeAmount} is required to confirm your booking.`
+          : `Complete your $${chargeAmount} payment to confirm your session.`}
+      </p>
+
+      {/* Amount badge */}
+      <div
+        className="flex items-center justify-between p-4 rounded-2xl mb-6"
+        style={{
+          background: `${palette.teal}10`,
+          border: `1.5px solid ${palette.teal}30`,
+        }}
+      >
+        <div className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: `${palette.teal}20` }}
+          >
+            <CreditCard className="w-5 h-5" style={{ color: palette.teal }} />
+          </div>
+          <div>
+            <p
+              className="font-bold text-sm"
+              style={{ color: palette.charcoal }}
+            >
+              {service.name}
+            </p>
+            <p className="text-xs" style={{ color: palette.sage }}>
+              {isDeposit ? "Deposit" : "Full payment"}
+            </p>
+          </div>
+        </div>
+        <p className="text-2xl font-bold" style={{ color: palette.teal }}>
+          ${chargeAmount}
+        </p>
+      </div>
+
+      {/* Card input */}
+      <div className="space-y-4">
+        <label
+          className="block text-xs font-bold uppercase tracking-wider mb-1.5"
+          style={{ color: palette.charcoal }}
+        >
+          Card Details
+        </label>
+        <div
+          className="px-4 py-4 rounded-xl border-2 transition-all"
+          style={{
+            borderColor: paymentError ? "#e05252" : "#e0ddd6",
+            background: "white",
+          }}
+        >
+          <CardElement options={cardElementOptions} />
+        </div>
+
+        {paymentError && (
+          <div className="p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200">
+            ⚠️ {paymentError}
+          </div>
+        )}
+      </div>
+
+      {/* Security note */}
+      <div
+        className="mt-5 flex items-center gap-2 text-xs"
+        style={{ color: "#8a9490" }}
+      >
+        <Lock className="w-3.5 h-3.5 shrink-0" />
+        <span>
+          Your payment is encrypted and processed securely by Stripe. We never
+          store your card details.
+        </span>
+      </div>
     </div>
   );
 }
@@ -588,7 +704,6 @@ function SuccessScreen({ service, selectedDate, selectedTime, form, onReset }) {
           A confirmation has been sent to{" "}
           <strong style={{ color: palette.teal }}>{form.clientEmail}</strong>
         </p>
-
         <div
           className="rounded-2xl p-6 mb-6 text-left shadow-sm"
           style={{ background: "white" }}
@@ -608,7 +723,6 @@ function SuccessScreen({ service, selectedDate, selectedTime, form, onReset }) {
             🕐 {selectedTime}
           </p>
         </div>
-
         <div className="flex gap-3 justify-center">
           <button
             onClick={onReset}
@@ -633,6 +747,9 @@ function SuccessScreen({ service, selectedDate, selectedTime, form, onReset }) {
 // ─── Main Booking Page ────────────────────────────────────────────────────────
 export default function BookingPage() {
   const { serviceId } = useParams();
+  const stripe = useStripe();
+  const elements = useElements();
+
   const [step, setStep] = useState(serviceId ? 2 : 1);
   const [selectedServiceId, setSelectedServiceId] = useState(serviceId || null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -644,9 +761,9 @@ export default function BookingPage() {
   });
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [paymentError, setPaymentError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
-  // ── Supabase: load services ──────────────────────────────────────────────
   const [services, setServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [servicesError, setServicesError] = useState(null);
@@ -658,35 +775,42 @@ export default function BookingPage() {
         .from("services")
         .select("*")
         .order("price", { ascending: true });
-
-      if (error) {
-        setServicesError(error.message);
-      } else {
-        setServices(data);
-      }
+      if (error) setServicesError(error.message);
+      else setServices(data);
       setLoadingServices(false);
     }
     fetchServices();
   }, []);
 
   const service = services.find((s) => s.id === selectedServiceId);
+  const chargeAmount = service
+    ? service.deposit > 0
+      ? service.deposit
+      : service.price
+    : 0;
+  const requiresPayment = chargeAmount > 0;
 
+  // Dynamically build steps based on whether payment is needed
   const steps = [
     { n: 1, label: "Service" },
     { n: 2, label: "Date & Time" },
     { n: 3, label: "Details" },
     { n: 4, label: "Confirm" },
+    ...(requiresPayment ? [{ n: 5, label: "Payment" }] : []),
   ];
+  const totalSteps = steps.length;
 
   const canNext = () => {
     if (step === 1) return !!selectedServiceId;
     if (step === 2) return !!selectedDate && !!selectedTime;
     if (step === 3) return form.clientName.trim() && form.clientEmail.trim();
+    if (step === 4) return true;
+    if (step === 5) return !!stripe && !!elements;
     return true;
   };
 
-  // ── Supabase: create appointment ─────────────────────────────────────────
-  const handleSubmit = async () => {
+  // ── Free booking: direct Supabase insert ─────────────────────────────────
+  const handleFreeBooking = async () => {
     if (!service || !selectedDate || !selectedTime) return;
     setSubmitting(true);
     setSubmitError(null);
@@ -707,16 +831,100 @@ export default function BookingPage() {
       client_phone: form.clientPhone || null,
       start_time: start.toISOString(),
       end_time: end.toISOString(),
-      status: "pending",
+      status: "confirmed",
       notes: null,
     });
 
-    if (error) {
-      setSubmitError(error.message);
-    } else {
-      setSubmitted(true);
-    }
+    if (error) setSubmitError(error.message);
+    else setSubmitted(true);
     setSubmitting(false);
+  };
+
+  // ── Paid booking: Stripe → then Supabase insert ───────────────────────────
+  const handlePaidBooking = async () => {
+    if (!stripe || !elements || !service) return;
+    setSubmitting(true);
+    setPaymentError(null);
+    setSubmitError(null);
+
+    try {
+      // 1. Create payment intent via Supabase Edge Function
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment-intent`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+          },
+          body: JSON.stringify({
+            amount: chargeAmount,
+            currency: "usd",
+            metadata: {
+              service_name: service.name,
+              client_email: form.clientEmail,
+              client_name: form.clientName,
+            },
+          }),
+        },
+      );
+
+      const { clientSecret, error: intentError } = await response.json();
+      if (intentError) throw new Error(intentError);
+
+      // 2. Confirm card payment with Stripe
+      const cardElement = elements.getElement(CardElement);
+      const { error: stripeError, paymentIntent } =
+        await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: {
+              name: form.clientName,
+              email: form.clientEmail,
+            },
+          },
+        });
+
+      if (stripeError) {
+        setPaymentError(stripeError.message);
+        setSubmitting(false);
+        return;
+      }
+
+      // 3. Payment succeeded — insert appointment to Supabase
+      const [timePart, meridiem] = selectedTime.split(" ");
+      const [hStr, mStr] = timePart.split(":");
+      let h = parseInt(hStr);
+      if (meridiem === "PM" && h !== 12) h += 12;
+      if (meridiem === "AM" && h === 12) h = 0;
+      const start = new Date(selectedDate);
+      start.setHours(h, parseInt(mStr), 0, 0);
+      const end = new Date(start.getTime() + service.duration_minutes * 60000);
+
+      const { error: dbError } = await supabase.from("appointments").insert({
+        service_id: service.id,
+        client_name: form.clientName,
+        client_email: form.clientEmail,
+        client_phone: form.clientPhone || null,
+        start_time: start.toISOString(),
+        end_time: end.toISOString(),
+        status: "confirmed",
+        stripe_payment_intent_id: paymentIntent.id,
+        notes: null,
+      });
+
+      if (dbError) throw new Error(dbError.message);
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err.message);
+    }
+
+    setSubmitting(false);
+  };
+
+  const handleSubmit = () => {
+    if (requiresPayment) handlePaidBooking();
+    else handleFreeBooking();
   };
 
   const reset = () => {
@@ -727,6 +935,7 @@ export default function BookingPage() {
     setForm({ clientName: "", clientEmail: "", clientPhone: "" });
     setSubmitted(false);
     setSubmitError(null);
+    setPaymentError(null);
   };
 
   if (submitted && service) {
@@ -798,7 +1007,6 @@ export default function BookingPage() {
           className="rounded-3xl shadow-sm border p-8"
           style={{ background: "white", borderColor: "#e8e4dd" }}
         >
-          {/* Loading / error state for services */}
           {step === 1 && loadingServices && (
             <div className="text-center py-16" style={{ color: palette.sage }}>
               <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -845,8 +1053,10 @@ export default function BookingPage() {
               form={form}
             />
           )}
+          {step === 5 && service && (
+            <PaymentStep service={service} paymentError={paymentError} />
+          )}
 
-          {/* Submit error */}
           {submitError && (
             <div className="mt-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200">
               ⚠️ Booking failed: {submitError}
@@ -867,7 +1077,7 @@ export default function BookingPage() {
               <ChevronLeft className="w-4 h-4" /> Back
             </button>
 
-            {step < 4 ? (
+            {step < totalSteps ? (
               <button
                 onClick={() => setStep((s) => s + 1)}
                 disabled={!canNext()}
@@ -885,7 +1095,11 @@ export default function BookingPage() {
                   background: `linear-gradient(135deg, ${palette.teal}, ${palette.sage})`,
                 }}
               >
-                {submitting ? "Confirming…" : "Confirm Booking ✓"}
+                {submitting
+                  ? "Processing…"
+                  : requiresPayment
+                    ? `Pay $${chargeAmount} & Confirm ✓`
+                    : "Confirm Booking ✓"}
               </button>
             )}
           </div>
