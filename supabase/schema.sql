@@ -1,6 +1,7 @@
 -- ============================================================
 -- Holistic Therapy Platform — Supabase Schema
 -- Created: February 2026
+-- Updated: March 2026
 -- ============================================================
 
 -- Enable UUID extension
@@ -49,7 +50,9 @@ CREATE TABLE IF NOT EXISTS services (
   name TEXT NOT NULL,
   description TEXT,
   duration_minutes INTEGER DEFAULT 60,
-  price NUMERIC(10,2),
+  price NUMERIC(10,2) DEFAULT 0,
+  deposit NUMERIC(10,2) DEFAULT 0,      -- deposit amount required to book
+  color TEXT,                            -- UI color for service card
   category TEXT,
   is_active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -60,14 +63,29 @@ CREATE TABLE IF NOT EXISTS services (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS appointments (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+
+  -- Linked IDs (nullable — supports guest bookings)
   client_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   therapist_id UUID REFERENCES therapists(id) ON DELETE SET NULL,
   service_id UUID REFERENCES services(id) ON DELETE SET NULL,
-  scheduled_at TIMESTAMPTZ NOT NULL,
+
+  -- Guest booking fields (no account required)
+  client_name TEXT,
+  client_email TEXT,
+  client_phone TEXT,
+
+  -- Scheduling
+  start_time TIMESTAMPTZ,
+  end_time TIMESTAMPTZ,
+  scheduled_at TIMESTAMPTZ,             -- nullable (legacy compat, NOT enforced)
   duration_minutes INTEGER DEFAULT 60,
   format TEXT CHECK (format IN ('video', 'phone', 'chat', 'in-person')),
+
+  -- Status & Stripe
   status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled', 'completed')),
+  stripe_payment_intent_id TEXT UNIQUE,
   notes TEXT,
+
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -127,14 +145,14 @@ ALTER TABLE contact_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE quiz_results ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 
--- Profiles: users can read/update their own profile
+-- Profiles
 CREATE POLICY "Users can view own profile" ON profiles
   FOR SELECT USING (auth.uid() = id);
 
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.uid() = id);
 
--- Therapists: public read, only therapist can update their own
+-- Therapists: public read
 CREATE POLICY "Anyone can view therapists" ON therapists
   FOR SELECT USING (TRUE);
 
@@ -142,25 +160,25 @@ CREATE POLICY "Anyone can view therapists" ON therapists
 CREATE POLICY "Anyone can view services" ON services
   FOR SELECT USING (is_active = TRUE);
 
--- Appointments: clients see their own, therapists see theirs
+-- Appointments
 CREATE POLICY "Clients can view own appointments" ON appointments
   FOR SELECT USING (auth.uid() = client_id);
 
-CREATE POLICY "Clients can create appointments" ON appointments
-  FOR INSERT WITH CHECK (auth.uid() = client_id);
+CREATE POLICY "Anyone can create appointments" ON appointments  -- allows guest bookings
+  FOR INSERT WITH CHECK (TRUE);
 
--- Contact submissions: insert only (no auth required)
+-- Contact submissions: insert only
 CREATE POLICY "Anyone can submit contact form" ON contact_submissions
   FOR INSERT WITH CHECK (TRUE);
 
--- Quiz results: users can insert and view their own
+-- Quiz results
 CREATE POLICY "Users can insert quiz results" ON quiz_results
   FOR INSERT WITH CHECK (auth.uid() = client_id);
 
 CREATE POLICY "Users can view own quiz results" ON quiz_results
   FOR SELECT USING (auth.uid() = client_id);
 
--- Payments: clients see their own
+-- Payments
 CREATE POLICY "Clients can view own payments" ON payments
   FOR SELECT USING (auth.uid() = client_id);
 
