@@ -170,7 +170,7 @@ function FAQCategory({ category, openId, setOpenId }) {
   )
 }
 
-export default function FAQ() {
+function FAQ() {
   const [openId, setOpenId] = useState('about-0') // first item open by default
 
   const totalQuestions = categories.reduce((sum, c) => sum + c.items.length, 0)
