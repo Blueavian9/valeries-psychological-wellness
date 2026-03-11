@@ -1,61 +1,24 @@
-<!doctype html>
-<html lang="en">
+import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 
-<head>
-  <meta charset="UTF-8" />
-  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
+  apiVersion: "2024-04-10",
+  httpClient: Stripe.createFetchHttpClient(),
+});
 
-  <!-- ─── Primary SEO ─────────────────────────────────────────── -->
-  <title>Valerie's Wellness | Holistic Therapy & Mental Health Support</title>
-  <meta name="description"
-    content="Connect with licensed holistic therapists specializing in mindfulness, somatic healing, CBT, EMDR, and integrative mental health. Book a free consultation today." />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://valerieswellness.com/" />
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
 
-  <!-- ─── Open Graph (Facebook, LinkedIn, iMessage previews) ─── -->
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://valerieswellness.com/" />
-  <meta property="og:title" content="Valerie's Wellness | Holistic Therapy & Mental Health Support" />
-  <meta property="og:description"
-    content="Licensed holistic therapists specializing in mindfulness, somatic healing, CBT, and EMDR. Book your free 15-minute consultation." />
-  <meta property="og:image" content="https://valerieswellness.com/og-image.png" />
-
-  <!-- ─── Twitter / X Card ─────────────────────────────────────── -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:url" content="https://valerieswellness.com/" />
-  <meta name="twitter:title" content="Valerie's Wellness | Holistic Therapy & Mental Health Support" />
-  <meta name="twitter:description"
-    content="Licensed holistic therapists specializing in mindfulness, somatic healing, CBT, and EMDR. Book your free 15-minute consultation." />
-  <meta name="twitter:image" content="https://valerieswellness.com/og-image.png" />
-
-  <!-- ─── Schema.org: Local Business (boosts Google ranking) ──── -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "MedicalBusiness",
-      "name": "Valerie's Wellness",
-      "description": "Holistic therapy and integrative mental health support.",
-      "url": "https://valerieswellness.com",
-      "telephone": "",
-      "priceRange": "$$",
-      "medicalSpecialty": "Psychiatry",
-      "availableService": [
-        { "@type": "MedicalTherapy", "name": "Holistic Therapy" },
-        { "@type": "MedicalTherapy", "name": "Mindfulness Coaching" },
-        { "@type": "MedicalTherapy", "name": "Somatic Experiencing" },
-        { "@type": "MedicalTherapy", "name": "EMDR Therapy" }
-      ]
-    }
-    </script>
-
-  <!-- ─── Theme color (browser chrome on mobile) ───────────────── -->
-  <meta name="theme-color" content="#3a6d77" />
-</head>
-
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/main.jsx"></script>
-</body>
-
-</html>
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  try {
+    const { amount, currency = "usd", metadata = {} } = await req.json();
+    if (!amount || amount <= 0) return new Response(JSON.stringify({ error: "Invalid amount" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    const paymentIntent = await stripe.paymentIntents.create({ amount: Math.round(amount * 100), currency, metadata, automatic_payment_methods: { enabled: true } });
+    return new Response(JSON.stringify({ clientSecret: paymentIntent.client_secret }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  } catch (err) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
+});
