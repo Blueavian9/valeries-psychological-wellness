@@ -179,7 +179,7 @@ function FAQ() {
   const totalQuestions = categories.reduce((sum, c) => sum + c.items.length, 0);
 
   return (
-    <section
+    <section id="faq"
       className="py-20"
       style={{ background: "white" }}
       // SEO: FAQ schema markup
@@ -249,3 +249,4 @@ function FAQ() {
     </section>
   );
 }
+export default FAQ;
