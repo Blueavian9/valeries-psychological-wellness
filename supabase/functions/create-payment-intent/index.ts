@@ -1,47 +1,61 @@
-import "@supabase/functions-js/edge-runtime.d.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
+<!doctype html>
+<html lang="en">
 
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") ?? "", {
-  apiVersion: "2024-04-10",
-});
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+  <!-- ─── Primary SEO ─────────────────────────────────────────── -->
+  <title>Valerie's Wellness | Holistic Therapy & Mental Health Support</title>
+  <meta name="description"
+    content="Connect with licensed holistic therapists specializing in mindfulness, somatic healing, CBT, EMDR, and integrative mental health. Book a free consultation today." />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://valerieswellness.com/" />
 
-Deno.serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
+  <!-- ─── Open Graph (Facebook, LinkedIn, iMessage previews) ─── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://valerieswellness.com/" />
+  <meta property="og:title" content="Valerie's Wellness | Holistic Therapy & Mental Health Support" />
+  <meta property="og:description"
+    content="Licensed holistic therapists specializing in mindfulness, somatic healing, CBT, and EMDR. Book your free 15-minute consultation." />
+  <meta property="og:image" content="https://valerieswellness.com/og-image.png" />
 
-  try {
-    const { amount, currency = "usd", metadata = {} } = await req.json();
+  <!-- ─── Twitter / X Card ─────────────────────────────────────── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://valerieswellness.com/" />
+  <meta name="twitter:title" content="Valerie's Wellness | Holistic Therapy & Mental Health Support" />
+  <meta name="twitter:description"
+    content="Licensed holistic therapists specializing in mindfulness, somatic healing, CBT, and EMDR. Book your free 15-minute consultation." />
+  <meta name="twitter:image" content="https://valerieswellness.com/og-image.png" />
 
-    if (!amount || amount <= 0) {
-      return new Response(
-        JSON.stringify({ error: "Invalid amount" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+  <!-- ─── Schema.org: Local Business (boosts Google ranking) ──── -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalBusiness",
+      "name": "Valerie's Wellness",
+      "description": "Holistic therapy and integrative mental health support.",
+      "url": "https://valerieswellness.com",
+      "telephone": "",
+      "priceRange": "$$",
+      "medicalSpecialty": "Psychiatry",
+      "availableService": [
+        { "@type": "MedicalTherapy", "name": "Holistic Therapy" },
+        { "@type": "MedicalTherapy", "name": "Mindfulness Coaching" },
+        { "@type": "MedicalTherapy", "name": "Somatic Experiencing" },
+        { "@type": "MedicalTherapy", "name": "EMDR Therapy" }
+      ]
     }
+    </script>
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(amount * 100), // convert dollars → cents
-      currency,
-      metadata,
-      automatic_payment_methods: { enabled: true },
-    });
+  <!-- ─── Theme color (browser chrome on mobile) ───────────────── -->
+  <meta name="theme-color" content="#3a6d77" />
+</head>
 
-    return new Response(
-      JSON.stringify({ clientSecret: paymentIntent.client_secret }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
 
-  } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-  }
-});
+</html>
