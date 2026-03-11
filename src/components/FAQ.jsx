@@ -84,7 +84,7 @@ const categories = [
   },
 ];
 
-export default function FAQItem({ question, answer, isOpen, onToggle }) {
+function FAQItem({ question, answer, isOpen, onToggle }) {
   return (
     <div
       className="rounded-2xl overflow-hidden transition-all duration-200"
