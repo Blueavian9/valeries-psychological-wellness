@@ -22,6 +22,7 @@ import Footer from "./components/Footer";
 import TherapistFinder from "./components/TherapistFinder";
 // Pages
 import BookingPage from "./pages/BookingPage";
+import BookingConfirmation from "./pages/BookingConfirmation";
 import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
@@ -45,7 +46,6 @@ function HomePage() {
 }
 
 // ─── Layout: Header + Footer wrapper ─────────────────────────────────────────
-// Using Outlet (React Router v6 best practice) instead of nested <Routes>
 function MainLayout() {
   return (
     <div className="min-h-screen bg-white">
@@ -71,7 +71,6 @@ function App() {
               </ProtectedRoute>
             }
           />
-
           {/* ── All public routes: wrapped with Header + Footer ── */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
@@ -79,17 +78,19 @@ function App() {
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/find-therapist" element={<TherapistFinder />} />
-
             {/*
               ── Booking: OPEN to guests (no ProtectedRoute) ──
-              Option 3: guest-first flow, account prompt shown
-              on the success screen AFTER booking is complete.
-              /booking          → user picks service themselves
-              /booking/:serviceId → deep link to pre-select a service
-                                    (used by service cards on homepage)
+              /booking                → user picks service themselves
+              /booking/:serviceId     → deep link to pre-select a service
+              /booking/confirmation   → post-payment confirmation page
+                                        noindexed for HIPAA + SEO
             */}
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/booking/:serviceId" element={<BookingPage />} />
+            <Route
+              path="/booking/confirmation"
+              element={<BookingConfirmation />}
+            />
           </Route>
         </Routes>
       </Router>
