@@ -534,7 +534,6 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
           ))}
         </div>
       </div>
-
       {!isFree && (
         <div
           className="mt-4 p-4 rounded-2xl text-sm"
@@ -555,7 +554,6 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
           </p>
         </div>
       )}
-
       {isFree && (
         <div
           className="mt-4 p-4 rounded-2xl text-sm"
@@ -603,8 +601,6 @@ function PaymentStep({ service, paymentError }) {
           ? `A deposit of $${chargeAmount} is required to confirm your booking.`
           : `Complete your $${chargeAmount} payment to confirm your session.`}
       </p>
-
-      {/* Amount badge */}
       <div
         className="flex items-center justify-between p-4 rounded-2xl mb-6"
         style={{
@@ -635,8 +631,6 @@ function PaymentStep({ service, paymentError }) {
           ${chargeAmount}
         </p>
       </div>
-
-      {/* Card input */}
       <div className="space-y-4">
         <label
           className="block text-xs font-bold uppercase tracking-wider mb-1.5"
@@ -653,15 +647,12 @@ function PaymentStep({ service, paymentError }) {
         >
           <CardElement options={cardElementOptions} />
         </div>
-
         {paymentError && (
           <div className="p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200">
             ⚠️ {paymentError}
           </div>
         )}
       </div>
-
-      {/* Security note */}
       <div
         className="mt-5 flex items-center gap-2 text-xs"
         style={{ color: "#8a9490" }}
@@ -676,77 +667,10 @@ function PaymentStep({ service, paymentError }) {
   );
 }
 
-// ─── Success Screen ───────────────────────────────────────────────────────────
-function SuccessScreen({ service, selectedDate, selectedTime, form, onReset }) {
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center px-4"
-      style={{
-        background: `linear-gradient(135deg, ${palette.cream} 0%, #eef4ee 100%)`,
-      }}
-    >
-      <div className="max-w-md w-full text-center">
-        <div
-          className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
-          style={{
-            background: `linear-gradient(135deg, ${palette.teal}, ${palette.sage})`,
-          }}
-        >
-          <Check className="w-10 h-10 text-white" />
-        </div>
-        <h1
-          className="text-3xl font-bold mb-2"
-          style={{ color: palette.charcoal }}
-        >
-          You're booked!
-        </h1>
-        <p className="text-sm mb-6" style={{ color: palette.sage }}>
-          A confirmation has been sent to{" "}
-          <strong style={{ color: palette.teal }}>{form.clientEmail}</strong>
-        </p>
-        <div
-          className="rounded-2xl p-6 mb-6 text-left shadow-sm"
-          style={{ background: "white" }}
-        >
-          <p className="font-bold text-lg mb-3" style={{ color: palette.teal }}>
-            {service.name}
-          </p>
-          <p className="text-sm mb-1" style={{ color: palette.charcoal }}>
-            📅{" "}
-            {selectedDate?.toLocaleDateString("en-US", {
-              weekday: "long",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-          <p className="text-sm" style={{ color: palette.charcoal }}>
-            🕐 {selectedTime}
-          </p>
-        </div>
-        <div className="flex gap-3 justify-center">
-          <button
-            onClick={onReset}
-            className="px-6 py-3 rounded-xl text-sm font-bold border-2 transition-all hover:shadow-md"
-            style={{ borderColor: palette.teal, color: palette.teal }}
-          >
-            Book Another
-          </button>
-          <Link
-            to="/"
-            className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:shadow-md hover:opacity-90"
-            style={{ background: palette.teal }}
-          >
-            Return Home
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // ─── Main Booking Page ────────────────────────────────────────────────────────
 export default function BookingPage() {
   const { serviceId } = useParams();
+  const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
 
@@ -763,7 +687,6 @@ export default function BookingPage() {
   const [submitError, setSubmitError] = useState(null);
   const [paymentError, setPaymentError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
-
   const [services, setServices] = useState([]);
   const [loadingServices, setLoadingServices] = useState(true);
   const [servicesError, setServicesError] = useState(null);
@@ -790,7 +713,6 @@ export default function BookingPage() {
     : 0;
   const requiresPayment = chargeAmount > 0;
 
-  // Dynamically build steps based on whether payment is needed
   const steps = [
     { n: 1, label: "Service" },
     { n: 2, label: "Date & Time" },
@@ -809,7 +731,7 @@ export default function BookingPage() {
     return true;
   };
 
-  // ── Free booking: direct Supabase insert ─────────────────────────────────
+  // ── Free booking ──────────────────────────────────────────────────────────
   const handleFreeBooking = async () => {
     if (!service || !selectedDate || !selectedTime) return;
     setSubmitting(true);
@@ -840,7 +762,7 @@ export default function BookingPage() {
     setSubmitting(false);
   };
 
-  // ── Paid booking: Stripe → then Supabase insert ───────────────────────────
+  // ── Paid booking ──────────────────────────────────────────────────────────
   const handlePaidBooking = async () => {
     if (!stripe || !elements || !service) return;
     setSubmitting(true);
@@ -848,7 +770,37 @@ export default function BookingPage() {
     setSubmitError(null);
 
     try {
-      // 1. Create payment intent via Supabase Edge Function
+      // ── Step 1: Build appointment times ──────────────────────────────────
+      const [timePart, meridiem] = selectedTime.split(" ");
+      const [hStr, mStr] = timePart.split(":");
+      let h = parseInt(hStr);
+      if (meridiem === "PM" && h !== 12) h += 12;
+      if (meridiem === "AM" && h === 12) h = 0;
+      const start = new Date(selectedDate);
+      start.setHours(h, parseInt(mStr), 0, 0);
+      const end = new Date(start.getTime() + service.duration_minutes * 60000);
+
+      // ── Step 2: Insert appointment as "pending" ───────────────────────────
+      // HIPAA: only appointment_id goes to Stripe — no PHI leaves Supabase
+      const { data: apptData, error: apptError } = await supabase
+        .from("appointments")
+        .insert({
+          service_id: service.id,
+          client_name: form.clientName,
+          client_email: form.clientEmail,
+          client_phone: form.clientPhone || null,
+          start_time: start.toISOString(),
+          end_time: end.toISOString(),
+          status: "pending",
+          notes: null,
+        })
+        .select("id")
+        .single();
+
+      if (apptError) throw new Error(apptError.message);
+      const appointmentId = apptData.id;
+
+      // ── Step 3: Create PaymentIntent with appointment_id in metadata ──────
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment-intent`,
         {
@@ -861,9 +813,8 @@ export default function BookingPage() {
             amount: chargeAmount,
             currency: "usd",
             metadata: {
+              appointment_id: appointmentId,
               service_name: service.name,
-              client_email: form.clientEmail,
-              client_name: form.clientName,
             },
           }),
         },
@@ -872,7 +823,7 @@ export default function BookingPage() {
       const { clientSecret, error: intentError } = await response.json();
       if (intentError) throw new Error(intentError);
 
-      // 2. Confirm card payment with Stripe
+      // ── Step 4: Confirm card payment ──────────────────────────────────────
       const cardElement = elements.getElement(CardElement);
       const { error: stripeError, paymentIntent } =
         await stripe.confirmCardPayment(clientSecret, {
@@ -891,35 +842,19 @@ export default function BookingPage() {
         return;
       }
 
-      // 3. Payment succeeded — insert appointment to Supabase
-      const [timePart, meridiem] = selectedTime.split(" ");
-      const [hStr, mStr] = timePart.split(":");
-      let h = parseInt(hStr);
-      if (meridiem === "PM" && h !== 12) h += 12;
-      if (meridiem === "AM" && h === 12) h = 0;
-      const start = new Date(selectedDate);
-      start.setHours(h, parseInt(mStr), 0, 0);
-      const end = new Date(start.getTime() + service.duration_minutes * 60000);
+      // ── Step 5: Link payment intent ID to appointment ─────────────────────
+      await supabase
+        .from("appointments")
+        .update({ stripe_payment_intent_id: paymentIntent.id })
+        .eq("id", appointmentId);
 
-      const { error: dbError } = await supabase.from("appointments").insert({
-        service_id: service.id,
-        client_name: form.clientName,
-        client_email: form.clientEmail,
-        client_phone: form.clientPhone || null,
-        start_time: start.toISOString(),
-        end_time: end.toISOString(),
-        status: "confirmed",
-        stripe_payment_intent_id: paymentIntent.id,
-        notes: null,
-      });
-
-      if (dbError) throw new Error(dbError.message);
-      setSubmitted(true);
+      // ── Step 6: Navigate to confirmation page ─────────────────────────────
+      // Webhook updates status to "confirmed" — page polls for it
+      navigate(`/booking/confirmation?appointment_id=${appointmentId}`);
     } catch (err) {
       setSubmitError(err.message);
+      setSubmitting(false);
     }
-
-    setSubmitting(false);
   };
 
   const handleSubmit = () => {
@@ -938,15 +873,74 @@ export default function BookingPage() {
     setPaymentError(null);
   };
 
+  // Free booking success screen
   if (submitted && service) {
     return (
-      <SuccessScreen
-        service={service}
-        selectedDate={selectedDate}
-        selectedTime={selectedTime}
-        form={form}
-        onReset={reset}
-      />
+      <div
+        className="min-h-screen flex items-center justify-center px-4"
+        style={{
+          background: `linear-gradient(135deg, ${palette.cream} 0%, #eef4ee 100%)`,
+        }}
+      >
+        <div className="max-w-md w-full text-center">
+          <div
+            className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
+            style={{
+              background: `linear-gradient(135deg, ${palette.teal}, ${palette.sage})`,
+            }}
+          >
+            <Check className="w-10 h-10 text-white" />
+          </div>
+          <h1
+            className="text-3xl font-bold mb-2"
+            style={{ color: palette.charcoal }}
+          >
+            You're booked!
+          </h1>
+          <p className="text-sm mb-6" style={{ color: palette.sage }}>
+            A confirmation has been sent to{" "}
+            <strong style={{ color: palette.teal }}>{form.clientEmail}</strong>
+          </p>
+          <div
+            className="rounded-2xl p-6 mb-6 text-left shadow-sm"
+            style={{ background: "white" }}
+          >
+            <p
+              className="font-bold text-lg mb-3"
+              style={{ color: palette.teal }}
+            >
+              {service.name}
+            </p>
+            <p className="text-sm mb-1" style={{ color: palette.charcoal }}>
+              📅{" "}
+              {selectedDate?.toLocaleDateString("en-US", {
+                weekday: "long",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+            <p className="text-sm" style={{ color: palette.charcoal }}>
+              🕐 {selectedTime}
+            </p>
+          </div>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={reset}
+              className="px-6 py-3 rounded-xl text-sm font-bold border-2 transition-all hover:shadow-md"
+              style={{ borderColor: palette.teal, color: palette.teal }}
+            >
+              Book Another
+            </button>
+            <Link
+              to="/"
+              className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:shadow-md hover:opacity-90"
+              style={{ background: palette.teal }}
+            >
+              Return Home
+            </Link>
+          </div>
+        </div>
+      </div>
     );
   }
 
