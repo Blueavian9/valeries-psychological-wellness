@@ -30,7 +30,8 @@ function useAppointmentStatus(appointmentId) {
     const timer = setTimeout(async () => {
       const { data, error } = await supabase
         .from("appointments")
-        .select(`
+        .select(
+          `
           id,
           status,
           start_time,
@@ -42,7 +43,8 @@ function useAppointmentStatus(appointmentId) {
             duration_minutes,
             price
           )
-        `)
+        `,
+        )
         .eq("id", appointmentId)
         .single();
 
@@ -73,7 +75,10 @@ export default function BookingConfirmation() {
         style={{ background: palette.cream }}
       >
         <div className="text-center max-w-md">
-          <p className="text-lg font-bold mb-2" style={{ color: palette.charcoal }}>
+          <p
+            className="text-lg font-bold mb-2"
+            style={{ color: palette.charcoal }}
+          >
             No booking found
           </p>
           <p className="text-sm mb-6" style={{ color: palette.sage }}>
@@ -215,8 +220,8 @@ export default function BookingConfirmation() {
               className="mt-4 pt-4 border-t text-xs"
               style={{ borderColor: "#e8e4dd", color: "#8a9490" }}
             >
-              🔒 Your session details are private and encrypted.
-              Booking ID: {appointmentId.slice(0, 8)}…
+              🔒 Your session details are private and encrypted. Booking ID:{" "}
+              {appointmentId.slice(0, 8)}…
             </div>
           </div>
 
