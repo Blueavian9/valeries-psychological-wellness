@@ -87,9 +87,7 @@ function App() {
             */}
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/booking/:serviceId" element={<BookingPage />} />
-            <Route
-              path="/booking/confirmation"
-              element={<BookingConfirmation />}
+            <Route path="/booking/confirmation" element={<BookingConfirmation />}
             />
           </Route>
         </Routes>
