@@ -1,5 +1,6 @@
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { bookingConfirmationTemplate } from "../_shared/emailTemplates.ts";
 
 // ── Stripe client ──────────────────────────────────────────────────────────────
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
@@ -34,21 +35,72 @@ async function writeAuditLog(
 // ── Trigger confirmation email ─────────────────────────────────────────────────
 async function triggerConfirmationEmail(appointmentId: string) {
   try {
+    // 1. Fetch appointment + related data from Supabase
+    const { data: appt, error } = await supabase
+      .from("appointments")
+      .select(`
+        id,
+        scheduled_at,
+        services ( name, price ),
+        profiles!appointments_client_id_fkey ( full_name, email ),
+        therapists ( full_name )
+      `)
+      .eq("id", appointmentId)
+      .single();
+
+    if (error || !appt) {
+      console.error("[EMAIL FETCH FAILED]", error?.message ?? "No appointment found");
+      return;
+    }
+
+    const clientName  = appt.profiles?.full_name  ?? "Valued Client";
+    const clientEmail = appt.profiles?.email       ?? null;
+    const serviceName = appt.services?.name        ?? "Therapy Session";
+    const therapistName = appt.therapists?.full_name ?? "Your Therapist";
+    const amount      = appt.services?.price
+      ? `$${Number(appt.services.price).toFixed(2)}`
+      : "Paid";
+    const scheduledAt = new Date(appt.scheduled_at).toLocaleString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    if (!clientEmail) {
+      console.warn("[EMAIL SKIPPED] No client email for appointment", appointmentId);
+      return;
+    }
+
+    // 2. Call send-email Edge Function with rendered template
     const res = await fetch(
-      `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-booking-confirmation`,
+      `${Deno.env.get("SUPABASE_URL")}/functions/v1/send-email`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
         },
-        body: JSON.stringify({ appointment_id: appointmentId }),
+        body: JSON.stringify({
+          to: clientEmail,
+          subject: "Your Appointment is Confirmed 🌿",
+          html: bookingConfirmationTemplate({
+            clientName,
+            serviceName,
+            therapistName,
+            scheduledAt,
+            amount,
+          }),
+        }),
       }
     );
+
     if (!res.ok) {
-      console.error("[EMAIL TRIGGER FAILED]", await res.text());
+      console.error("[EMAIL SEND FAILED]", await res.text());
     } else {
-      console.log("[EMAIL TRIGGERED]", appointmentId);
+      console.log("[EMAIL SENT]", clientEmail, appointmentId);
     }
   } catch (err) {
     console.error("[EMAIL TRIGGER ERROR]", err.message);
