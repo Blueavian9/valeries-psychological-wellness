@@ -781,7 +781,6 @@ export default function BookingPage() {
       const end = new Date(start.getTime() + service.duration_minutes * 60000);
 
       // ── Step 2: Insert appointment as "pending" ───────────────────────────
-      // HIPAA: only appointment_id goes to Stripe — no PHI leaves Supabase
       const { data: apptData, error: apptError } = await supabase
         .from("appointments")
         .insert({
@@ -800,7 +799,7 @@ export default function BookingPage() {
       if (apptError) throw new Error(apptError.message);
       const appointmentId = apptData.id;
 
-      // ── Step 3: Create PaymentIntent with appointment_id in metadata ──────
+      // ── Step 3: Create PaymentIntent ──────────────────────────────────────
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-payment-intent`,
         {
@@ -848,8 +847,68 @@ export default function BookingPage() {
         .update({ stripe_payment_intent_id: paymentIntent.id })
         .eq("id", appointmentId);
 
-      // ── Step 6: Navigate to confirmation page ─────────────────────────────
-      // Webhook updates status to "confirmed" — page polls for it
+      // ── Step 6: Fallback confirmation email ───────────────────────────────
+      // Fires immediately from the client in case the Stripe webhook is delayed.
+      // The webhook is the primary trigger — this is the safety net.
+      try {
+        const scheduledAt = start.toLocaleString("en-US", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+            },
+            body: JSON.stringify({
+              to: form.clientEmail,
+              subject: "Your Appointment is Confirmed 🌿",
+              // Inline template for fallback — avoids a second Edge Function roundtrip
+              html: `
+                <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                  <div style="background:#4a7c59;padding:32px;text-align:center;">
+                    <h1 style="color:#fff;margin:0;">🌿 Valerie's Psychological Wellness</h1>
+                  </div>
+                  <div style="padding:32px;">
+                    <h2 style="color:#2d2d2d;">Booking Confirmed ✅</h2>
+                    <p style="color:#555;">Hi <strong>${form.clientName}</strong>, your appointment has been booked!</p>
+                    <table style="width:100%;background:#f0f7f1;border-radius:6px;padding:20px;margin:20px 0;">
+                      <tr><td style="padding:8px 0;border-bottom:1px solid #d4e8d9;">
+                        <span style="color:#777;font-size:13px;">SERVICE</span><br/>
+                        <strong>${service.name}</strong>
+                      </td></tr>
+                      <tr><td style="padding:8px 0;border-bottom:1px solid #d4e8d9;">
+                        <span style="color:#777;font-size:13px;">DATE & TIME</span><br/>
+                        <strong>${scheduledAt}</strong>
+                      </td></tr>
+                      <tr><td style="padding:8px 0;">
+                        <span style="color:#777;font-size:13px;">AMOUNT PAID</span><br/>
+                        <strong style="color:#4a7c59;font-size:18px;">$${chargeAmount}</strong>
+                      </td></tr>
+                    </table>
+                    <p style="color:#555;font-size:14px;">You'll receive a reminder 24 hours before your appointment.</p>
+                  </div>
+                  <div style="background:#f9f9f9;padding:20px;text-align:center;border-top:1px solid #eee;">
+                    <p style="color:#aaa;font-size:12px;margin:0;">© 2025 Valerie's Psychological Wellness</p>
+                  </div>
+                </div>
+              `,
+            }),
+          },
+        );
+      } catch (emailErr) {
+        // Non-blocking — log but don't fail the booking
+        console.warn("[FALLBACK EMAIL FAILED]", emailErr.message);
+      }
+
+      // ── Step 7: Navigate to confirmation page ─────────────────────────────
       navigate(`/booking/confirmation?appointment_id=${appointmentId}`);
     } catch (err) {
       setSubmitError(err.message);
