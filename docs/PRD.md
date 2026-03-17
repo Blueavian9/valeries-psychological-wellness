@@ -112,7 +112,7 @@
 ✅ 1.5  Write booking confirmation HTML email template
 ✅ 1.6  Deploy send-email Edge Function
 ✅ 1.7  Update stripe-webhook to call send-email on payment_intent.succeeded
-❌ 1.8  Add fallback call to send-email in BookingPage.jsx handlePaidBooking()
+✅ 1.8  Add fallback call to send-email in BookingPage.jsx handlePaidBooking()
 ❌ 1.9  Test end-to-end: book → pay → confirm email received
 ❌ 1.10 Push to repo + mark ✅
 ```
