@@ -197,4 +197,82 @@ async function onChargeRefunded(charge: Stripe.Charge) {
       .from("payments")
       .update({ status: "refunded" })
       .eq("stripe_payment_intent_id", intentId);
-    if (payError) throw new Error(`payments
+    if (payError) throw new Error(`payments update failed: ${payError.message}`);
+
+    const { error: apptError } = await supabase
+      .from("appointments")
+      .update({ status: "cancelled" })
+      .eq("stripe_payment_intent_id", intentId);
+    if (apptError) throw new Error(`appointments update failed: ${apptError.message}`);
+
+    await writeAuditLog("payment_refunded", null, {
+      stripe_payment_intent_id: intentId,
+      amount_refunded: charge.amount_refunded / 100,
+    });
+    console.log("[REFUNDED]", intentId);
+  } catch (err) {
+    console.error("[onChargeRefunded ERROR]", err.message);
+    throw err;
+  }
+}
+
+// ── Main router ────────────────────────────────────────────────────────────────
+Deno.serve(async (req) => {
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  const signature = req.headers.get("stripe-signature");
+  if (!signature) {
+    return new Response("Missing stripe-signature", { status: 400 });
+  }
+
+  const body = await req.text();
+  let event: Stripe.Event;
+
+  try {
+    event = await stripe.webhooks.constructEventAsync(
+      body,
+      signature,
+      webhookSecret
+    );
+  } catch (err) {
+    console.error("[SIGNATURE VERIFICATION FAILED]", err.message);
+    return new Response(`Webhook signature error: ${err.message}`, {
+      status: 400,
+    });
+  }
+
+  try {
+    switch (event.type) {
+      case "payment_intent.succeeded":
+        await onPaymentSucceeded(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "payment_intent.payment_failed":
+        await onPaymentFailed(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "payment_intent.canceled":
+        await onPaymentCanceled(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "payment_intent.requires_action":
+        await onRequiresAction(event.data.object as Stripe.PaymentIntent);
+        break;
+      case "charge.refunded":
+        await onChargeRefunded(event.data.object as Stripe.Charge);
+        break;
+      default:
+        console.log("[UNHANDLED EVENT]", event.type);
+    }
+  } catch (err) {
+    console.error("[HANDLER ERROR]", event.type, err.message);
+    return new Response(
+      JSON.stringify({ received: true, error: err.message }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  }
+
+  return new Response(JSON.stringify({ received: true }), {
+    status: 200,
+    headers: { "Content-Type": "application/json" },
+  });
+});
