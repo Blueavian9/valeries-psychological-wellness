@@ -108,7 +108,7 @@
 ✅ 1.1  Create Resend account at resend.com
 ✅  1.2  Get Resend API key from dashboard
 ✅  1.3  Add RESEND_API_KEY to Supabase secrets
-❌ 1.4  Create supabase/functions/send-email/index.ts
+✅  1.4  Create supabase/functions/send-email/index.ts
 ❌ 1.5  Write booking confirmation HTML email template
 ❌ 1.6  Deploy send-email Edge Function
 ❌ 1.7  Update stripe-webhook to call send-email on payment_intent.succeeded
