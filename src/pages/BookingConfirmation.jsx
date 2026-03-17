@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Check, Clock, Calendar, ArrowLeft, Loader } from "lucide-react";
+import { Check, Clock, Calendar, Loader } from "lucide-react";
 import { supabase } from "../lib/supabase";
-
-// ─── HIPAA SEO: noindex this page ─────────────────────────────────────────────
-// This page contains session reference data — must never be indexed by Google
-// Phase 6 will add this via Vercel headers config as well
 
 const palette = {
   cream: "#fdfcf7",
@@ -16,8 +12,8 @@ const palette = {
 };
 
 // ─── Status poller ────────────────────────────────────────────────────────────
-// Polls Supabase every 2 seconds until webhook updates status to "confirmed"
-// Stops after 30 seconds (15 attempts) to avoid infinite loop
+// Polls every 2s until webhook updates status → "confirmed"
+// Gives up after 30s (15 attempts) and shows fallback UI
 function useAppointmentStatus(appointmentId) {
   const [status, setStatus] = useState("pending");
   const [appointment, setAppointment] = useState(null);
@@ -34,6 +30,7 @@ function useAppointmentStatus(appointmentId) {
           `
           id,
           status,
+          scheduled_at,
           start_time,
           end_time,
           client_name,
@@ -132,7 +129,10 @@ export default function BookingConfirmation() {
 
   // ── Confirmed: webhook fired, DB updated ──────────────────────────────────
   if (status === "confirmed" && appointment) {
-    const startTime = new Date(appointment.start_time);
+    // ← FIXED: use scheduled_at with fallback to start_time
+    const startTime = new Date(
+      appointment.scheduled_at ?? appointment.start_time,
+    );
 
     return (
       <div
@@ -141,11 +141,6 @@ export default function BookingConfirmation() {
           background: `linear-gradient(135deg, ${palette.cream} 0%, #eef4ee 100%)`,
         }}
       >
-        {/* noindex meta — HIPAA + SEO requirement */}
-        <head>
-          <meta name="robots" content="noindex, nofollow" />
-        </head>
-
         <div className="max-w-md w-full text-center">
           {/* Success icon */}
           <div
@@ -181,7 +176,6 @@ export default function BookingConfirmation() {
             >
               {appointment.service?.name}
             </p>
-
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
                 <Calendar
@@ -197,7 +191,6 @@ export default function BookingConfirmation() {
                   })}
                 </span>
               </div>
-
               <div className="flex items-center gap-3 text-sm">
                 <Clock
                   className="w-4 h-4 shrink-0"
@@ -214,7 +207,6 @@ export default function BookingConfirmation() {
                 </span>
               </div>
             </div>
-
             {/* HIPAA privacy note */}
             <div
               className="mt-4 pt-4 border-t text-xs"
@@ -247,7 +239,7 @@ export default function BookingConfirmation() {
     );
   }
 
-  // ── Fallback: timed out waiting for webhook ───────────────────────────────
+  // ── Fallback: timed out after 30s waiting for webhook ─────────────────────
   return (
     <div
       className="min-h-screen flex items-center justify-center px-4"
