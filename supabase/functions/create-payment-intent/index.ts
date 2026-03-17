@@ -1,5 +1,4 @@
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // ── Stripe client ──────────────────────────────────────────────────────────────
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
@@ -7,90 +6,55 @@ const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
   httpClient: Stripe.createFetchHttpClient(),
 });
 
-// ── Supabase admin client (server-side only, never exposed to browser) ─────────
-const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-);
-
-// ── Webhook secret (rotated, secured in Supabase secrets vault) ────────────────
-const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET")!;
-
-// ── Audit logger (HIPAA requirement: who changed what and when) ────────────────
-async function writeAuditLog(
-  action: string,
-  appointmentId: string | null,
-  metadata: Record<string, unknown>
-) {
-  const { error } = await supabase.from("audit_logs").insert({
-    action,
-    appointment_id: appointmentId,
-    triggered_by: "stripe_webhook",
-    metadata,
-    created_at: new Date().toISOString(),
-  });
-  if (error) console.error("[AUDIT LOG FAILED]", action, error.message);
-}
-
-// ── Handler: payment succeeded ─────────────────────────────────────────────────
-async function onPaymentSucceeded(intent: Stripe.PaymentIntent) {
-  try {
-    const { error: apptError } = await supabase
-      .from("appointments")
-      .update({ status: "confirmed" })
-      .eq("stripe_payment_intent_id", intent.id);
-    if (apptError) throw new Error(`appointments update failed: ${apptError.message}`);
-
-    const { error: payError } = await supabase.from("payments").upsert(
-      {
-        stripe_payment_intent_id: intent.id,
-        amount: intent.amount / 100,
-        currency: intent.currency,
-        status: "succeeded",
+// ── Main handler ───────────────────────────────────────────────────────────────
+Deno.serve(async (req) => {
+  // Handle CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", {
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
       },
-      { onConflict: "stripe_payment_intent_id" }
-    );
-    if (payError) throw new Error(`payments upsert failed: ${payError.message}`);
+    });
+  }
 
-    await writeAuditLog(
-      "payment_confirmed",
-      intent.metadata?.appointment_id ?? null,
+  if (req.method !== "POST") {
+    return new Response("Method not allowed", { status: 405 });
+  }
+
+  try {
+    const { amount, currency = "usd", metadata = {} } = await req.json();
+
+    if (!amount || typeof amount !== "number" || amount <= 0) {
+      return new Response(
+        JSON.stringify({ error: "Invalid amount" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Create PaymentIntent — amount in cents
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: Math.round(amount * 100),
+      currency,
+      metadata,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    return new Response(
+      JSON.stringify({ clientSecret: paymentIntent.client_secret }),
       {
-        stripe_payment_intent_id: intent.id,
-        amount: intent.amount / 100,
-        currency: intent.currency,
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Access-Control-Allow-Origin": "*",
+        },
       }
     );
-    console.log("[SUCCEEDED]", intent.id);
   } catch (err) {
-    console.error("[onPaymentSucceeded ERROR]", err.message);
-    throw err;
-  }
-}
-
-// ── Handler: payment failed ────────────────────────────────────────────────────
-async function onPaymentFailed(intent: Stripe.PaymentIntent) {
-  try {
-    const { error: apptError } = await supabase
-      .from("appointments")
-      .update({ status: "pending" })
-      .eq("stripe_payment_intent_id", intent.id);
-    if (apptError) throw new Error(`appointments update failed: ${apptError.message}`);
-
-    const { error: payError } = await supabase.from("payments").upsert(
-      {
-        stripe_payment_intent_id: intent.id,
-        amount: intent.amount / 100,
-        currency: intent.currency,
-        status: "failed",
-      },
-      { onConflict: "stripe_payment_intent_id" }
+    console.error("[create-payment-intent ERROR]", err.message);
+    return new Response(
+      JSON.stringify({ error: err.message }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
     );
-    if (payError) throw new Error(`payments upsert failed: ${payError.message}`);
-
-    await writeAuditLog(
-      "payment_failed",
-      intent.metadata?.appointment_id ?? null,
-      {
-        stripe_payment_intent_id: intent.id,
-        failure_message: i
+  }
+});
