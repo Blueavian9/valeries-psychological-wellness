@@ -6,7 +6,8 @@
 
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
+CREATE EXTENSION IF NOT EXISTS "pg_net";
+CREATE EXTENSION IF NOT EXISTS "pg_cron";
 -- ============================================================
 -- PROFILES (extends Supabase auth.users)
 -- ============================================================

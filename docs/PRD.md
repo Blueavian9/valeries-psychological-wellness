@@ -119,13 +119,13 @@
 
 ### ⏰ Task 2: Appointment Reminder Email
 ```
-❌ 2.1  Create supabase/functions/send-reminder/index.ts
-❌ 2.2  Write reminder HTML email template (24hr before appointment)
-❌ 2.3  Set up Supabase pg_cron job to query upcoming appointments
-❌ 2.4  Cron triggers send-reminder for appointments in next 24hrs
-❌ 2.5  Deploy send-reminder Edge Function
-❌ 2.6  Test: create appointment → verify reminder fires correctly
-❌ 2.7  Push to repo + mark ✅
+✅ 2.1  Create supabase/functions/send-reminder/index.ts
+✅ 2.2  Write reminder HTML email template (24hr before appointment)
+✅ 2.3  Set up Supabase pg_cron job to query upcoming appointments
+✅ 2.4  Cron triggers send-reminder for appointments in next 24hrs
+✅ 2.5  Deploy send-reminder Edge Function
+⬜ 2.6  Test: create appointment → verify reminder fires correctly
+⬜ 2.7  Push to repo + mark ✅
 ```
 
 ### 📬 Task 3: Contact Form Auto-Reply
