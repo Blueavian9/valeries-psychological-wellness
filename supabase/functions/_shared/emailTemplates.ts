@@ -242,3 +242,142 @@ export function appointmentReminderTemplate({
     </html>
   `;
 }
+
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+export function contactAutoReplyTemplate({ name }: { name: string }) {
+  const safe = escapeHtml(name);
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /></head>
+      <body style="margin:0;padding:0;background-color:#f4f4f4;font-family:Arial,sans-serif;">
+        <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f4;padding:40px 0;">
+          <tr><td align="center">
+            <table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:8px;overflow:hidden;">
+              <tr><td style="background-color:#4a7c59;padding:28px;text-align:center;">
+                <h1 style="color:#ffffff;margin:0;font-size:22px;">Thank you for reaching out</h1>
+              </td></tr>
+              <tr><td style="padding:32px;">
+                <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 16px;">Hi <strong>${safe}</strong>,</p>
+                <p style="color:#555;font-size:15px;line-height:1.6;margin:0 0 16px;">
+                  We received your message and will respond within <strong>2 business hours</strong> during regular office hours.
+                </p>
+                <p style="color:#555;font-size:15px;line-height:1.6;margin:0;">
+                  If this is urgent, please call our office or use the phone number on our website.
+                </p>
+              </td></tr>
+              <tr><td style="background-color:#f9f9f9;padding:20px;text-align:center;border-top:1px solid #eee;">
+                <p style="color:#aaa;font-size:12px;margin:0;">Valerie's Psychological Wellness</p>
+              </td></tr>
+            </table>
+          </td></tr>
+        </table>
+      </body>
+    </html>
+  `;
+}
+
+export function contactAdminNotificationTemplate({
+  name,
+  email,
+  phone,
+  message,
+  preferredContact,
+  newsletter,
+}: {
+  name: string;
+  email: string;
+  phone: string | null;
+  message: string;
+  preferredContact: string;
+  newsletter: boolean;
+}) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head><meta charset="utf-8" /></head>
+      <body style="font-family:Arial,sans-serif;color:#333;">
+        <h2 style="color:#4a7c59;">New contact form submission</h2>
+        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+        ${phone ? `<p><strong>Phone:</strong> ${escapeHtml(phone)}</p>` : ""}
+        <p><strong>Preferred contact:</strong> ${escapeHtml(preferredContact)}</p>
+        <p><strong>Newsletter:</strong> ${newsletter ? "Yes" : "No"}</p>
+        <p><strong>Message:</strong></p>
+        <p style="white-space:pre-wrap;border-left:4px solid #4a7c59;padding-left:12px;">${escapeHtml(message)}</p>
+      </body>
+    </html>
+  `;
+}
+
+export function adminPaymentSucceededTemplate({
+  appointmentId,
+  amount,
+  currency,
+}: {
+  appointmentId: string;
+  amount: number;
+  currency: string;
+}) {
+  return `
+    <!DOCTYPE html>
+    <html><head><meta charset="utf-8" /></head>
+    <body style="font-family:Arial,sans-serif;color:#333;">
+      <h2 style="color:#4a7c59;">Payment succeeded</h2>
+      <p><strong>Appointment ID:</strong> ${escapeHtml(appointmentId)}</p>
+      <p><strong>Amount:</strong> ${amount.toFixed(2)} ${currency.toUpperCase()}</p>
+    </body></html>
+  `;
+}
+
+export function adminBookingCreatedTemplate({
+  appointmentId,
+  status,
+  serviceName,
+  startTime,
+}: {
+  appointmentId: string;
+  status: string;
+  serviceName: string;
+  startTime: string;
+}) {
+  return `
+    <!DOCTYPE html>
+    <html><head><meta charset="utf-8" /></head>
+    <body style="font-family:Arial,sans-serif;color:#333;">
+      <h2 style="color:#4a7c59;">New booking created</h2>
+      <p><strong>Appointment ID:</strong> ${escapeHtml(appointmentId)}</p>
+      <p><strong>Status:</strong> ${escapeHtml(status)}</p>
+      <p><strong>Service:</strong> ${escapeHtml(serviceName)}</p>
+      <p><strong>Start:</strong> ${escapeHtml(startTime)}</p>
+    </body></html>
+  `;
+}
+
+export function adminSignupTemplate({
+  userId,
+  email,
+  fullName,
+}: {
+  userId: string;
+  email: string;
+  fullName: string;
+}) {
+  return `
+    <!DOCTYPE html>
+    <html><head><meta charset="utf-8" /></head>
+    <body style="font-family:Arial,sans-serif;color:#333;">
+      <h2 style="color:#4a7c59;">New user signup</h2>
+      <p><strong>User ID:</strong> ${escapeHtml(userId)}</p>
+      <p><strong>Email:</strong> ${escapeHtml(email)}</p>
+      <p><strong>Name:</strong> ${escapeHtml(fullName)}</p>
+    </body></html>
+  `;
+}

@@ -204,6 +204,8 @@ CREATE TRIGGER set_updated_at_appointments
 
 -- ============================================================
 -- AUTO-CREATE PROFILE ON SIGNUP
+-- Production: migration 20260416120000_phase5_cron_and_admin_triggers.sql
+-- replaces this function to add pg_net admin signup notification (keep in sync when editing).
 -- ============================================================
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$

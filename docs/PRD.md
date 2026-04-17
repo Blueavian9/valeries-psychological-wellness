@@ -101,7 +101,9 @@
 
 ---
 
-## PHASE 5: Email Notifications 🔄 IN PROGRESS
+## PHASE 5: Email Notifications ✅ COMPLETE
+
+**Secrets (Supabase Edge Functions → Project Settings → Edge Functions secrets):** `RESEND_API_KEY`, `ADMIN_EMAIL`, optional `RESEND_FROM_EMAIL` (defaults match `send-email`). **Cron + DB triggers:** Before applying [`supabase/migrations/20260416120000_phase5_cron_and_admin_triggers.sql`](../supabase/migrations/20260416120000_phase5_cron_and_admin_triggers.sql), replace `YOUR_PROJECT_REF` and `YOUR_SERVICE_ROLE_KEY` with your project ref and service role key (same value as in Edge secrets). Signup and new-booking admin pings use `pg_net` from the database to the `admin-notify` Edge Function (service role in the migration SQL only — treat like any other secret).
 
 ### 📧 Task 1: Booking Confirmation Email
 ```
@@ -124,34 +126,39 @@
 ✅ 2.3  Set up Supabase pg_cron job to query upcoming appointments
 ✅ 2.4  Cron triggers send-reminder for appointments in next 24hrs
 ✅ 2.5  Deploy send-reminder Edge Function
+✅ 2.5a HIPAA: no client email/PHI in Edge Function logs (send-reminder + stripe-webhook logs)
+✅ 2.5b Register `send_reminder_hourly` cron + `config.toml` [functions.send-reminder]
 ⬜ 2.6  Test: create appointment → verify reminder fires correctly
 ⬜ 2.7  Push to repo + mark ✅
 ```
 
 ### 📬 Task 3: Contact Form Auto-Reply
 ```
-❌ 3.1  Audit existing ContactCTA.jsx — confirm form fields (name, email, message)
-❌ 3.2  Create supabase/functions/send-contact-reply/index.ts
-❌ 3.3  Write auto-reply HTML template (thank you + expected response time)
-❌ 3.4  Write admin notification template (new contact form submission)
-❌ 3.5  Wire ContactCTA.jsx form submit to call send-contact-reply
-❌ 3.6  Deploy send-contact-reply Edge Function
-❌ 3.7  Test: submit form → verify auto-reply + admin email received
-❌ 3.8  Push to repo + mark ✅
+✅ 3.1  Audit existing ContactCTA.jsx — confirm form fields (name, email, message)
+✅ 3.2  Create supabase/functions/send-contact-reply/index.ts
+✅ 3.3  Write auto-reply HTML template (thank you + expected response time)
+✅ 3.4  Write admin notification template (new contact form submission)
+✅ 3.5  Wire ContactCTA.jsx form submit to call send-contact-reply
+✅ 3.5a Map `either` → preferred_contact `text` (schema CHECK)
+⬜ 3.6  Deploy send-contact-reply Edge Function
+⬜ 3.7  Test: submit form → verify auto-reply + admin email received
+⬜ 3.8  Push to repo + mark ✅
 ```
 
 ### 🔔 Task 4: Admin Notification Emails
 ```
-❌ 4.1  Identify all admin trigger events:
+✅ 4.1  Identify all admin trigger events:
           - New booking created
           - Payment succeeded
           - Contact form submitted
           - New user signup
-❌ 4.2  Add ADMIN_EMAIL to Supabase secrets
-❌ 4.3  Add admin notification calls to stripe-webhook (payment events)
-❌ 4.4  Add admin notification call to send-contact-reply (contact form)
-❌ 4.5  Test all admin notification triggers
-❌ 4.6  Push to repo + mark ✅
+✅ 4.2  Add ADMIN_EMAIL to Supabase secrets
+✅ 4.3  Add admin notification calls to stripe-webhook (payment events)
+✅ 4.4  Add admin notification call to send-contact-reply (contact form)
+✅ 4.4a New booking: `pg_net` trigger → `admin-notify` (booking_created)
+✅ 4.4b New signup: `handle_new_user` migration → `admin-notify` (signup)
+⬜ 4.5  Test all admin notification triggers
+⬜ 4.6  Push to repo + mark ✅
 ```
 
 ---

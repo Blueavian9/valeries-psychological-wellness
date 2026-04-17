@@ -12,8 +12,6 @@ import {
   Twitter,
   Heart,
 } from "lucide-react";
-import { supabase } from "../lib/supabase";
-
 const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
 
 const INITIAL_FORM = {
@@ -96,20 +94,29 @@ export default function ContactCTA() {
     setSubmitting(true);
     setSubmitError(null);
 
-    // ✅ Column names match schema.sql exactly
-    const { error } = await supabase.from("contact_submissions").insert([
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    const res = await fetch(
+      `${supabaseUrl}/functions/v1/send-contact-reply`,
       {
-        full_name: form.name.trim(),
-        email: form.email.trim().toLowerCase(),
-        phone: form.phone.trim() || null,
-        message: form.message.trim(),
-        preferred_contact: form.contactMethod, // schema: preferred_contact
-        newsletter_opt_in: form.newsletter, // schema: newsletter_opt_in
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({
+          full_name: form.name.trim(),
+          email: form.email.trim().toLowerCase(),
+          phone: form.phone.trim() || null,
+          message: form.message.trim(),
+          preferred_contact: form.contactMethod,
+          newsletter_opt_in: form.newsletter,
+        }),
       },
-    ]);
+    );
 
     setSubmitting(false);
-    if (error) {
+    if (!res.ok) {
       setSubmitError(
         "Couldn't send your message. Please email us directly at hello@valeriemunozpsyc.com.",
       );

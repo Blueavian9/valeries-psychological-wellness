@@ -101,12 +101,12 @@ Deno.serve(async (req: Request) => {
 
       if (!res.ok) {
         const err = await res.text();
-        console.error(`Failed to send reminder to ${clientEmail}:`, err);
-        throw new Error(`Resend error for ${clientEmail}: ${err}`);
+        console.error("[REMINDER SEND FAILED]", { appointmentId: appt.id, status: res.status });
+        throw new Error(`Resend error for appointment ${appt.id}`);
       }
 
-      console.log(`Reminder sent → ${clientEmail} (appt ${appt.id})`);
-      return { id: appt.id, email: clientEmail };
+      console.log("[REMINDER SENT]", { appointmentId: appt.id });
+      return { id: appt.id };
     })
   );
 

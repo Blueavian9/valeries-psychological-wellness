@@ -1,6 +1,10 @@
 import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { bookingConfirmationTemplate } from "../_shared/emailTemplates.ts";
+import { sendAdminEmail } from "../_shared/adminNotify.ts";
+import {
+  adminPaymentSucceededTemplate,
+  bookingConfirmationTemplate,
+} from "../_shared/emailTemplates.ts";
 
 // ── Stripe client ──────────────────────────────────────────────────────────────
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!, {
@@ -98,9 +102,9 @@ async function triggerConfirmationEmail(appointmentId: string) {
     );
 
     if (!res.ok) {
-      console.error("[EMAIL SEND FAILED]", await res.text());
+      console.error("[EMAIL SEND FAILED]", appointmentId, await res.text());
     } else {
-      console.log("[EMAIL SENT]", clientEmail, appointmentId);
+      console.log("[EMAIL SENT]", { appointmentId });
     }
   } catch (err) {
     console.error("[EMAIL TRIGGER ERROR]", err.message);
@@ -142,6 +146,18 @@ async function onPaymentSucceeded(intent: Stripe.PaymentIntent) {
         currency: intent.currency,
       }
     );
+
+    if (appointmentId) {
+      await sendAdminEmail(
+        `Payment succeeded — ${appointmentId}`,
+        adminPaymentSucceededTemplate({
+          appointmentId,
+          amount: intent.amount / 100,
+          currency: intent.currency,
+        })
+      );
+    }
+
     console.log("[SUCCEEDED]", intent.id);
   } catch (err) {
     console.error("[onPaymentSucceeded ERROR]", err.message);
