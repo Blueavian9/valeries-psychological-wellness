@@ -30,7 +30,7 @@ Deno.serve(async (req: Request) => {
       id,
       client_name,
       client_email,
-      start_time,
+      scheduled_at,
       format,
       services ( name ),
       therapists (
@@ -38,8 +38,8 @@ Deno.serve(async (req: Request) => {
       )
     `)
     .eq("status", "confirmed")
-    .gte("start_time", windowStart)
-    .lte("start_time", windowEnd)
+    .gte("scheduled_at", windowStart)
+    .lte("scheduled_at", windowEnd)
     .not("client_email", "is", null);
 
   if (error) {
@@ -67,7 +67,7 @@ Deno.serve(async (req: Request) => {
       const therapistName = (appt.therapists as any)?.profiles?.full_name ?? "Your Therapist";
       const format        = appt.format ?? "video";
 
-      const scheduledAt = new Date(appt.start_time).toLocaleString("en-US", {
+      const scheduledAt = new Date(appt.scheduled_at).toLocaleString("en-US", {
         weekday: "long",
         year:    "numeric",
         month:   "long",
