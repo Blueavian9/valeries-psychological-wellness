@@ -118,7 +118,7 @@ export default function ContactCTA() {
     setSubmitting(false);
     if (!res.ok) {
       setSubmitError(
-        "Couldn't send your message. Please email us directly at hello@valeriemunozpsyc.com.",
+        "Couldn't send your message. Please email us directly at anewhopeFamilycnt@gmail.com.",
       );
     } else {
       setSubmitted(true);
@@ -178,8 +178,8 @@ export default function ContactCTA() {
               </p>
               <div className="space-y-3 text-sm">
                 {[
-                  { icon: Phone, text: "+1 (800) 555-0100" },
-                  { icon: Mail, text: "hello@valeriemunozpsyc.com" },
+                  { icon: Phone, text: "323-314-1592" },
+                  { icon: Mail, text: "anewhopeFamilycnt@gmail.com" },
                   {
                     icon: MapPin,
                     text: "Los Angeles, CA (Telehealth Nationwide)",
