@@ -58,8 +58,8 @@
 ✅ 3.5 ContactCTA.jsx wired to call send-contact-reply
 ✅ 3.5a Map either → preferred_contact text (schema CHECK)
 ✅ 3.6 send-contact-reply Edge Function deployed (confirmed in dashboard)
-⬜ 3.7 Test: submit form → verify auto-reply + admin email received
-⬜ 3.8 Push to repo + mark ✅
+✅ 3.7 Test: submit form → verify auto-reply + admin email received
+✅ 3.8 Push to repo + mark ✅
 
 ### Task 4: Admin Notification Emails 🔄 IN PROGRESS
 ✅ 4.1 Admin trigger events identified
@@ -72,8 +72,8 @@
 ✅ 4.4d notify-admin-signup Edge Function deployed
 ✅ 4.4e RESEND_FROM_EMAIL set in Supabase secrets
 ✅ 4.4f Valerie contact info updated: anewhopeFamilycnt@gmail.com / 323-314-1592
-⬜ 4.5 Test all admin notification triggers
-⬜ 4.6 Push to repo + mark ✅
+✅ 4.5 Test all admin notification triggers
+✅ 4.6 Push to repo + mark ✅
 
 ---
 
