@@ -159,8 +159,8 @@
 ### 🔒 Task 3: SSL Certificate 🔄 IN PROGRESS
 ✅ 3.1  Vercel auto-provisioned SSL confirmed
 ✅ 3.2  https://www.valeriemunozpsyc.com loads correctly
-⬜ 3.3  Check for mixed content warnings in browser console
-⬜ 3.4  Push to repo + mark ✅
+✅ 3.3  Check for mixed content warnings — resolved (Netlify conflict removed)
+✅ 3.4  Push to repo + mark ✅
 
 ### 🔐 Task 4: Account Security 🔄 IN PROGRESS
 ✅ 4.1  Vercel 2FA enabled (Authenticator App)
