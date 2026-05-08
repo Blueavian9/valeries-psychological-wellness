@@ -165,8 +165,8 @@
 ### 🔐 Task 4: Account Security 🔄 IN PROGRESS
 ✅ 4.1  Vercel 2FA enabled (Authenticator App)
 ✅ 4.2  Passkey saved for Vercel account
-⬜ 4.3  Enable 2FA on Namecheap account
-⬜ 4.4  Enable 2FA on Supabase account
+✅ 4.3  Enable 2FA on Namecheap account
+✅ 4.4  Enable 2FA on Supabase account
 ⬜ 4.5  Enable 2FA on GitHub account
 
 ### 🔗 Task 5: Social Media Icons ❌ NOT STARTED
