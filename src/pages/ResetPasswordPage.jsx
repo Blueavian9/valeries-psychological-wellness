@@ -1,96 +1,120 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
-export default function ResetPasswordPage() {
-  const { resetPassword } = useAuth();
-  const [email, setEmail] = useState("");
+export default function UpdatePasswordPage() {
+  const [password, setPassword] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [ready, setReady] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") setReady(true);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (password !== confirm) return setError("Passwords do not match.");
+    if (password.length < 6)
+      return setError("Password must be at least 6 characters.");
     setLoading(true);
     setError(null);
-
-    const { error } = await resetPassword(email);
-
+    const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       setError(error.message);
       setLoading(false);
       return;
     }
-
     setSuccess(true);
     setLoading(false);
+    setTimeout(() => navigate("/login"), 3000);
   }
 
-  if (success) {
+  if (success)
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="text-center max-w-md">
-          <div className="text-6xl mb-6">📬</div>
+          <div className="text-6xl mb-6">✅</div>
           <h1 className="text-3xl font-bold text-gray-900 mb-3">
-            Check your inbox
+            Password updated!
           </h1>
-          <p className="text-gray-500 text-sm mb-6">
-            We sent a password reset link to <strong>{email}</strong>. It
-            expires in 1 hour.
-          </p>
-          <Link
-            to="/login"
-            className="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition"
-          >
-            Back to login
-          </Link>
+          <p className="text-gray-500 text-sm">Redirecting you to login...</p>
         </div>
       </div>
     );
-  }
+
+  if (!ready)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white px-6">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-6">⏳</div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Verifying link...
+          </h1>
+          <p className="text-gray-500 text-sm">
+            Please wait while we verify your reset link.
+          </p>
+        </div>
+      </div>
+    );
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-white px-6">
       <div className="w-full max-w-md">
         <div className="mb-8">
-          <Link
-            to="/login"
-            className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center gap-1 mb-6"
-          >
-            ← Back to login
-          </Link>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Reset your password
+            Set new password
           </h1>
           <p className="text-gray-500 text-sm">
-            Enter your email and we'll send you a reset link.
+            Choose a strong password for your account.
           </p>
         </div>
-
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
             {error}
           </div>
         )}
-
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email address
+              New password
             </label>
             <input
-              type="email"
-              value={email}
+              type="password"
+              value={password}
               onChange={(e) => {
-                setEmail(e.target.value);
+                setPassword(e.target.value);
                 setError(null);
               }}
               required
-              placeholder="you@example.com"
+              placeholder="••••••••"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
             />
           </div>
-
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm password
+            </label>
+            <input
+              type="password"
+              value={confirm}
+              onChange={(e) => {
+                setConfirm(e.target.value);
+                setError(null);
+              }}
+              required
+              placeholder="••••••••"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+            />
+          </div>
           <button
             type="submit"
             disabled={loading}
@@ -99,10 +123,10 @@ export default function ResetPasswordPage() {
             {loading ? (
               <>
                 <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Sending...
+                Updating...
               </>
             ) : (
-              "Send reset link"
+              "Update password"
             )}
           </button>
         </form>
