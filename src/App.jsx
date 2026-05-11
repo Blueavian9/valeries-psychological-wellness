@@ -27,6 +27,7 @@ import Dashboard from "./pages/Dashboard";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 
 // ─── Home Page ────────────────────────────────────────────────────────────────
 function HomePage() {
@@ -77,6 +78,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/update-password" element={<UpdatePasswordPage />} />
             <Route path="/find-therapist" element={<TherapistFinder />} />
             {/*
               ── Booking: OPEN to guests (no ProtectedRoute) ──
