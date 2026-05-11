@@ -91,7 +91,7 @@
 ✅ Portfolio site live and public
 
 ### ⬜ This Week (Critical Path to Interviews)
-⬜ Add therapy app to LinkedIn Featured section
+✅ Add therapy app to LinkedIn Featured section
 ⬜ Record 2-minute demo video of therapy app
 ⬜ Write README for React-Tailwind-Portfolio repo
 ⬜ Begin 5 job applications per day
