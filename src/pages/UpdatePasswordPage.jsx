@@ -12,12 +12,25 @@ export default function UpdatePasswordPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") setReady(true);
-    });
-    return () => subscription.unsubscribe();
+    const params = new URLSearchParams(window.location.search);
+    const tokenHash = params.get("token_hash");
+    const type = params.get("type");
+
+    if (tokenHash && type === "recovery") {
+      supabase.auth
+        .verifyOtp({ token_hash: tokenHash, type: "recovery" })
+        .then(({ error }) => {
+          if (error) {
+            setError(
+              "Reset link is invalid or expired. Please request a new one.",
+            );
+          } else {
+            setReady(true);
+          }
+        });
+    } else {
+      setError("Invalid reset link. Please request a new one.");
+    }
   }, []);
 
   async function handleSubmit(e) {
@@ -51,6 +64,25 @@ export default function UpdatePasswordPage() {
       </div>
     );
 
+  if (error)
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white px-6">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-6">❌</div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Link expired
+          </h1>
+          <p className="text-red-500 text-sm mb-6">{error}</p>
+          <button
+            onClick={() => navigate("/reset-password")}
+            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition"
+          >
+            Request new link
+          </button>
+        </div>
+      </div>
+    );
+
   if (!ready)
     return (
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
@@ -77,11 +109,6 @@ export default function UpdatePasswordPage() {
             Choose a strong password for your account.
           </p>
         </div>
-        {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
-            {error}
-          </div>
-        )}
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
