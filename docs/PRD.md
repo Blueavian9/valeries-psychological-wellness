@@ -49,6 +49,12 @@
 ✅ Custom domain set as website URL on GitHub
 ✅ Production README pushed to repo
 
+✅ Password reset flow debugged and fixed
+
+✅ UpdatePasswordPage.jsx — removed verifyOtp, now uses onAuthStateChange PASSWORD_RECOVERY event
+✅ Supabase URL Configuration verified — Site URL + Redirect URLs confirmed correct
+
+
 ### 🚫 Deferred (Post-Employment)
 🚫 Social media icons (Valerie has no accounts yet)
 🚫 PostHog Analytics (requires HIPAA BAA — post-launch)
@@ -150,8 +156,16 @@
 | May 11 | LinkedIn Services About updated | ✅ |
 | May 11 | Phase 6 marked COMPLETE | ✅ |
 | May 11 | PRD migrated to hire-focused version | ✅ |
+| May 12 | Diagnosed password reset token bug — verifyOtp consuming token prematurely | ✅ |
+| May 12 | UpdatePasswordPage.jsx refactored — fixed auth flow | ✅ |
+| May 12 | Supabase URL Configuration audited and verified | ✅ |
+| May 12 | PRD updated to reflect auth bug fix | ✅ |
+
 
 ---
 
 *Rule: Ship beats perfect. Finish beats impressive.*
+
 *Last updated: May 11 — Phase 6 COMPLETE. Phase 9 in progress.*
+
+*Last updated: May 12 -- Auth bug fixed + deployed. Phase 9 in progress.*
