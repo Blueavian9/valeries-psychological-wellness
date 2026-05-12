@@ -20,6 +20,7 @@ export default function UpdatePasswordPage() {
       supabase.auth
         .verifyOtp({ token_hash: tokenHash, type: "recovery" })
         .then(({ error }) => {
+            console.log('verifyOtp error:', error);
           if (error) {
             setError(
               "Reset link is invalid or expired. Please request a new one.",
