@@ -155,7 +155,7 @@ supabase/
 
 ## 👤 Built For
 
-**Valerie Munoz, Psy.D.**  
+**Valerie Munoz, Psy.Doc.**  
 Licensed Therapist — Los Angeles, CA  
 [valeriemunozpsyc.com](https://www.valeriemunozpsyc.com)
 
@@ -164,7 +164,7 @@ Licensed Therapist — Los Angeles, CA
 ## 👨‍💻 Built By
 
 **Cesar A. Aguilar** — Full Stack Engineer  
-[Portfolio](https://react-tailwind-portfolio-murex.vercel.app/) · [GitHub](https://github.com/Blueavian9) · [LinkedIn](#)
+[Portfolio](https://react-tailwind-portfolio-murex.vercel.app/) · [GitHub](https://github.com/Blueavian9) · [LinkedIn](https://www.linkedin.com/in/cesar-aguilar-blueavian9/)
 
 ---
 
