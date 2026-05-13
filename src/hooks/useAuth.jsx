@@ -40,7 +40,8 @@ export function AuthProvider({ children }) {
     // Listen for auth state changes (login, logout, token refresh)
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "PASSWORD_RECOVERY") return;
       const currentUser = session?.user ?? null;
       setUser(currentUser);
 
@@ -86,7 +87,7 @@ export function AuthProvider({ children }) {
 
   async function resetPassword(email) {
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
+      redirectTo: `${window.location.origin}/update-password`,
     });
     return { data, error };
   }
