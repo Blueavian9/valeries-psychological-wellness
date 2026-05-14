@@ -12,20 +12,42 @@ export default function UpdatePasswordPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event) => {
-        if (event === "PASSWORD_RECOVERY") {
-          setReady(true);
-        }
-      }
-    );
-    return () => subscription.unsubscribe();
+    const params = new URLSearchParams(window.location.search);
+    const tokenHash = params.get("token_hash");
+    const type = params.get("type");
+
+    if (tokenHash && type === "recovery") {
+      // Manually exchange the token hash for a session
+      supabase.auth
+        .verifyOtp({
+          token_hash: tokenHash,
+          type: "recovery",
+        })
+        .then(({ error }) => {
+          if (error) {
+            setError(
+              "Reset link is invalid or expired. Please request a new one.",
+            );
+          } else {
+            setReady(true);
+          }
+        });
+    } else {
+      // Fallback: listen for hash-based token exchange
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((event) => {
+        if (event === "PASSWORD_RECOVERY") setReady(true);
+      });
+      return () => subscription.unsubscribe();
+    }
   }, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (password !== confirm) return setError("Passwords do not match.");
-    if (password.length < 6) return setError("Password must be at least 6 characters.");
+    if (password.length < 6)
+      return setError("Password must be at least 6 characters.");
     setLoading(true);
     setError(null);
     const { error } = await supabase.auth.updateUser({ password });
@@ -44,7 +66,9 @@ export default function UpdatePasswordPage() {
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">✅</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Password updated!</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Password updated!
+          </h1>
           <p className="text-gray-500 text-sm">Redirecting you to login...</p>
         </div>
       </div>
@@ -55,7 +79,9 @@ export default function UpdatePasswordPage() {
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">❌</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Link expired</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Link expired
+          </h1>
           <p className="text-red-500 text-sm mb-6">{error}</p>
           <button
             onClick={() => navigate("/reset-password")}
@@ -72,8 +98,12 @@ export default function UpdatePasswordPage() {
       <div className="min-h-screen flex items-center justify-center bg-white px-6">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-6">⏳</div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Verifying link...</h1>
-          <p className="text-gray-500 text-sm">Please wait while we verify your reset link.</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Verifying link...
+          </h1>
+          <p className="text-gray-500 text-sm">
+            Please wait while we verify your reset link.
+          </p>
         </div>
       </div>
     );
@@ -82,27 +112,41 @@ export default function UpdatePasswordPage() {
     <div className="min-h-screen flex items-center justify-center bg-white px-6">
       <div className="w-full max-w-md">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Set new password</h1>
-          <p className="text-gray-500 text-sm">Choose a strong password for your account.</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Set new password
+          </h1>
+          <p className="text-gray-500 text-sm">
+            Choose a strong password for your account.
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">New password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              New password
+            </label>
             <input
               type="password"
               value={password}
-              onChange={(e) => { setPassword(e.target.value); setError(null); }}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
               required
               placeholder="••••••••"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Confirm password
+            </label>
             <input
               type="password"
               value={confirm}
-              onChange={(e) => { setConfirm(e.target.value); setError(null); }}
+              onChange={(e) => {
+                setConfirm(e.target.value);
+                setError(null);
+              }}
               required
               placeholder="••••••••"
               className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
