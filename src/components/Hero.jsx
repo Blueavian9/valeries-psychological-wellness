@@ -17,7 +17,7 @@ export default function Hero() {
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-600 mb-10 max-w-3xl mx-auto leading-relaxed">
-            Experience transformative therapy that treats the whole person—mind,
+            Experience transformative therapy that treats the whole personâ€”mind,
             body, and spirit. Find the perfect online platform for your holistic
             healing journey.
           </p>
