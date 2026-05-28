@@ -1,1 +1,16 @@
 @import "tailwindcss";
+
+/* ── Brand color variables ──────────────────────── */
+:root {
+  --color-purple:          #7C3AED;
+  --color-purple-dark:     #5B21B6;
+  --color-lavender:        #C4B5FD;
+  --color-lavender-light:  #EDE9FE;
+  --color-fuchsia:         #D946EF;
+  --color-fuchsia-dark:    #A21CAF;
+  --color-fuchsia-light:   #FAE8FF;
+  --color-text-primary:    #1E1B4B;
+  --color-text-muted:      #6D6A85;
+  --color-bg:              #FFFFFF;
+  --color-bg-alt:          #FAFAF9;
+}

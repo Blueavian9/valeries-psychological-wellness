@@ -40,7 +40,7 @@ export default function ResetPasswordPage() {
           </p>
           <Link
             to="/login"
-            className="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition"
+            className="inline-block px-6 py-3 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-xl text-sm transition"
           >
             Back to login
           </Link>
@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
         <div className="mb-8">
           <Link
             to="/login"
-            className="text-sm text-green-600 hover:text-green-700 font-medium flex items-center gap-1 mb-6"
+            className="text-sm text-[#7C3AED] hover:text-[#5B21B6] font-medium flex items-center gap-1 mb-6"
           >
             ← Back to login
           </Link>
@@ -87,14 +87,14 @@ export default function ResetPasswordPage() {
               }}
               required
               placeholder="you@example.com"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
             />
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-6 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm"
+            className="w-full py-3 px-6 bg-[#7C3AED] hover:bg-[#5B21B6] disabled:bg-green-300 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm"
           >
             {loading ? (
               <>

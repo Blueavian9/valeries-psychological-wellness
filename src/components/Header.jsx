@@ -30,24 +30,24 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <header className="bg-[#5B21B6] border-b border-[#6D28D9] sticky top-0 z-50">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="shrink-0">
-            <Link to="/" className="text-2xl font-bold text-green-600">
+            <Link to="/" className="text-2xl font-bold text-white">
               Holistic Therapy
             </Link>
           </div>
           <div className="hidden md:flex space-x-8 items-center">
             <Link
               to="/booking"
-              className="text-gray-700 hover:text-green-600 transition font-medium"
+              className="text-white/90 hover:text-[#C4B5FD] transition font-medium"
             >
               Booking
             </Link>
             <Link
               to="/dashboard"
-              className="text-gray-700 hover:text-green-600 transition font-medium"
+              className="text-white/90 hover:text-[#C4B5FD] transition font-medium"
             >
               Dashboard
             </Link>
@@ -56,7 +56,7 @@ export default function Header() {
                 key={anchor}
                 href={anchor}
                 onClick={(e) => handleAnchorClick(e, anchor)}
-                className="text-gray-700 hover:text-green-600 transition cursor-pointer"
+                className="text-white/90 hover:text-[#C4B5FD] transition cursor-pointer"
               >
                 {label}
               </a>
@@ -65,7 +65,7 @@ export default function Header() {
           <div className="hidden md:block">
             <Link
               to="/booking"
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition inline-block"
+              className="bg-[#D946EF] text-white px-6 py-2 rounded-lg hover:bg-[#A21CAF] transition inline-block"
             >
               Get Started
             </Link>
@@ -73,7 +73,7 @@ export default function Header() {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-700 hover:text-green-600"
+              className="text-white hover:text-[#C4B5FD]"
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
@@ -83,14 +83,14 @@ export default function Header() {
           <div className="md:hidden py-4 space-y-4">
             <Link
               to="/booking"
-              className="block text-gray-700 hover:text-green-600"
+              className="block text-white/90 hover:text-[#C4B5FD]"
               onClick={() => setIsMenuOpen(false)}
             >
               Booking
             </Link>
             <Link
               to="/dashboard"
-              className="block text-gray-700 hover:text-green-600"
+              className="block text-white/90 hover:text-[#C4B5FD]"
               onClick={() => setIsMenuOpen(false)}
             >
               Dashboard
@@ -100,14 +100,14 @@ export default function Header() {
                 key={anchor}
                 href={anchor}
                 onClick={(e) => handleAnchorClick(e, anchor)}
-                className="block text-gray-700 hover:text-green-600 cursor-pointer"
+                className="block text-white/90 hover:text-[#C4B5FD] cursor-pointer"
               >
                 {label}
               </a>
             ))}
             <Link
               to="/booking"
-              className="block w-full bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-center"
+              className="block w-full bg-[#D946EF] text-white px-6 py-2 rounded-lg hover:bg-[#A21CAF] text-center"
               onClick={() => setIsMenuOpen(false)}
             >
               Get Started

@@ -4,11 +4,11 @@ import { Check, Clock, Calendar, Loader } from "lucide-react";
 import { supabase } from "../lib/supabase";
 
 const palette = {
-  cream: "#fdfcf7",
-  sage: "#a8b5a2",
-  teal: "#3a6d77",
-  charcoal: "#333645",
-  lavender: "#c4b5e2",
+  cream: "#FAFAF9",
+  sage: "#6D6A85",
+  teal: "#7C3AED",
+  charcoal: "#1E1B4B",
+  lavender: "#C4B5FD",
 };
 
 // ─── Status poller ────────────────────────────────────────────────────────────
@@ -138,7 +138,7 @@ export default function BookingConfirmation() {
       <div
         className="min-h-screen flex items-center justify-center px-4"
         style={{
-          background: `linear-gradient(135deg, ${palette.cream} 0%, #eef4ee 100%)`,
+          background: `linear-gradient(135deg, ${palette.cream} 0%, #EDE9FE 100%)`,
         }}
       >
         <div className="max-w-md w-full text-center">
@@ -210,7 +210,7 @@ export default function BookingConfirmation() {
             {/* HIPAA privacy note */}
             <div
               className="mt-4 pt-4 border-t text-xs"
-              style={{ borderColor: "#e8e4dd", color: "#8a9490" }}
+              style={{ borderColor: "#EDE9FE", color: "#6D6A85" }}
             >
               🔒 Your session details are private and encrypted. Booking ID:{" "}
               {appointmentId.slice(0, 8)}…

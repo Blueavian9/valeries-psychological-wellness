@@ -11,7 +11,7 @@ const testimonials = [
     quote:
       "I'd tried traditional therapy twice before and never felt truly heard. The holistic approach here connected my anxiety to patterns in my body I hadn't even noticed. Within 8 weeks I was sleeping again.",
     initials: 'SM',
-    color: '#3a6d77',
+    color: '#7C3AED',
   },
   {
     id: 2,
@@ -22,7 +22,7 @@ const testimonials = [
     quote:
       'Combining mindfulness with talk therapy was a game changer. My therapist helped me see the physical toll stress was taking — tight chest, shallow breathing — and gave me real tools I use every day.',
     initials: 'JT',
-    color: '#a8b5a2',
+    color: '#6D6A85',
   },
   {
     id: 3,
@@ -33,7 +33,7 @@ const testimonials = [
     quote:
       "The somatic work was unlike anything I'd experienced. I learned that depression wasn't just in my head — my whole nervous system was involved. Six months later, I feel like myself again.",
     initials: 'PK',
-    color: '#c4b5e2',
+    color: '#C4B5FD',
   },
   {
     id: 4,
@@ -44,7 +44,7 @@ const testimonials = [
     quote:
       "I was skeptical about online therapy. Then my first session blew me away — the warmth, the structure, the way trauma was addressed through the body AND the mind. Real healing happened here.",
     initials: 'MR',
-    color: '#b8a88f',
+    color: '#A21CAF',
   },
   {
     id: 5,
@@ -55,7 +55,7 @@ const testimonials = [
     quote:
       'Couples counseling with a holistic lens completely changed how my partner and I communicate. We learned to slow down, check in with our bodies, and actually listen. Best investment we ever made.',
     initials: 'LV',
-    color: '#e8b4bc',
+    color: '#D946EF',
   },
   {
     id: 6,
@@ -66,7 +66,7 @@ const testimonials = [
     quote:
       "Midlife brought a crisis I didn't expect. The integrative approach — part therapy, part mindfulness, part meaning-making — helped me rebuild my identity from the ground up. Grateful every day.",
     initials: 'DO',
-    color: '#3a6d77',
+    color: '#7C3AED',
   },
 ]
 
@@ -86,7 +86,7 @@ function TestimonialCard({ testimonial, active }) {
       className={`relative rounded-3xl p-7 shadow-sm border transition-all duration-500 flex flex-col h-full ${
         active ? 'scale-100 opacity-100' : 'scale-95 opacity-60'
       }`}
-      style={{ background: 'white', borderColor: '#f0ede8' }}
+      style={{ background: 'white', borderColor: '#EDE9FE' }}
     >
       {/* Decorative quote mark */}
       <div
@@ -108,7 +108,7 @@ function TestimonialCard({ testimonial, active }) {
       </p>
 
       {/* User */}
-      <div className="flex items-center gap-3 mt-6 pt-5 border-t" style={{ borderColor: '#f0ede8' }}>
+      <div className="flex items-center gap-3 mt-6 pt-5 border-t" style={{ borderColor: '#EDE9FE' }}>
         <div
           className="w-11 h-11 rounded-2xl flex items-center justify-center font-bold text-sm text-white shrink-0"
           style={{ background: `linear-gradient(135deg, ${testimonial.color}, ${testimonial.color}99)` }}
@@ -116,19 +116,19 @@ function TestimonialCard({ testimonial, active }) {
           {testimonial.initials}
         </div>
         <div>
-          <p className="font-bold text-sm" style={{ color: '#333645' }}>
+          <p className="font-bold text-sm" style={{ color: '#1E1B4B' }}>
             {testimonial.name}, {testimonial.age}
           </p>
-          <p className="text-xs" style={{ color: '#a8b5a2' }}>
+          <p className="text-xs" style={{ color: '#6D6A85' }}>
             {testimonial.issue}
           </p>
         </div>
         {/* Verified badge */}
         <div
           className="ml-auto flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full"
-          style={{ background: '#f0fdf4', color: '#16a34a' }}
+          style={{ background: '#EDE9FE', color: '#7C3AED' }}
         >
-          <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[#EDE9FE]0 inline-block" />
           Verified
         </div>
       </div>
@@ -166,7 +166,7 @@ export default function Testimonials() {
   return (
     <section
       className="py-20"
-      style={{ background: 'linear-gradient(180deg, #fdfcf7 0%, #f0f7f0 100%)' }}
+      style={{ background: 'linear-gradient(180deg, #FAFAF9 0%, #EDE9FE 100%)' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -176,17 +176,17 @@ export default function Testimonials() {
         <div className="text-center mb-14">
           <span
             className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
-            style={{ background: '#f0fdf4', color: '#16a34a' }}
+            style={{ background: '#EDE9FE', color: '#7C3AED' }}
           >
             Real Stories
           </span>
           <h2
             className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight"
-            style={{ color: '#333645' }}
+            style={{ color: '#1E1B4B' }}
           >
             What Our Clients Say
           </h2>
-          <p className="max-w-xl mx-auto text-base" style={{ color: '#a8b5a2' }}>
+          <p className="max-w-xl mx-auto text-base" style={{ color: '#6D6A85' }}>
             Hear from people who've taken the first step and found their path to
             holistic wellness.
           </p>
@@ -216,7 +216,7 @@ export default function Testimonials() {
           <button
             onClick={prev}
             className="w-10 h-10 rounded-2xl border-2 flex items-center justify-center hover:shadow-md transition-all"
-            style={{ borderColor: '#e0ddd6', color: '#333645', background: 'white' }}
+            style={{ borderColor: '#EDE9FE', color: '#1E1B4B', background: 'white' }}
             aria-label="Previous testimonial"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -232,7 +232,7 @@ export default function Testimonials() {
                 style={{
                   width: current === i ? '24px' : '8px',
                   height: '8px',
-                  background: current === i ? '#16a34a' : '#d1d5db',
+                  background: current === i ? '#7C3AED' : '#d1d5db',
                 }}
                 aria-label={`Go to testimonial ${i + 1}`}
               />
@@ -242,7 +242,7 @@ export default function Testimonials() {
           <button
             onClick={next}
             className="w-10 h-10 rounded-2xl border-2 flex items-center justify-center hover:shadow-md transition-all"
-            style={{ borderColor: '#e0ddd6', color: '#333645', background: 'white' }}
+            style={{ borderColor: '#EDE9FE', color: '#1E1B4B', background: 'white' }}
             aria-label="Next testimonial"
           >
             <ChevronRight className="w-4 h-4" />
@@ -252,7 +252,7 @@ export default function Testimonials() {
         {/* Social proof footer */}
         <div className="mt-12 text-center">
           <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl shadow-sm"
-            style={{ background: 'white', border: '1px solid #f0ede8' }}>
+            style={{ background: 'white', border: '1px solid #EDE9FE' }}>
             <div className="flex -space-x-2">
               {testimonials.slice(0, 4).map(t => (
                 <div
@@ -264,9 +264,9 @@ export default function Testimonials() {
                 </div>
               ))}
             </div>
-            <p className="text-sm" style={{ color: '#333645' }}>
+            <p className="text-sm" style={{ color: '#1E1B4B' }}>
               <strong>10,000+</strong>{' '}
-              <span style={{ color: '#a8b5a2' }}>people found their path to wellness</span>
+              <span style={{ color: '#6D6A85' }}>people found their path to wellness</span>
             </p>
           </div>
         </div>

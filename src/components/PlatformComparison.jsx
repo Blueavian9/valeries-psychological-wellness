@@ -61,12 +61,12 @@ export default function PlatformComparison() {
               {platforms.map((platform, index) => (
                 <tr 
                   key={index} 
-                  className={`border-b border-gray-100 ${platform.featured ? 'bg-green-50' : ''}`}
+                  className={`border-b border-gray-100 ${platform.featured ? 'bg-[#EDE9FE]' : ''}`}
                 >
                   <td className="py-4 px-6 font-semibold">
                     {platform.name}
                     {platform.featured && (
-                      <span className="ml-2 text-xs bg-green-600 text-white px-2 py-1 rounded">
+                      <span className="ml-2 text-xs bg-[#7C3AED] text-white px-2 py-1 rounded">
                         RECOMMENDED
                       </span>
                     )}
@@ -74,25 +74,25 @@ export default function PlatformComparison() {
                   <td className="py-4 px-6">{platform.price}</td>
                   <td className="py-4 px-6 text-center">
                     {platform.holistic ? 
-                      <Check className="inline text-green-600" size={20} /> : 
+                      <Check className="inline text-[#7C3AED]" size={20} /> : 
                       <X className="inline text-gray-300" size={20} />
                     }
                   </td>
                   <td className="py-4 px-6 text-center">
                     {platform.yoga ? 
-                      <Check className="inline text-green-600" size={20} /> : 
+                      <Check className="inline text-[#7C3AED]" size={20} /> : 
                       <X className="inline text-gray-300" size={20} />
                     }
                   </td>
                   <td className="py-4 px-6 text-center">
                     {platform.meditation ? 
-                      <Check className="inline text-green-600" size={20} /> : 
+                      <Check className="inline text-[#7C3AED]" size={20} /> : 
                       <X className="inline text-gray-300" size={20} />
                     }
                   </td>
                   <td className="py-4 px-6 text-center">
                     {platform.traditional ? 
-                      <Check className="inline text-green-600" size={20} /> : 
+                      <Check className="inline text-[#7C3AED]" size={20} /> : 
                       <X className="inline text-gray-300" size={20} />
                     }
                   </td>

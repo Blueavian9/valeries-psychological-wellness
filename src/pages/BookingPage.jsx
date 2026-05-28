@@ -16,16 +16,16 @@ import { supabase } from "../lib/supabase";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const palette = {
-  cream: "#fdfcf7",
-  sage: "#a8b5a2",
-  lavender: "#c4b5e2",
-  teal: "#3a6d77",
-  taupe: "#b8a88f",
-  charcoal: "#333645",
-  coral: "#e8b4bc",
+  cream: "#FAFAF9",
+  sage: "#6D6A85",
+  lavender: "#C4B5FD",
+  teal: "#7C3AED",
+  taupe: "#A21CAF",
+  charcoal: "#1E1B4B",
+  coral: "#D946EF",
 };
 
-const SERVICE_COLORS = [palette.teal, palette.sage, palette.lavender, palette.coral];
+const SERVICE_COLORS = ["#7C3AED", "#D946EF", "#C4B5FD", "#5B21B6"];
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
@@ -54,7 +54,7 @@ function ServiceStep({ services, selectedId, onSelect }) {
           return (
             <button key={svc.id} onClick={() => onSelect(svc.id)}
               className="text-left rounded-2xl p-5 border-2 transition-all hover:shadow-md hover:-translate-y-0.5"
-              style={{ borderColor: selectedId === svc.id ? color : "#e8e4dd", background: selectedId === svc.id ? `${color}12` : palette.cream }}>
+              style={{ borderColor: selectedId === svc.id ? color : "#EDE9FE", background: selectedId === svc.id ? `${color}12` : palette.cream }}>
               <div className="flex justify-between items-start mb-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${color}25` }}>
                   <Leaf className="w-5 h-5" style={{ color }} />
@@ -66,7 +66,7 @@ function ServiceStep({ services, selectedId, onSelect }) {
                 )}
               </div>
               <p className="font-bold text-sm mb-1" style={{ color: palette.charcoal }}>{svc.name}</p>
-              {svc.description && <p className="text-xs mb-3" style={{ color: "#8a9490" }}>{svc.description}</p>}
+              {svc.description && <p className="text-xs mb-3" style={{ color: "#6D6A85" }}>{svc.description}</p>}
               <div className="flex items-center gap-4 text-xs">
                 <span className="flex items-center gap-1" style={{ color: palette.teal }}><Clock className="w-3.5 h-3.5" /> {svc.duration_minutes} min</span>
                 <span className="flex items-center gap-1 font-bold" style={{ color }}><DollarSign className="w-3.5 h-3.5" />{svc.price === 0 ? "Free" : `$${svc.price}`}</span>
@@ -99,7 +99,7 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
       <h2 className="text-2xl font-bold mb-2" style={{ color: palette.charcoal }}>Pick a Date & Time</h2>
       <p className="text-sm mb-6" style={{ color: palette.sage }}>Session: <strong style={{ color: palette.teal }}>{service.name}</strong> · {service.duration_minutes} min</p>
       <div className="grid lg:grid-cols-5 gap-6">
-        <div className="lg:col-span-3 rounded-2xl border p-5" style={{ background: palette.cream, borderColor: "#e8e4dd" }}>
+        <div className="lg:col-span-3 rounded-2xl border p-5" style={{ background: palette.cream, borderColor: "#EDE9FE" }}>
           <div className="flex items-center justify-between mb-5">
             <button onClick={prevMonth} className="p-2 rounded-xl hover:bg-white transition-colors" style={{ color: palette.charcoal }}><ChevronLeft className="w-4 h-4" /></button>
             <span className="font-bold text-sm" style={{ color: palette.charcoal }}>{MONTHS[viewMonth]} {viewYear}</span>
@@ -132,21 +132,21 @@ function CalendarStep({ service, selectedDate, selectedTime, onSelect }) {
         </div>
         <div className="lg:col-span-2">
           {!selectedDate ? (
-            <div className="h-full flex items-center justify-center rounded-2xl border p-6 text-center" style={{ background: palette.cream, borderColor: "#e8e4dd" }}>
+            <div className="h-full flex items-center justify-center rounded-2xl border p-6 text-center" style={{ background: palette.cream, borderColor: "#EDE9FE" }}>
               <div><Calendar className="w-10 h-10 mx-auto mb-3" style={{ color: palette.sage }} /><p className="text-sm font-medium" style={{ color: palette.charcoal }}>Select a date to see available times</p></div>
             </div>
           ) : timeSlots.length === 0 ? (
-            <div className="h-full flex items-center justify-center rounded-2xl border p-6 text-center" style={{ background: palette.cream, borderColor: "#e8e4dd" }}>
+            <div className="h-full flex items-center justify-center rounded-2xl border p-6 text-center" style={{ background: palette.cream, borderColor: "#EDE9FE" }}>
               <p className="text-sm" style={{ color: palette.sage }}>No availability on this day.</p>
             </div>
           ) : (
-            <div className="rounded-2xl border p-5 h-full" style={{ background: palette.cream, borderColor: "#e8e4dd" }}>
+            <div className="rounded-2xl border p-5 h-full" style={{ background: palette.cream, borderColor: "#EDE9FE" }}>
               <p className="font-bold text-sm mb-4" style={{ color: palette.charcoal }}>{selectedDate.toLocaleDateString("en-US", { weekday: "long", month: "short", day: "numeric" })}</p>
               <div className="grid grid-cols-2 gap-2 overflow-y-auto max-h-72">
                 {timeSlots.map(time => (
                   <button key={time} onClick={() => onSelect({ date: selectedDate, time })}
                     className="py-2.5 px-3 rounded-xl text-xs font-semibold border-2 transition-all"
-                    style={{ borderColor: selectedTime === time ? palette.teal : "#e0ddd6", background: selectedTime === time ? `${palette.teal}15` : "white", color: selectedTime === time ? palette.teal : palette.charcoal }}>
+                    style={{ borderColor: selectedTime === time ? palette.teal : "#EDE9FE", background: selectedTime === time ? `${palette.teal}15` : "white", color: selectedTime === time ? palette.teal : palette.charcoal }}>
                     {time}
                   </button>
                 ))}
@@ -170,27 +170,27 @@ function DetailsStep({ service, form, onChange }) {
             <label className="block text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: palette.charcoal }}>Full Name *</label>
             <input value={form.clientName} onChange={e => onChange("clientName", e.target.value)} placeholder="Your full name"
               className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
-              style={{ borderColor: "#e0ddd6", background: "white", color: palette.charcoal }}
-              onFocus={e => (e.target.style.borderColor = palette.teal)} onBlur={e => (e.target.style.borderColor = "#e0ddd6")} />
+              style={{ borderColor: "#EDE9FE", background: "white", color: palette.charcoal }}
+              onFocus={e => (e.target.style.borderColor = palette.teal)} onBlur={e => (e.target.style.borderColor = "#EDE9FE")} />
           </div>
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: palette.charcoal }}>Phone (optional)</label>
             <input value={form.clientPhone} onChange={e => onChange("clientPhone", e.target.value)} placeholder="+1 (555) 000-0000"
               className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
-              style={{ borderColor: "#e0ddd6", background: "white", color: palette.charcoal }}
-              onFocus={e => (e.target.style.borderColor = palette.teal)} onBlur={e => (e.target.style.borderColor = "#e0ddd6")} />
+              style={{ borderColor: "#EDE9FE", background: "white", color: palette.charcoal }}
+              onFocus={e => (e.target.style.borderColor = palette.teal)} onBlur={e => (e.target.style.borderColor = "#EDE9FE")} />
           </div>
         </div>
         <div>
           <label className="block text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: palette.charcoal }}>Email Address *</label>
           <input type="email" value={form.clientEmail} onChange={e => onChange("clientEmail", e.target.value)} placeholder="you@example.com"
             className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
-            style={{ borderColor: "#e0ddd6", background: "white", color: palette.charcoal }}
-            onFocus={e => (e.target.style.borderColor = palette.teal)} onBlur={e => (e.target.style.borderColor = "#e0ddd6")} />
+            style={{ borderColor: "#EDE9FE", background: "white", color: palette.charcoal }}
+            onFocus={e => (e.target.style.borderColor = palette.teal)} onBlur={e => (e.target.style.borderColor = "#EDE9FE")} />
         </div>
         <div className="p-4 rounded-2xl text-sm" style={{ background: `${palette.sage}20`, color: palette.charcoal }}>
           <p className="font-semibold mb-1">🔒 Your privacy matters</p>
-          <p className="text-xs" style={{ color: "#6b7b6a" }}>Your information is kept strictly confidential and is never shared. This platform is HIPAA-aware and uses secure, encrypted communication.</p>
+          <p className="text-xs" style={{ color: "#6D6A85" }}>Your information is kept strictly confidential and is never shared. This platform is HIPAA-aware and uses secure, encrypted communication.</p>
         </div>
       </div>
     </div>
@@ -209,7 +209,7 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
         <div className="p-5" style={{ background: `${color}15` }}>
           <p className="text-xs font-bold uppercase tracking-wider mb-1" style={{ color }}>Session</p>
           <p className="text-xl font-bold" style={{ color: palette.charcoal }}>{service.name}</p>
-          <p className="text-sm" style={{ color: "#6b7b6a" }}>{service.duration_minutes} min · {service.price === 0 ? "Free" : `$${service.price}`}</p>
+          <p className="text-sm" style={{ color: "#6D6A85" }}>{service.duration_minutes} min · {service.price === 0 ? "Free" : `$${service.price}`}</p>
         </div>
         <div className="p-5 space-y-3" style={{ background: palette.cream }}>
           {[
@@ -219,7 +219,7 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
             { label: "Email", value: form.clientEmail },
             { label: "Phone", value: form.clientPhone || "Not provided" },
           ].map(({ label, value }) => (
-            <div key={label} className="flex justify-between items-start text-sm border-b pb-3 last:border-0 last:pb-0" style={{ borderColor: "#e8e4dd" }}>
+            <div key={label} className="flex justify-between items-start text-sm border-b pb-3 last:border-0 last:pb-0" style={{ borderColor: "#EDE9FE" }}>
               <span className="font-medium" style={{ color: palette.sage }}>{label}</span>
               <span className="font-semibold text-right ml-4" style={{ color: palette.charcoal }}>{value}</span>
             </div>
@@ -229,13 +229,13 @@ function ConfirmationStep({ service, selectedDate, selectedTime, form }) {
       {!isFree && (
         <div className="mt-4 p-4 rounded-2xl text-sm" style={{ background: `${palette.lavender}30`, color: palette.charcoal }}>
           <p className="font-semibold">💳 {service.deposit > 0 ? `Deposit required: $${service.deposit}` : `Payment required: $${service.price}`}</p>
-          <p className="text-xs mt-1" style={{ color: "#6b7b6a" }}>You'll enter your card details on the next step. Secure payment via Stripe.</p>
+          <p className="text-xs mt-1" style={{ color: "#6D6A85" }}>You'll enter your card details on the next step. Secure payment via Stripe.</p>
         </div>
       )}
       {isFree && (
         <div className="mt-4 p-4 rounded-2xl text-sm" style={{ background: `${palette.sage}20`, color: palette.charcoal }}>
           <p className="font-semibold">✅ No payment required</p>
-          <p className="text-xs mt-1" style={{ color: "#6b7b6a" }}>This session is free. Click confirm to book your appointment.</p>
+          <p className="text-xs mt-1" style={{ color: "#6D6A85" }}>This session is free. Click confirm to book your appointment.</p>
         </div>
       )}
     </div>
@@ -247,7 +247,7 @@ function PaymentStep({ service, paymentError }) {
   const isDeposit = service.deposit > 0;
   const cardElementOptions = {
     style: {
-      base: { fontSize: "15px", color: palette.charcoal, fontFamily: "system-ui, sans-serif", "::placeholder": { color: "#b0b8b0" }, iconColor: palette.teal },
+      base: { fontSize: "15px", color: palette.charcoal, fontFamily: "system-ui, sans-serif", "::placeholder": { color: "#C4B5FD" }, iconColor: palette.teal },
       invalid: { color: "#e05252", iconColor: "#e05252" },
     },
     hidePostalCode: false,
@@ -270,12 +270,12 @@ function PaymentStep({ service, paymentError }) {
       </div>
       <div className="space-y-4">
         <label className="block text-xs font-bold uppercase tracking-wider mb-1.5" style={{ color: palette.charcoal }}>Card Details</label>
-        <div className="px-4 py-4 rounded-xl border-2 transition-all" style={{ borderColor: paymentError ? "#e05252" : "#e0ddd6", background: "white" }}>
+        <div className="px-4 py-4 rounded-xl border-2 transition-all" style={{ borderColor: paymentError ? "#e05252" : "#EDE9FE", background: "white" }}>
           <CardElement options={cardElementOptions} />
         </div>
         {paymentError && <div className="p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200">⚠️ {paymentError}</div>}
       </div>
-      <div className="mt-5 flex items-center gap-2 text-xs" style={{ color: "#8a9490" }}>
+      <div className="mt-5 flex items-center gap-2 text-xs" style={{ color: "#6D6A85" }}>
         <Lock className="w-3.5 h-3.5 shrink-0" />
         <span>Your payment is encrypted and processed securely by Stripe. We never store your card details.</span>
       </div>
@@ -436,24 +436,24 @@ export default function BookingPage() {
             subject: "Your Appointment is Confirmed 🌿",
             html: `
               <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
-                <div style="background:#4a7c59;padding:32px;text-align:center;">
+                <div style="background:#7C3AED;padding:32px;text-align:center;">
                   <h1 style="color:#fff;margin:0;">🌿 Valerie's Psychological Wellness</h1>
                 </div>
                 <div style="padding:32px;">
                   <h2 style="color:#2d2d2d;">Booking Confirmed ✅</h2>
                   <p style="color:#555;">Hi <strong>${form.clientName}</strong>, your appointment has been booked!</p>
-                  <table style="width:100%;background:#f0f7f1;border-radius:6px;padding:20px;margin:20px 0;">
-                    <tr><td style="padding:8px 0;border-bottom:1px solid #d4e8d9;">
+                  <table style="width:100%;background:#EDE9FE;border-radius:6px;padding:20px;margin:20px 0;">
+                    <tr><td style="padding:8px 0;border-bottom:1px solid #C4B5FD;">
                       <span style="color:#777;font-size:13px;">SERVICE</span><br/>
                       <strong>${service.name}</strong>
                     </td></tr>
-                    <tr><td style="padding:8px 0;border-bottom:1px solid #d4e8d9;">
+                    <tr><td style="padding:8px 0;border-bottom:1px solid #C4B5FD;">
                       <span style="color:#777;font-size:13px;">DATE & TIME</span><br/>
                       <strong>${scheduledAt}</strong>
                     </td></tr>
                     <tr><td style="padding:8px 0;">
                       <span style="color:#777;font-size:13px;">AMOUNT PAID</span><br/>
-                      <strong style="color:#4a7c59;font-size:18px;">$${chargeAmount}</strong>
+                      <strong style="color:#7C3AED;font-size:18px;">$${chargeAmount}</strong>
                     </td></tr>
                   </table>
                   <p style="color:#555;font-size:14px;">You'll receive a reminder 24 hours before your appointment.</p>
@@ -486,7 +486,7 @@ export default function BookingPage() {
 
   if (submitted && service) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: `linear-gradient(135deg, ${palette.cream} 0%, #eef4ee 100%)` }}>
+      <div className="min-h-screen flex items-center justify-center px-4" style={{ background: `linear-gradient(135deg, ${palette.cream} 0%, #EDE9FE 100%)` }}>
         <div className="max-w-md w-full text-center">
           <div className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg" style={{ background: `linear-gradient(135deg, ${palette.teal}, ${palette.sage})` }}>
             <Check className="w-10 h-10 text-white" />
@@ -508,7 +508,7 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="min-h-screen py-12 px-4" style={{ background: `linear-gradient(180deg, ${palette.cream} 0%, white 100%)` }}>
+    <div className="min-h-screen py-12 px-4" style={{ background: `linear-gradient(180deg, ${palette.cream} 0%, #FAFAF9 100%)` }}>
       <div className="max-w-3xl mx-auto">
         <Link to="/" className="inline-flex items-center gap-1.5 text-sm mb-8 hover:opacity-70 transition-opacity" style={{ color: palette.sage }}>
           <ArrowLeft className="w-4 h-4" /> Back to home
@@ -518,16 +518,16 @@ export default function BookingPage() {
             <div key={s.n} className="flex items-center gap-2">
               <div className="flex flex-col items-center">
                 <div className="w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all"
-                  style={{ background: step > s.n ? palette.sage : step === s.n ? palette.teal : "#e8e4dd", color: step >= s.n ? "white" : "#aaa" }}>
+                  style={{ background: step > s.n ? palette.sage : step === s.n ? palette.teal : "#EDE9FE", color: step >= s.n ? "white" : "#aaa" }}>
                   {step > s.n ? <Check className="w-4 h-4" /> : s.n}
                 </div>
                 <span className="text-xs mt-1 hidden sm:block" style={{ color: step === s.n ? palette.teal : palette.sage }}>{s.label}</span>
               </div>
-              {i < steps.length - 1 && <div className="w-12 h-0.5 -mt-5 transition-all" style={{ background: step > s.n ? palette.sage : "#e8e4dd" }} />}
+              {i < steps.length - 1 && <div className="w-12 h-0.5 -mt-5 transition-all" style={{ background: step > s.n ? palette.sage : "#EDE9FE" }} />}
             </div>
           ))}
         </div>
-        <div className="rounded-3xl shadow-sm border p-8" style={{ background: "white", borderColor: "#e8e4dd" }}>
+        <div className="rounded-3xl shadow-sm border p-8" style={{ background: "white", borderColor: "#EDE9FE" }}>
           {step === 1 && loadingServices && (
             <div className="text-center py-16" style={{ color: palette.sage }}>
               <div className="w-8 h-8 border-2 border-current border-t-transparent rounded-full animate-spin mx-auto mb-3" />
@@ -541,10 +541,10 @@ export default function BookingPage() {
           {step === 4 && service && <ConfirmationStep service={service} selectedDate={selectedDate} selectedTime={selectedTime} form={form} />}
           {step === 5 && service && <PaymentStep service={service} paymentError={paymentError} />}
           {submitError && <div className="mt-4 p-3 rounded-xl text-sm text-red-600 bg-red-50 border border-red-200">⚠️ Booking failed: {submitError}</div>}
-          <div className="flex justify-between mt-8 pt-6 border-t" style={{ borderColor: "#e8e4dd" }}>
+          <div className="flex justify-between mt-8 pt-6 border-t" style={{ borderColor: "#EDE9FE" }}>
             <button onClick={() => setStep(s => s - 1)} disabled={step === 1}
               className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold border-2 transition-all disabled:opacity-30"
-              style={{ borderColor: "#e0ddd6", color: palette.charcoal }}>
+              style={{ borderColor: "#EDE9FE", color: palette.charcoal }}>
               <ChevronLeft className="w-4 h-4" /> Back
             </button>
             {step < totalSteps ? (

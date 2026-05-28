@@ -12,7 +12,7 @@ const SERVICES = [
     duration: 15,
     price: 0,
     deposit: 0,
-    color: "#16a34a",
+    color: "#7C3AED",
     intakeQuestions: [],
   },
   {
@@ -23,7 +23,7 @@ const SERVICES = [
     duration: 60,
     price: 120,
     deposit: 30,
-    color: "#3a6d77",
+    color: "#7C3AED",
     intakeQuestions: [
       "What brings you to therapy at this time?",
       "Have you participated in therapy before?",
@@ -37,7 +37,7 @@ const SERVICES = [
     duration: 90,
     price: 180,
     deposit: 50,
-    color: "#c4b5e2",
+    color: "#C4B5FD",
     intakeQuestions: [
       "What are your primary goals for couples therapy?",
       "How long have you been together?",
@@ -51,7 +51,7 @@ const SERVICES = [
     duration: 90,
     price: 45,
     deposit: 0,
-    color: "#a8b5a2",
+    color: "#6D6A85",
     intakeQuestions: ["What are you hoping to gain from the group experience?"],
   },
 ];

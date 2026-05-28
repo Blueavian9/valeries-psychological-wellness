@@ -85,7 +85,7 @@ export default function UpdatePasswordPage() {
           <p className="text-red-500 text-sm mb-6">{error}</p>
           <button
             onClick={() => navigate("/reset-password")}
-            className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition"
+            className="px-6 py-3 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-xl text-sm transition"
           >
             Request new link
           </button>
@@ -133,7 +133,7 @@ export default function UpdatePasswordPage() {
               }}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
             />
           </div>
           <div>
@@ -149,13 +149,13 @@ export default function UpdatePasswordPage() {
               }}
               required
               placeholder="••••••••"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-6 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm"
+            className="w-full py-3 px-6 bg-[#7C3AED] hover:bg-[#5B21B6] disabled:bg-green-300 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm"
           >
             {loading ? (
               <>

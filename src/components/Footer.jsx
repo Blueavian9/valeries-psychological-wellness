@@ -1,12 +1,12 @@
 export default function Footer() {
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-[#1E1B4B] text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div>
             <h3 className="text-xl font-bold mb-4">Holistic Therapy</h3>
-            <p className="text-gray-400">
+            <p className="text-[#C4B5FD]">
               Empowering your journey to holistic wellness through mind, body,
               and spirit integration.
             </p>
@@ -15,7 +15,7 @@ export default function Footer() {
           {/* Quick Links */}
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-2 text-[#C4B5FD]">
               <li>
                 <a href="#features" className="hover:text-white">
                   Features
@@ -42,7 +42,7 @@ export default function Footer() {
           {/* Resources */}
           <div>
             <h4 className="font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-2 text-[#C4B5FD]">
               <li>
                 <a href="#" className="hover:text-white">
                   Blog
@@ -69,14 +69,14 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h4 className="font-semibold mb-4">Contact</h4>
-            <ul className="space-y-2 text-gray-400">
+            <ul className="space-y-2 text-[#C4B5FD]">
               <li>Email: anewhopeFamilycnt@gmail.com</li>
               <li>Phone: 323-314-1592</li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+        <div className="border-t border-[#3B0764]/40 mt-8 pt-8 text-center text-[#6D6A85]">
           <p>
             &copy; 2026 Valerie Munoz Holistic Therapy Services. All rights
             reserved.

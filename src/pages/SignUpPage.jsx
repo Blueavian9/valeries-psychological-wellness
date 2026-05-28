@@ -61,7 +61,7 @@ export default function SignUpPage() {
           </p>
           <Link
             to="/login"
-            className="inline-block px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl text-sm transition"
+            className="inline-block px-6 py-3 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-xl text-sm transition"
           >
             Back to login
           </Link>
@@ -120,7 +120,7 @@ export default function SignUpPage() {
                 onChange={handleChange}
                 required
                 placeholder="Jane Smith"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
               />
             </div>
 
@@ -133,7 +133,7 @@ export default function SignUpPage() {
                 onChange={handleChange}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
               />
             </div>
 
@@ -146,7 +146,7 @@ export default function SignUpPage() {
                 onChange={handleChange}
                 required
                 placeholder="Min. 8 characters"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
               />
             </div>
 
@@ -159,14 +159,14 @@ export default function SignUpPage() {
                 onChange={handleChange}
                 required
                 placeholder="••••••••"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent text-sm transition"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-6 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm"
+              className="w-full py-3 px-6 bg-[#7C3AED] hover:bg-[#5B21B6] disabled:bg-green-300 text-white font-semibold rounded-xl transition flex items-center justify-center gap-2 text-sm"
             >
               {loading ? (
                 <>
@@ -180,15 +180,15 @@ export default function SignUpPage() {
 
             <p className="text-xs text-gray-400 text-center">
               By signing up you agree to our{' '}
-              <a href="#" className="text-green-600 hover:underline">Terms of Service</a>{' '}
+              <a href="#" className="text-[#7C3AED] hover:underline">Terms of Service</a>{' '}
               and{' '}
-              <a href="#" className="text-green-600 hover:underline">Privacy Policy</a>.
+              <a href="#" className="text-[#7C3AED] hover:underline">Privacy Policy</a>.
             </p>
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-500">
             Already have an account?{' '}
-            <Link to="/login" className="text-green-600 hover:text-green-700 font-medium">
+            <Link to="/login" className="text-[#7C3AED] hover:text-[#5B21B6] font-medium">
               Sign in
             </Link>
           </p>

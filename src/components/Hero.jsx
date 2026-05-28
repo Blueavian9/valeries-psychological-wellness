@@ -14,7 +14,7 @@ export default function Hero() {
         <div className="text-center animate-fade-in">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm mb-8">
-            <Sparkles className="text-green-600" size={18} />
+            <Sparkles className="text-[#7C3AED]" size={18} />
             <span className="text-sm font-medium text-gray-700">
               Mind • Body • Spirit Integration
             </span>
@@ -44,7 +44,7 @@ export default function Hero() {
                 className="group-hover:translate-x-1 transition-transform"
               />
             </button>
-            <button className="bg-white/80 backdrop-blur-sm text-green-600 px-8 py-4 rounded-xl text-lg font-semibold border-2 border-green-600 hover:bg-green-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button className="bg-white/80 backdrop-blur-sm text-[#7C3AED] px-8 py-4 rounded-xl text-lg font-semibold border-2 border-green-600 hover:bg-[#EDE9FE] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               Compare Platforms
             </button>
           </div>
@@ -52,15 +52,15 @@ export default function Hero() {
           {/* Trust indicators */}
           <div className="mt-16 flex flex-wrap justify-center gap-8 text-sm text-gray-600">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+              <div className="w-2 h-2 bg-[#7C3AED] rounded-full"></div>
               <span>HIPAA Compliant</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+              <div className="w-2 h-2 bg-[#7C3AED] rounded-full"></div>
               <span>Licensed Therapists</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+              <div className="w-2 h-2 bg-[#7C3AED] rounded-full"></div>
               <span>24/7 Support</span>
             </div>
           </div>

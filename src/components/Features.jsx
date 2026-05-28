@@ -52,7 +52,7 @@ export default function Features() {
             return (
               <div key={index} className="bg-white p-8 rounded-xl shadow-sm hover:shadow-md transition">
                 <div className="bg-green-100 w-12 h-12 rounded-lg flex items-center justify-center mb-4">
-                  <Icon className="text-green-600" size={24} />
+                  <Icon className="text-[#7C3AED]" size={24} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 mb-3">
                   {feature.title}

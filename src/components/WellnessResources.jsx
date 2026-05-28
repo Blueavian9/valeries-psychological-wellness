@@ -19,13 +19,13 @@ import {
 
 // ─── Design tokens (matching site palette) ───────────────────────────────────
 const P = {
-  cream: "#fdfcf7",
-  sage: "#a8b5a2",
-  teal: "#3a6d77",
-  lavender: "#c4b5e2",
-  taupe: "#b8a88f",
-  charcoal: "#333645",
-  green: "#16a34a",
+  cream: "#FAFAF9",
+  sage: "#6D6A85",
+  teal: "#7C3AED",
+  lavender: "#C4B5FD",
+  taupe: "#A21CAF",
+  charcoal: "#1E1B4B",
+  green: "#7C3AED",
 };
 
 // ─── Category definitions ─────────────────────────────────────────────────────
@@ -35,15 +35,15 @@ const CATEGORIES = [
     id: "meditation",
     label: "Meditation",
     emoji: "🧘",
-    color: "#3a6d77",
+    color: "#7C3AED",
     icon: Wind,
   },
-  { id: "yoga", label: "Yoga", emoji: "🌸", color: "#a8b5a2", icon: Flower2 },
+  { id: "yoga", label: "Yoga", emoji: "🌸", color: "#6D6A85", icon: Flower2 },
   {
     id: "nutrition",
     label: "Nutrition",
     emoji: "🥗",
-    color: "#16a34a",
+    color: "#7C3AED",
     icon: Apple,
   },
   { id: "sleep", label: "Sleep", emoji: "🌙", color: "#7c5cbf", icon: Moon },
@@ -51,7 +51,7 @@ const CATEGORIES = [
     id: "stress",
     label: "Stress Relief",
     emoji: "⚡",
-    color: "#b8a88f",
+    color: "#A21CAF",
     icon: Zap,
   },
 ];
@@ -68,7 +68,7 @@ const RESOURCES = [
       "A quick box-breathing exercise to calm your nervous system anywhere, anytime. Ideal before stressful meetings or anxious moments.",
     duration: "5 min",
     level: "Beginner",
-    color: "#3a6d77",
+    color: "#7C3AED",
     tags: ["Anxiety", "Quick Relief", "Nervous System"],
     preview: [
       "Inhale for 4 counts — feel your belly expand",
@@ -89,7 +89,7 @@ const RESOURCES = [
       "A 20-minute guided body scan to release stored tension and reconnect with physical sensations. Deeply restorative for trauma and stress.",
     duration: "20 min",
     level: "All Levels",
-    color: "#3a6d77",
+    color: "#7C3AED",
     tags: ["Somatic", "Trauma", "Deep Relaxation"],
     preview: [
       "Lie down comfortably — close your eyes",
@@ -110,7 +110,7 @@ const RESOURCES = [
       "Cultivate compassion for yourself and others with this classic Metta meditation practice. Shown to reduce depression and increase social connection.",
     duration: "15 min",
     level: "Intermediate",
-    color: "#3a6d77",
+    color: "#7C3AED",
     tags: ["Self-Compassion", "Depression", "Connection"],
     preview: [
       '"May I be happy. May I be healthy. May I be at peace."',
@@ -132,7 +132,7 @@ const RESOURCES = [
       "A 15-minute Sun Salutation sequence to awaken your body and set a positive intention for the day. No equipment needed.",
     duration: "15 min",
     level: "Beginner",
-    color: "#a8b5a2",
+    color: "#6D6A85",
     tags: ["Morning Routine", "Energy", "Sun Salutation"],
     preview: [
       "Mountain Pose → Forward Fold → Halfway Lift",
@@ -153,7 +153,7 @@ const RESOURCES = [
       "Gentle yin yoga poses held for 3–5 minutes each to decompress the spine, release hip tension, and prepare the body for deep sleep.",
     duration: "30 min",
     level: "All Levels",
-    color: "#a8b5a2",
+    color: "#6D6A85",
     tags: ["Sleep", "Yin Yoga", "Evening Routine"],
     preview: [
       "Supported Child's Pose — 3 min",
@@ -174,7 +174,7 @@ const RESOURCES = [
       "Five key poses specifically chosen for their evidence-based stress-reduction effects on the vagus nerve and HPA axis.",
     duration: "10 min",
     level: "Beginner",
-    color: "#a8b5a2",
+    color: "#6D6A85",
     tags: ["Stress", "Vagus Nerve", "Quick Practice"],
     preview: [
       "Standing Forward Fold — activates parasympathetic response",
@@ -197,7 +197,7 @@ const RESOURCES = [
       "Evidence-based nutrition guide covering the gut-brain axis, anti-inflammatory foods, and how specific nutrients directly affect serotonin and dopamine.",
     duration: "10 min read",
     level: "All Levels",
-    color: "#16a34a",
+    color: "#7C3AED",
     tags: ["Depression", "Gut-Brain", "Anti-inflammatory"],
     preview: [
       "Omega-3s (salmon, walnuts, flaxseed) → reduce neuroinflammation",
@@ -218,7 +218,7 @@ const RESOURCES = [
       "A printable 7-day meal planning template with a focus on brain-supportive foods, prep tips, and a grocery checklist.",
     duration: "Printable",
     level: "Practical Tool",
-    color: "#16a34a",
+    color: "#7C3AED",
     tags: ["Meal Prep", "Weekly Routine", "Practical"],
     preview: [
       "Mon: Overnight oats + walnuts + berries",
@@ -285,7 +285,7 @@ const RESOURCES = [
       "A structured daily journal template for tracking mood patterns, triggers, and energy levels. Includes weekly reflection prompts.",
     duration: "Daily Tool",
     level: "Practical Tool",
-    color: "#b8a88f",
+    color: "#A21CAF",
     tags: ["Self-Awareness", "Journaling", "Daily Practice"],
     preview: [
       "Morning: Rate mood 1–10 + one word to describe it",
@@ -306,7 +306,7 @@ const RESOURCES = [
       "Research-backed gratitude journaling system shown to increase wellbeing by 25% in 6 weeks. Includes prompts, pitfalls, and how to make it stick.",
     duration: "5 min/day",
     level: "Beginner",
-    color: "#b8a88f",
+    color: "#A21CAF",
     tags: ["Positive Psychology", "Resilience", "Daily Habit"],
     preview: [
       "Write 3 specific things you're grateful for (not generic)",
@@ -327,7 +327,7 @@ const RESOURCES = [
       "A psychoeducation guide on the neuroscience of stress resilience, practical reframing techniques, and how to build your personal recovery toolkit.",
     duration: "15 min read",
     level: "Intermediate",
-    color: "#b8a88f",
+    color: "#A21CAF",
     tags: ["Resilience", "CBT Tools", "Psychoeducation"],
     preview: [
       "Understand your window of tolerance (Siegel, 1999)",
@@ -365,7 +365,7 @@ function ResourceCard({ resource, onPreview }) {
       className="group rounded-3xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       style={{
         background: "white",
-        border: "1.5px solid #f0ede8",
+        border: "1.5px solid #EDE9FE",
         boxShadow: "0 2px 12px 0 rgba(51,54,69,0.04)",
       }}
     >
@@ -388,7 +388,7 @@ function ResourceCard({ resource, onPreview }) {
           </span>
           <span
             className="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full"
-            style={{ background: "#f5f3ee", color: P.charcoal }}
+            style={{ background: "#EDE9FE", color: P.charcoal }}
           >
             <TypeIcon className="w-3 h-3" />
             {TYPE_LABEL[resource.type]}
@@ -406,7 +406,7 @@ function ResourceCard({ resource, onPreview }) {
         {/* Description */}
         <p
           className="text-sm leading-relaxed flex-1 mb-4"
-          style={{ color: "#6b7b6a" }}
+          style={{ color: "#6D6A85" }}
         >
           {resource.description}
         </p>
@@ -422,7 +422,7 @@ function ResourceCard({ resource, onPreview }) {
           </span>
           <span
             className="px-2 py-0.5 rounded-full text-xs font-medium"
-            style={{ background: "#f5f3ee", color: P.charcoal }}
+            style={{ background: "#EDE9FE", color: P.charcoal }}
           >
             {resource.level}
           </span>
@@ -500,7 +500,7 @@ function PreviewModal({ resource, onClose }) {
           className="px-7 py-6"
           style={{
             background: `linear-gradient(135deg, ${resource.color}20, ${resource.color}08)`,
-            borderBottom: "1.5px solid #f0ede8",
+            borderBottom: "1.5px solid #EDE9FE",
           }}
         >
           <div className="flex items-start justify-between gap-4">
@@ -544,7 +544,7 @@ function PreviewModal({ resource, onClose }) {
         <div className="px-7 py-6">
           <p
             className="text-sm leading-relaxed mb-5"
-            style={{ color: "#6b7b6a" }}
+            style={{ color: "#6D6A85" }}
           >
             {resource.description}
           </p>
@@ -628,7 +628,7 @@ function PreviewModal({ resource, onClose }) {
             )}
           </div>
 
-          <p className="text-center text-xs mt-4" style={{ color: "#c4bdb3" }}>
+          <p className="text-center text-xs mt-4" style={{ color: "#C4B5FD" }}>
             Free for all registered clients · No login required for basic access
           </p>
         </div>
@@ -654,7 +654,7 @@ export default function WellnessResources() {
       <section
         className="py-20"
         style={{
-          background: "linear-gradient(180deg, #f0f7f0 0%, #fdfcf7 100%)",
+          background: "linear-gradient(180deg, #EDE9FE 0%, #FAFAF9 100%)",
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -662,7 +662,7 @@ export default function WellnessResources() {
           <div className="text-center mb-14">
             <span
               className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
-              style={{ background: "#f0fdf4", color: P.green }}
+              style={{ background: "#EDE9FE", color: P.green }}
             >
               <Sparkles className="w-3.5 h-3.5" />
               Free Wellness Library
@@ -696,7 +696,7 @@ export default function WellnessResources() {
                       ? `linear-gradient(135deg, ${cat.color}, ${cat.color}cc)`
                       : "white",
                     color: isActive ? "white" : P.charcoal,
-                    border: `1.5px solid ${isActive ? "transparent" : "#e8e4dd"}`,
+                    border: `1.5px solid ${isActive ? "transparent" : "#EDE9FE"}`,
                     boxShadow: isActive
                       ? `0 4px 14px ${cat.color}40`
                       : "0 1px 4px rgba(0,0,0,0.04)",

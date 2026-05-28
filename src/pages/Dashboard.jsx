@@ -35,14 +35,14 @@ import {
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const P = {
-  cream: "#fdfcf7",
-  sage: "#a8b5a2",
-  lavender: "#c4b5e2",
-  teal: "#3a6d77",
-  taupe: "#b8a88f",
-  charcoal: "#333645",
-  coral: "#e8b4bc",
-  bg: "#f5f3ee",
+  cream: "#FAFAF9",
+  sage: "#6D6A85",
+  lavender: "#C4B5FD",
+  teal: "#7C3AED",
+  taupe: "#A21CAF",
+  charcoal: "#1E1B4B",
+  coral: "#D946EF",
+  bg: "#EDE9FE",
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -65,7 +65,7 @@ const STATUS_STYLES = {
   completed: { bg: `${P.lavender}30`, color: "#7c3aed", label: "Completed" },
 };
 const PAYMENT_STYLES = {
-  paid: { bg: `${P.sage}25`, color: "#15803d", label: "Paid" },
+  paid: { bg: `${P.sage}25`, color: "#5B21B6", label: "Paid" },
   deposit: { bg: `${P.lavender}30`, color: "#7c3aed", label: "Deposit" },
   pending: { bg: "#fef9c3", color: "#b45309", label: "Pending" },
   free: { bg: "#f0f9ff", color: "#0369a1", label: "Free" },
@@ -107,12 +107,12 @@ function Sidebar({ open, onClose }) {
         fixed lg:static inset-y-0 left-0 z-40 w-60 flex flex-col shadow-xl lg:shadow-none
         transition-transform duration-300 ${open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
       `}
-        style={{ background: P.charcoal }}
+        style={{ background: "#5B21B6" }}
       >
         {/* Logo */}
         <div
           className="flex items-center justify-between px-5 py-5 border-b"
-          style={{ borderColor: "#ffffff18" }}
+          style={{ borderColor: "#ffffff20" }}
         >
           <div className="flex items-center gap-2">
             <div
@@ -166,7 +166,7 @@ function Sidebar({ open, onClose }) {
         {/* Footer */}
         <div
           className="px-5 py-4 border-t"
-          style={{ borderColor: "#ffffff18" }}
+          style={{ borderColor: "#ffffff20" }}
         >
           <div className="flex items-center gap-2.5">
             <div
@@ -306,7 +306,7 @@ function Overview() {
         <div className="rounded-2xl shadow-sm" style={{ background: "white" }}>
           <div
             className="flex items-center justify-between p-5 border-b"
-            style={{ borderColor: "#f0ede8" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             <h2 className="font-bold text-sm" style={{ color: P.charcoal }}>
               Today's Sessions
@@ -318,7 +318,7 @@ function Overview() {
               {todayAppts.length} sessions
             </span>
           </div>
-          <div className="divide-y" style={{ borderColor: "#f0ede8" }}>
+          <div className="divide-y" style={{ borderColor: "#EDE9FE" }}>
             {todayAppts.length === 0 ? (
               <div
                 className="p-6 text-center text-sm"
@@ -369,7 +369,7 @@ function Overview() {
         <div className="rounded-2xl shadow-sm" style={{ background: "white" }}>
           <div
             className="flex items-center justify-between p-5 border-b"
-            style={{ borderColor: "#f0ede8" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             <h2 className="font-bold text-sm" style={{ color: P.charcoal }}>
               Upcoming Appointments
@@ -382,7 +382,7 @@ function Overview() {
               View all →
             </Link>
           </div>
-          <div className="divide-y" style={{ borderColor: "#f0ede8" }}>
+          <div className="divide-y" style={{ borderColor: "#EDE9FE" }}>
             {upcoming.length === 0 ? (
               <div
                 className="p-6 text-center text-sm"
@@ -503,7 +503,7 @@ function CalendarPanel() {
           {/* View toggle */}
           <div
             className="flex rounded-xl border overflow-hidden"
-            style={{ borderColor: "#e0ddd6" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             {["week", "month"].map((v) => (
               <button
@@ -528,14 +528,14 @@ function CalendarPanel() {
               setRefDate(d);
             }}
             className="p-2 rounded-xl border transition-all hover:bg-gray-50"
-            style={{ borderColor: "#e0ddd6" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             <ChevronLeft className="w-4 h-4" style={{ color: P.charcoal }} />
           </button>
           <button
             onClick={() => setRefDate(new Date())}
             className="px-3 py-1.5 rounded-xl border text-xs font-semibold transition-all hover:bg-gray-50"
-            style={{ borderColor: "#e0ddd6", color: P.charcoal }}
+            style={{ borderColor: "#EDE9FE", color: P.charcoal }}
           >
             Today
           </button>
@@ -547,7 +547,7 @@ function CalendarPanel() {
               setRefDate(d);
             }}
             className="p-2 rounded-xl border transition-all hover:bg-gray-50"
-            style={{ borderColor: "#e0ddd6" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             <ChevronRight className="w-4 h-4" style={{ color: P.charcoal }} />
           </button>
@@ -561,7 +561,7 @@ function CalendarPanel() {
         >
           <div
             className="grid grid-cols-7 border-b"
-            style={{ borderColor: "#f0ede8" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             {weekDays.map((day, i) => {
               const isToday = day.toDateString() === new Date().toDateString();
@@ -569,7 +569,7 @@ function CalendarPanel() {
                 <div
                   key={i}
                   className="p-3 text-center border-r last:border-0"
-                  style={{ borderColor: "#f0ede8" }}
+                  style={{ borderColor: "#EDE9FE" }}
                 >
                   <p
                     className="text-xs font-semibold"
@@ -599,7 +599,7 @@ function CalendarPanel() {
               <div
                 key={i}
                 className="p-2 border-r last:border-0 min-h-32"
-                style={{ borderColor: "#f0ede8" }}
+                style={{ borderColor: "#EDE9FE" }}
               >
                 {apptsByDay(day).map((a) => (
                   <button
@@ -627,13 +627,13 @@ function CalendarPanel() {
         >
           <div
             className="p-4 border-b text-center font-bold"
-            style={{ borderColor: "#f0ede8", color: P.charcoal }}
+            style={{ borderColor: "#EDE9FE", color: P.charcoal }}
           >
             {MONTHS[refDate.getMonth()]} {refDate.getFullYear()}
           </div>
           <div
             className="grid grid-cols-7 border-b"
-            style={{ borderColor: "#f0ede8" }}
+            style={{ borderColor: "#EDE9FE" }}
           >
             {DAYS_SHORT.map((d) => (
               <div
@@ -650,7 +650,7 @@ function CalendarPanel() {
               <div
                 key={`e${i}`}
                 className="min-h-20 border-b border-r"
-                style={{ borderColor: "#f0ede8" }}
+                style={{ borderColor: "#EDE9FE" }}
               />
             ))}
             {Array.from({ length: daysInMonth }).map((_, i) => {
@@ -666,7 +666,7 @@ function CalendarPanel() {
                 <div
                   key={day}
                   className="min-h-20 p-1.5 border-b border-r"
-                  style={{ borderColor: "#f0ede8" }}
+                  style={{ borderColor: "#EDE9FE" }}
                 >
                   <div
                     className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1`}
@@ -782,7 +782,7 @@ function CalendarPanel() {
               {selectedAppt.notes && (
                 <div
                   className="pt-2 border-t"
-                  style={{ borderColor: "#f0ede8" }}
+                  style={{ borderColor: "#EDE9FE" }}
                 >
                   <p
                     className="text-xs font-semibold mb-1"
@@ -843,7 +843,7 @@ function ClientsPanel() {
         className="lg:col-span-2 rounded-2xl shadow-sm overflow-hidden"
         style={{ background: "white" }}
       >
-        <div className="p-4 border-b" style={{ borderColor: "#f0ede8" }}>
+        <div className="p-4 border-b" style={{ borderColor: "#EDE9FE" }}>
           <h2 className="font-bold" style={{ color: P.charcoal }}>
             All Clients
           </h2>
@@ -853,7 +853,7 @@ function ClientsPanel() {
         </div>
         <div
           className="divide-y overflow-y-auto"
-          style={{ borderColor: "#f0ede8", maxHeight: "70vh" }}
+          style={{ borderColor: "#EDE9FE", maxHeight: "70vh" }}
         >
           {clients.map((c) => {
             const lastAppt = clientAppts(c.email)[0];
@@ -990,12 +990,12 @@ function ClientsPanel() {
                 placeholder="Confidential notes about this client's care, progress, preferences..."
                 className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all resize-none"
                 style={{
-                  borderColor: "#e0ddd6",
+                  borderColor: "#EDE9FE",
                   background: P.cream,
                   color: P.charcoal,
                 }}
                 onFocus={(e) => (e.target.style.borderColor = P.teal)}
-                onBlur={(e) => (e.target.style.borderColor = "#e0ddd6")}
+                onBlur={(e) => (e.target.style.borderColor = "#EDE9FE")}
               />
               <button
                 onClick={handleSaveNote}
@@ -1011,12 +1011,12 @@ function ClientsPanel() {
               className="rounded-2xl shadow-sm overflow-hidden"
               style={{ background: "white" }}
             >
-              <div className="p-4 border-b" style={{ borderColor: "#f0ede8" }}>
+              <div className="p-4 border-b" style={{ borderColor: "#EDE9FE" }}>
                 <h3 className="font-bold text-sm" style={{ color: P.charcoal }}>
                   Session History
                 </h3>
               </div>
-              <div className="divide-y" style={{ borderColor: "#f0ede8" }}>
+              <div className="divide-y" style={{ borderColor: "#EDE9FE" }}>
                 {clientAppts(selected.email).length === 0 ? (
                   <div
                     className="p-4 text-center text-sm"
@@ -1185,7 +1185,7 @@ function ServicesPanel() {
           >
             <div
               className="flex items-center justify-between p-6 border-b"
-              style={{ borderColor: "#f0ede8" }}
+              style={{ borderColor: "#EDE9FE" }}
             >
               <h2 className="font-bold text-lg" style={{ color: P.charcoal }}>
                 {editing.id ? "Edit Service" : "New Service"}
@@ -1244,7 +1244,7 @@ function ServicesPanel() {
                     }
                     placeholder={placeholder}
                     className="w-full px-4 py-2.5 rounded-xl border-2 text-sm outline-none"
-                    style={{ borderColor: "#e0ddd6", color: P.charcoal }}
+                    style={{ borderColor: "#EDE9FE", color: P.charcoal }}
                   />
                 </div>
               ))}
@@ -1263,7 +1263,7 @@ function ServicesPanel() {
                       setEditing((prev) => ({ ...prev, color: e.target.value }))
                     }
                     className="w-10 h-10 rounded-xl cursor-pointer border-2"
-                    style={{ borderColor: "#e0ddd6" }}
+                    style={{ borderColor: "#EDE9FE" }}
                   />
                   <span className="text-sm" style={{ color: P.sage }}>
                     {editing.color}
@@ -1275,7 +1275,7 @@ function ServicesPanel() {
               <button
                 onClick={() => setEditing(null)}
                 className="px-5 py-2.5 rounded-xl border-2 text-sm font-semibold transition-all"
-                style={{ borderColor: "#e0ddd6", color: P.charcoal }}
+                style={{ borderColor: "#EDE9FE", color: P.charcoal }}
               >
                 Cancel
               </button>
@@ -1306,7 +1306,7 @@ export default function Dashboard() {
         {/* Top bar */}
         <header
           className="flex items-center justify-between px-5 py-3 border-b shadow-sm shrink-0"
-          style={{ background: "white", borderColor: "#e8e4dd" }}
+          style={{ background: "white", borderColor: "#EDE9FE" }}
         >
           <button
             onClick={() => setSidebarOpen(true)}

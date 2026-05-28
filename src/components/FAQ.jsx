@@ -6,7 +6,7 @@ const categories = [
     id: "about",
     emoji: "🌿",
     title: "About Holistic Therapy",
-    color: "#3a6d77",
+    color: "#7C3AED",
     items: [
       {
         q: "What is holistic therapy?",
@@ -26,7 +26,7 @@ const categories = [
     id: "platform",
     emoji: "💻",
     title: "Platform Usage",
-    color: "#a8b5a2",
+    color: "#6D6A85",
     items: [
       {
         q: "How does online holistic therapy work?",
@@ -46,7 +46,7 @@ const categories = [
     id: "pricing",
     emoji: "💳",
     title: "Pricing & Insurance",
-    color: "#b8a88f",
+    color: "#A21CAF",
     items: [
       {
         q: "How much does holistic therapy cost?",
@@ -66,7 +66,7 @@ const categories = [
     id: "started",
     emoji: "🚀",
     title: "Getting Started",
-    color: "#c4b5e2",
+    color: "#C4B5FD",
     items: [
       {
         q: "How do I choose the right platform?",
@@ -90,7 +90,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
       className="rounded-2xl overflow-hidden transition-all duration-200"
       style={{
         border: "1.5px solid",
-        borderColor: isOpen ? "#d1fae5" : "#f0ede8",
+        borderColor: isOpen ? "#d1fae5" : "#EDE9FE",
         background: isOpen ? "#fafffe" : "white",
       }}
     >
@@ -102,20 +102,20 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
       >
         <span
           className="font-semibold text-sm leading-relaxed"
-          style={{ color: "#333645" }}
+          style={{ color: "#1E1B4B" }}
         >
           {question}
         </span>
         <div
           className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300"
           style={{
-            background: isOpen ? "#16a34a" : "#f0ede8",
+            background: isOpen ? "#7C3AED" : "#EDE9FE",
             transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
           }}
         >
           <ChevronDown
             className="w-3.5 h-3.5"
-            style={{ color: isOpen ? "white" : "#a8b5a2" }}
+            style={{ color: isOpen ? "white" : "#6D6A85" }}
           />
         </div>
       </button>
@@ -127,7 +127,7 @@ function FAQItem({ question, answer, isOpen, onToggle }) {
       >
         <div
           className="px-5 pb-5 pt-1 text-sm leading-relaxed"
-          style={{ color: "#6b7b6a", borderTop: "1px solid #f0ede8" }}
+          style={{ color: "#6D6A85", borderTop: "1px solid #EDE9FE" }}
         >
           {answer}
         </div>
@@ -191,20 +191,20 @@ function FAQ() {
         <div className="text-center mb-14">
           <span
             className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
-            style={{ background: "#f0fdf4", color: "#16a34a" }}
+            style={{ background: "#EDE9FE", color: "#7C3AED" }}
           >
             <HelpCircle className="w-3.5 h-3.5" />
             Have Questions?
           </span>
           <h2
             className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight"
-            style={{ color: "#333645" }}
+            style={{ color: "#1E1B4B" }}
           >
             Frequently Asked Questions
           </h2>
           <p
             className="max-w-xl mx-auto text-base"
-            style={{ color: "#a8b5a2" }}
+            style={{ color: "#6D6A85" }}
           >
             Everything you need to know before starting your holistic wellness
             journey. {totalQuestions} answers below.
@@ -227,20 +227,20 @@ function FAQ() {
         <div
           className="mt-14 rounded-3xl p-7 text-center"
           style={{
-            background: "linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%)",
+            background: "linear-gradient(135deg, #EDE9FE 0%, #ecfdf5 100%)",
             border: "1.5px solid #d1fae5",
           }}
         >
-          <p className="font-bold text-base mb-2" style={{ color: "#333645" }}>
+          <p className="font-bold text-base mb-2" style={{ color: "#1E1B4B" }}>
             Still have questions?
           </p>
-          <p className="text-sm mb-5" style={{ color: "#a8b5a2" }}>
+          <p className="text-sm mb-5" style={{ color: "#6D6A85" }}>
             Our team responds within 2 hours during business hours.
           </p>
           <a
             href="#contact"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm text-white shadow-sm hover:shadow-md hover:opacity-90 transition-all"
-            style={{ background: "linear-gradient(135deg, #16a34a, #3a6d77)" }}
+            style={{ background: "linear-gradient(135deg, #7C3AED, #7C3AED)" }}
           >
             Ask Us Anything →
           </a>

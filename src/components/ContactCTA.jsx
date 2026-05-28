@@ -125,7 +125,7 @@ export default function ContactCTA() {
     }
   };
 
-  const borderColor = (hasErr) => (hasErr ? "#fca5a5" : "#e0ddd6");
+  const borderColor = (hasErr) => (hasErr ? "#fca5a5" : "#EDE9FE");
   const bgColor = (hasErr) => (hasErr ? "#fff7f7" : "white");
 
   return (
@@ -133,26 +133,26 @@ export default function ContactCTA() {
       id="contact"
       className="py-20"
       style={{
-        background: "linear-gradient(180deg, #fdfcf7 0%, #f0f7f0 100%)",
+        background: "linear-gradient(180deg, #FAFAF9 0%, #EDE9FE 100%)",
       }}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
           <span
             className="inline-block text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4"
-            style={{ background: "#f0fdf4", color: "#16a34a" }}
+            style={{ background: "#EDE9FE", color: "#7C3AED" }}
           >
             Start Your Journey
           </span>
           <h2
             className="text-3xl sm:text-4xl font-extrabold mb-4 leading-tight"
-            style={{ color: "#333645" }}
+            style={{ color: "#1E1B4B" }}
           >
             Ready to Begin Healing?
           </h2>
           <p
             className="max-w-xl mx-auto text-base"
-            style={{ color: "#a8b5a2" }}
+            style={{ color: "#6D6A85" }}
           >
             Take the first step. Our team will match you with the right
             therapist within 24 hours — no pressure, no commitment.
@@ -165,7 +165,7 @@ export default function ContactCTA() {
             <div
               className="rounded-3xl p-7 text-white"
               style={{
-                background: "linear-gradient(135deg, #3a6d77 0%, #16a34a 100%)",
+                background: "linear-gradient(135deg, #5B21B6 0%, #D946EF 100%)",
               }}
             >
               <Heart className="w-8 h-8 mb-4 opacity-80" />
@@ -201,12 +201,12 @@ export default function ContactCTA() {
                 <div
                   key={text}
                   className="rounded-2xl p-4 text-center shadow-sm"
-                  style={{ background: "white", border: "1.5px solid #f0ede8" }}
+                  style={{ background: "white", border: "1.5px solid #EDE9FE" }}
                 >
                   <div className="text-2xl mb-1">{emoji}</div>
                   <p
                     className="text-xs font-semibold"
-                    style={{ color: "#333645" }}
+                    style={{ color: "#1E1B4B" }}
                   >
                     {text}
                   </p>
@@ -216,11 +216,11 @@ export default function ContactCTA() {
 
             <div
               className="rounded-2xl p-5 shadow-sm"
-              style={{ background: "white", border: "1.5px solid #f0ede8" }}
+              style={{ background: "white", border: "1.5px solid #EDE9FE" }}
             >
               <p
                 className="text-xs font-bold uppercase tracking-wide mb-4"
-                style={{ color: "#a8b5a2" }}
+                style={{ color: "#6D6A85" }}
               >
                 Follow Our Wellness Journey
               </p>
@@ -231,14 +231,14 @@ export default function ContactCTA() {
                     href={href}
                     aria-label={label}
                     className="w-10 h-10 rounded-xl flex items-center justify-center border-2 hover:shadow-md transition-all"
-                    style={{ borderColor: "#e0ddd6", color: "#a8b5a2" }}
+                    style={{ borderColor: "#EDE9FE", color: "#6D6A85" }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "#16a34a";
-                      e.currentTarget.style.color = "#16a34a";
+                      e.currentTarget.style.borderColor = "#7C3AED";
+                      e.currentTarget.style.color = "#7C3AED";
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "#e0ddd6";
-                      e.currentTarget.style.color = "#a8b5a2";
+                      e.currentTarget.style.borderColor = "#EDE9FE";
+                      e.currentTarget.style.color = "#6D6A85";
                     }}
                   >
                     <Icon className="w-4 h-4" />
@@ -252,30 +252,30 @@ export default function ContactCTA() {
           <div className="lg:col-span-3">
             <div
               className="rounded-3xl shadow-sm p-8"
-              style={{ background: "white", border: "1.5px solid #f0ede8" }}
+              style={{ background: "white", border: "1.5px solid #EDE9FE" }}
             >
               {submitted ? (
                 <div className="py-10 text-center">
                   <div
                     className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-lg"
                     style={{
-                      background: "linear-gradient(135deg, #16a34a, #3a6d77)",
+                      background: "linear-gradient(135deg, #7C3AED, #5B21B6)",
                     }}
                   >
                     <Check className="w-10 h-10 text-white" />
                   </div>
                   <h3
                     className="text-2xl font-bold mb-3"
-                    style={{ color: "#333645" }}
+                    style={{ color: "#1E1B4B" }}
                   >
                     Message sent! 🌿
                   </h3>
-                  <p className="text-sm mb-2" style={{ color: "#a8b5a2" }}>
+                  <p className="text-sm mb-2" style={{ color: "#6D6A85" }}>
                     We'll be in touch within 2 hours at{" "}
-                    <strong style={{ color: "#16a34a" }}>{form.email}</strong>
+                    <strong style={{ color: "#7C3AED" }}>{form.email}</strong>
                   </p>
                   {form.newsletter && (
-                    <p className="text-xs mb-8" style={{ color: "#c4bdb3" }}>
+                    <p className="text-xs mb-8" style={{ color: "#C4B5FD" }}>
                       You're also subscribed to our wellness newsletter.
                     </p>
                   )}
@@ -287,7 +287,7 @@ export default function ContactCTA() {
                       setSubmitError(null);
                     }}
                     className="px-6 py-3 rounded-2xl border-2 font-semibold text-sm hover:shadow-md transition-all"
-                    style={{ borderColor: "#16a34a", color: "#16a34a" }}
+                    style={{ borderColor: "#7C3AED", color: "#7C3AED" }}
                   >
                     Send Another Message
                   </button>
@@ -296,7 +296,7 @@ export default function ContactCTA() {
                 <div className="space-y-5">
                   <h3
                     className="text-xl font-bold"
-                    style={{ color: "#333645" }}
+                    style={{ color: "#1E1B4B" }}
                   >
                     Send Us a Message
                   </h3>
@@ -319,9 +319,9 @@ export default function ContactCTA() {
                     <div>
                       <label
                         className="block text-xs font-bold uppercase tracking-wide mb-1.5"
-                        style={{ color: "#333645" }}
+                        style={{ color: "#1E1B4B" }}
                       >
-                        Full Name <span style={{ color: "#16a34a" }}>*</span>
+                        Full Name <span style={{ color: "#7C3AED" }}>*</span>
                       </label>
                       <input
                         type="text"
@@ -332,10 +332,10 @@ export default function ContactCTA() {
                         style={{
                           borderColor: borderColor(errors.name),
                           background: bgColor(errors.name),
-                          color: "#333645",
+                          color: "#1E1B4B",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#16a34a")
+                          (e.target.style.borderColor = "#7C3AED")
                         }
                         onBlur={(e) =>
                           (e.target.style.borderColor = borderColor(
@@ -348,12 +348,12 @@ export default function ContactCTA() {
                     <div>
                       <label
                         className="block text-xs font-bold uppercase tracking-wide mb-1.5"
-                        style={{ color: "#333645" }}
+                        style={{ color: "#1E1B4B" }}
                       >
                         Phone{" "}
                         <span
                           className="font-normal normal-case"
-                          style={{ color: "#c4bdb3" }}
+                          style={{ color: "#C4B5FD" }}
                         >
                           (optional)
                         </span>
@@ -364,11 +364,11 @@ export default function ContactCTA() {
                         value={form.phone}
                         onChange={(e) => set("phone", e.target.value)}
                         className="w-full px-4 py-3 rounded-xl border-2 text-sm outline-none transition-all"
-                        style={{ borderColor: "#e0ddd6", color: "#333645" }}
+                        style={{ borderColor: "#EDE9FE", color: "#1E1B4B" }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#16a34a")
+                          (e.target.style.borderColor = "#7C3AED")
                         }
-                        onBlur={(e) => (e.target.style.borderColor = "#e0ddd6")}
+                        onBlur={(e) => (e.target.style.borderColor = "#EDE9FE")}
                       />
                     </div>
                   </div>
@@ -376,9 +376,9 @@ export default function ContactCTA() {
                   <div>
                     <label
                       className="block text-xs font-bold uppercase tracking-wide mb-1.5"
-                      style={{ color: "#333645" }}
+                      style={{ color: "#1E1B4B" }}
                     >
-                      Email Address <span style={{ color: "#16a34a" }}>*</span>
+                      Email Address <span style={{ color: "#7C3AED" }}>*</span>
                     </label>
                     <input
                       type="email"
@@ -389,9 +389,9 @@ export default function ContactCTA() {
                       style={{
                         borderColor: borderColor(errors.email),
                         background: bgColor(errors.email),
-                        color: "#333645",
+                        color: "#1E1B4B",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
+                      onFocus={(e) => (e.target.style.borderColor = "#7C3AED")}
                       onBlur={(e) =>
                         (e.target.style.borderColor = borderColor(errors.email))
                       }
@@ -402,7 +402,7 @@ export default function ContactCTA() {
                   <div>
                     <label
                       className="block text-xs font-bold uppercase tracking-wide mb-2"
-                      style={{ color: "#333645" }}
+                      style={{ color: "#1E1B4B" }}
                     >
                       Preferred Contact Method
                     </label>
@@ -415,11 +415,11 @@ export default function ContactCTA() {
                           className="flex-1 py-2.5 rounded-xl border-2 text-xs font-semibold transition-all"
                           style={{
                             borderColor:
-                              form.contactMethod === id ? "#16a34a" : "#e0ddd6",
+                              form.contactMethod === id ? "#7C3AED" : "#EDE9FE",
                             background:
-                              form.contactMethod === id ? "#f0fdf4" : "white",
+                              form.contactMethod === id ? "#EDE9FE" : "white",
                             color:
-                              form.contactMethod === id ? "#16a34a" : "#a8b5a2",
+                              form.contactMethod === id ? "#7C3AED" : "#6D6A85",
                           }}
                         >
                           {label}
@@ -431,10 +431,10 @@ export default function ContactCTA() {
                   <div>
                     <label
                       className="block text-xs font-bold uppercase tracking-wide mb-1.5"
-                      style={{ color: "#333645" }}
+                      style={{ color: "#1E1B4B" }}
                     >
                       Message / Question{" "}
-                      <span style={{ color: "#16a34a" }}>*</span>
+                      <span style={{ color: "#7C3AED" }}>*</span>
                     </label>
                     <textarea
                       rows={4}
@@ -445,9 +445,9 @@ export default function ContactCTA() {
                       style={{
                         borderColor: borderColor(errors.message),
                         background: bgColor(errors.message),
-                        color: "#333645",
+                        color: "#1E1B4B",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#16a34a")}
+                      onFocus={(e) => (e.target.style.borderColor = "#7C3AED")}
                       onBlur={(e) =>
                         (e.target.style.borderColor = borderColor(
                           errors.message,
@@ -458,7 +458,7 @@ export default function ContactCTA() {
                       <FieldError message={errors.message} />
                       <span
                         className="text-xs mt-1 ml-auto"
-                        style={{ color: "#c4bdb3" }}
+                        style={{ color: "#C4B5FD" }}
                       >
                         {form.message.length}/500
                       </span>
@@ -470,8 +470,8 @@ export default function ContactCTA() {
                       <div
                         className="w-5 h-5 rounded-lg border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all"
                         style={{
-                          borderColor: form.newsletter ? "#16a34a" : "#e0ddd6",
-                          background: form.newsletter ? "#16a34a" : "white",
+                          borderColor: form.newsletter ? "#7C3AED" : "#EDE9FE",
+                          background: form.newsletter ? "#7C3AED" : "white",
                         }}
                         onClick={() => set("newsletter", !form.newsletter)}
                       >
@@ -479,7 +479,7 @@ export default function ContactCTA() {
                           <Check className="w-3 h-3 text-white" />
                         )}
                       </div>
-                      <span className="text-sm" style={{ color: "#6b7b6a" }}>
+                      <span className="text-sm" style={{ color: "#6D6A85" }}>
                         Subscribe to our weekly wellness newsletter — tips,
                         resources, and mindfulness practices.
                       </span>
@@ -492,9 +492,9 @@ export default function ContactCTA() {
                           borderColor: errors.privacy
                             ? "#fca5a5"
                             : form.privacy
-                              ? "#16a34a"
-                              : "#e0ddd6",
-                          background: form.privacy ? "#16a34a" : "white",
+                              ? "#7C3AED"
+                              : "#EDE9FE",
+                          background: form.privacy ? "#7C3AED" : "white",
                         }}
                         onClick={() => set("privacy", !form.privacy)}
                       >
@@ -502,17 +502,17 @@ export default function ContactCTA() {
                           <Check className="w-3 h-3 text-white" />
                         )}
                       </div>
-                      <span className="text-sm" style={{ color: "#6b7b6a" }}>
+                      <span className="text-sm" style={{ color: "#6D6A85" }}>
                         I agree to the{" "}
                         <a
                           href="#"
-                          style={{ color: "#16a34a" }}
+                          style={{ color: "#7C3AED" }}
                           className="underline hover:opacity-70"
                         >
                           Privacy Policy
                         </a>{" "}
                         and understand my information will be handled with care.{" "}
-                        <span style={{ color: "#16a34a" }}>*</span>
+                        <span style={{ color: "#7C3AED" }}>*</span>
                       </span>
                     </label>
                     <FieldError message={errors.privacy} />
@@ -523,7 +523,7 @@ export default function ContactCTA() {
                     disabled={submitting}
                     className="w-full py-4 rounded-2xl font-bold text-sm text-white shadow-md hover:shadow-lg hover:opacity-95 transition-all disabled:opacity-70 flex items-center justify-center gap-2"
                     style={{
-                      background: "linear-gradient(135deg, #16a34a, #3a6d77)",
+                      background: "linear-gradient(135deg, #7C3AED, #5B21B6)",
                     }}
                   >
                     {submitting ? (
@@ -541,7 +541,7 @@ export default function ContactCTA() {
 
                   <p
                     className="text-center text-xs"
-                    style={{ color: "#c4bdb3" }}
+                    style={{ color: "#C4B5FD" }}
                   >
                     🔒 Your message is encrypted and confidential
                   </p>

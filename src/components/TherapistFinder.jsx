@@ -20,12 +20,12 @@ import {
 
 // Color palette
 const P = {
-  teal: "#3a6d77",
-  sage: "#a8b5a2",
-  green: "#16a34a",
-  lavender: "#c4b5e2",
-  charcoal: "#333645",
-  cream: "#fdfcf7",
+  teal: "#7C3AED",
+  sage: "#6D6A85",
+  green: "#7C3AED",
+  lavender: "#C4B5FD",
+  charcoal: "#1E1B4B",
+  cream: "#FAFAF9",
 };
 
 // Quiz steps data
@@ -40,7 +40,7 @@ const QUIZ_STEPS = [
         id: "anxiety",
         label: "Anxiety & Stress",
         emoji: "😰",
-        color: "#3a6d77",
+        color: "#7C3AED",
       },
       { id: "depression", label: "Depression", emoji: "🌧️", color: "#7c5cbf" },
       { id: "trauma", label: "Trauma / PTSD", emoji: "💔", color: "#dc2626" },
@@ -48,22 +48,22 @@ const QUIZ_STEPS = [
         id: "relationships",
         label: "Relationships",
         emoji: "💑",
-        color: "#c4b5e2",
+        color: "#C4B5FD",
       },
       {
         id: "transitions",
         label: "Life Transitions",
         emoji: "🔄",
-        color: "#b8a88f",
+        color: "#A21CAF",
       },
       {
         id: "identity",
         label: "Identity & Self-Exploration",
         emoji: "🪞",
-        color: "#16a34a",
+        color: "#7C3AED",
       },
       { id: "grief", label: "Grief & Loss", emoji: "🕊️", color: "#6b7280" },
-      { id: "other", label: "Something Else", emoji: "✨", color: "#a8b5a2" },
+      { id: "other", label: "Something Else", emoji: "✨", color: "#6D6A85" },
     ],
   },
   {
@@ -196,7 +196,7 @@ const THERAPISTS = [
     bio: "I blend EMDR with somatic experiencing and nervous system regulation to help clients heal from trauma at the body level.",
     nextAvailable: "Tomorrow, 2pm",
     tags: ["Trauma-Informed", "Somatic", "EMDR Certified"],
-    color: "#3a6d77",
+    color: "#7C3AED",
   },
   {
     id: "t2",
@@ -214,7 +214,7 @@ const THERAPISTS = [
     bio: "I combine evidence-based CBT with mindfulness practices to help you build practical tools for lasting change.",
     nextAvailable: "Friday, 10am",
     tags: ["CBT", "Mindfulness", "Work Stress"],
-    color: "#16a34a",
+    color: "#7C3AED",
   },
   {
     id: "t3",
@@ -232,7 +232,7 @@ const THERAPISTS = [
     bio: "My approach honors the whole person — integrating psychology, yoga philosophy, and spiritual exploration for deep healing.",
     nextAvailable: "Today, 4pm",
     tags: ["Yoga Therapy", "Spiritual", "South Asian"],
-    color: "#c4b5e2",
+    color: "#C4B5FD",
   },
   {
     id: "t4",
@@ -250,7 +250,7 @@ const THERAPISTS = [
     bio: "Gottman-trained couples therapist specializing in communication, attachment, and rebuilding trust after betrayal.",
     nextAvailable: "Mon, 6pm",
     tags: ["Gottman Method", "Couples", "Attachment"],
-    color: "#b8a88f",
+    color: "#A21CAF",
   },
   {
     id: "t5",
@@ -301,7 +301,7 @@ function QuizOption({ option, selected, onToggle }) {
       onClick={onToggle}
       className="group relative rounded-2xl p-5 text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg"
       style={{
-        border: `2px solid ${selected ? option.color || P.green : "#e8e4dd"}`,
+        border: `2px solid ${selected ? option.color || P.green : "#EDE9FE"}`,
         background: selected ? `${option.color || P.green}08` : "white",
         boxShadow: selected
           ? `0 4px 20px ${option.color || P.green}25`
@@ -354,7 +354,7 @@ function TherapistCard({ therapist }) {
       className="group rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
       style={{
         background: "white",
-        border: "1.5px solid #f0ede8",
+        border: "1.5px solid #EDE9FE",
         boxShadow: "0 2px 12px rgba(51,54,69,0.06)",
       }}
     >
@@ -409,7 +409,7 @@ function TherapistCard({ therapist }) {
 
         <p
           className="text-sm leading-relaxed mb-4"
-          style={{ color: "#6b7b6a" }}
+          style={{ color: "#6D6A85" }}
         >
           {therapist.bio}
         </p>
@@ -553,14 +553,14 @@ export default function TherapistFinder() {
       <div
         className="min-h-screen py-16"
         style={{
-          background: "linear-gradient(180deg, #f0f7f0 0%, #fdfcf7 100%)",
+          background: "linear-gradient(180deg, #EDE9FE 0%, #FAFAF9 100%)",
         }}
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5"
-              style={{ background: "#f0fdf4", border: "1.5px solid #d1fae5" }}
+              style={{ background: "#EDE9FE", border: "1.5px solid #d1fae5" }}
             >
               <CheckCircle className="w-4 h-4" style={{ color: P.green }} />
               <span className="text-sm font-bold" style={{ color: P.green }}>
@@ -586,7 +586,7 @@ export default function TherapistFinder() {
             <button
               onClick={handleReset}
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 font-semibold text-sm transition-all hover:shadow-md"
-              style={{ borderColor: "#e8e4dd", color: P.charcoal }}
+              style={{ borderColor: "#EDE9FE", color: P.charcoal }}
             >
               <ArrowLeft className="w-4 h-4" />
               Retake Quiz
@@ -654,7 +654,7 @@ export default function TherapistFinder() {
     <div
       className="min-h-screen py-16"
       style={{
-        background: "linear-gradient(180deg, #fdfcf7 0%, #f0f7f0 100%)",
+        background: "linear-gradient(180deg, #FAFAF9 0%, #EDE9FE 100%)",
       }}
     >
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -683,7 +683,7 @@ export default function TherapistFinder() {
           </div>
           <div
             className="h-2 rounded-full overflow-hidden"
-            style={{ background: "#e8e4dd" }}
+            style={{ background: "#EDE9FE" }}
           >
             <div
               className="h-full transition-all duration-500"
@@ -699,7 +699,7 @@ export default function TherapistFinder() {
           className="rounded-3xl p-8 sm:p-10 mb-8"
           style={{
             background: "white",
-            border: "1.5px solid #f0ede8",
+            border: "1.5px solid #EDE9FE",
             boxShadow: "0 4px 24px rgba(51,54,69,0.08)",
           }}
         >
@@ -737,7 +737,7 @@ export default function TherapistFinder() {
           {step.multiSelect && (
             <p
               className="text-center text-xs mt-5"
-              style={{ color: "#c4bdb3" }}
+              style={{ color: "#C4B5FD" }}
             >
               💡 Select as many as apply — this helps us find your best match
             </p>
@@ -756,7 +756,7 @@ export default function TherapistFinder() {
           <ArrowRight className="w-4 h-4" />
         </button>
 
-        <p className="text-center text-xs mt-6" style={{ color: "#c4bdb3" }}>
+        <p className="text-center text-xs mt-6" style={{ color: "#C4B5FD" }}>
           🔒 Your responses are private and only used to match you with the
           right therapist
         </p>
