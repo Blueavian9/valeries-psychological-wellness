@@ -102,7 +102,7 @@ export default function BlogPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFAF9]">
-      <div className="bg-gradient-to-br from-[#FAE8FF] via-[#EDE9FE] to-[#E0D7FF] py-16 px-4">
+      <div className="bg-linear-to-br from-[#FAE8FF] via-[#EDE9FE] to-[#E0D7FF] py-16 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <span className="inline-block bg-white/70 text-[#7C3AED] text-xs font-bold uppercase tracking-widest px-4 py-1.5 rounded-full mb-4">
             Wellness Journal
@@ -123,13 +123,13 @@ export default function BlogPage() {
               Featured Article
             </p>
             <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-[#EDE9FE] grid lg:grid-cols-2">
-              <div className="relative h-72 lg:h-auto overflow-hidden bg-gradient-to-br from-[#EDE9FE] to-[#FAE8FF]">
+              <div className="relative h-72 lg:h-auto overflow-hidden bg-linear-to-br from-[#EDE9FE] to-[#FAE8FF]">
                 <img
                   src="/valerie-munoz.jpg"
                   alt="Dr. Valerie Munoz"
                   className="w-full h-full object-cover object-top"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#1E1B4B]/40 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#1E1B4B]/40 to-transparent" />
                 <span className="absolute bottom-4 left-4 bg-[#7C3AED] text-white text-xs font-bold px-3 py-1 rounded-full">
                   {featured.category}
                 </span>
@@ -244,7 +244,7 @@ export default function BlogPage() {
           ))}
         </div>
 
-        <div className="bg-gradient-to-r from-[#EDE9FE] to-[#FAE8FF] rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-[#C4B5FD]/30">
+        <div className="bg-linear-to-r from-[#EDE9FE] to-[#FAE8FF] rounded-3xl p-8 flex flex-col md:flex-row items-center gap-8 border border-[#C4B5FD]/30">
           <img
             src="/valerie-munoz.jpg"
             alt={AUTHOR.name}

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
-    <section className="relative bg-gradient-to-br from-[#FAE8FF] via-[#EDE9FE] to-[#E0D7FF] py-20 md:py-32 overflow-hidden">
+    <section className="relative bg-linear-to-br from-[#FAE8FF] via-[#EDE9FE] to-[#E0D7FF] py-20 md:py-32 overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#D946EF]/30 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#C4B5FD] rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse delay-1000"></div>
@@ -12,7 +12,7 @@ export default function Hero() {
         <div className="text-center animate-fade-in">
           <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 leading-tight">
             Discover Your Path to
-            <span className="block mt-2 bg-gradient-to-r from-[#C4B5FD] to-[#7C3AED] bg-clip-text text-transparent">
+            <span className="block mt-2 bg-linear-to-r from-[#C4B5FD] to-[#7C3AED] bg-clip-text text-transparent">
               Holistic Wellness
             </span>
           </h1>
@@ -22,7 +22,7 @@ export default function Hero() {
             healing journey.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/booking" className="group bg-gradient-to-r from-[#C4B5FD] to-[#7C3AED] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-[#7C3AED] hover:to-[#5B21B6] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2">
+            <Link to="/booking" className="group bg-linear-to-r from-[#C4B5FD] to-[#7C3AED] text-white px-8 py-4 rounded-xl text-lg font-semibold hover:from-[#7C3AED] hover:to-[#5B21B6] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 flex items-center justify-center gap-2">
               Start Your Journey
               <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
             </Link>

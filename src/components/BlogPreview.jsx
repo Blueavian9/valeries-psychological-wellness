@@ -69,13 +69,13 @@ export default function BlogPreview() {
               className="group rounded-2xl overflow-hidden border border-[#EDE9FE] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 bg-white flex flex-col"
             >
               {i === 0 ? (
-                <div className="relative h-48 overflow-hidden bg-gradient-to-br from-[#EDE9FE] to-[#FAE8FF]">
+                <div className="relative h-48 overflow-hidden bg-linear-to-br from-[#EDE9FE] to-[#FAE8FF]">
                   <img
                     src="/valerie-munoz.jpg"
                     alt="Dr. Valerie Munoz"
                     className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#1E1B4B]/30 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-[#1E1B4B]/30 to-transparent" />
                   <span className="absolute top-3 left-3 bg-white/90 text-[#7C3AED] text-xs font-bold px-2.5 py-1 rounded-full">
                     {post.category}
                   </span>
@@ -127,7 +127,7 @@ export default function BlogPreview() {
         <div className="text-center">
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C4B5FD] to-[#7C3AED] text-white font-semibold px-8 py-3.5 rounded-xl hover:from-[#7C3AED] hover:to-[#5B21B6] transition-all shadow-md hover:shadow-lg"
+            className="inline-flex items-center gap-2 bg-linear-to-r from-[#C4B5FD] to-[#7C3AED] text-white font-semibold px-8 py-3.5 rounded-xl hover:from-[#7C3AED] hover:to-[#5B21B6] transition-all shadow-md hover:shadow-lg"
           >
             Read All Articles <ArrowRight className="w-4 h-4" />
           </Link>
