@@ -6,28 +6,28 @@ import {
 } from "react-router-dom";
 import "./App.css";
 // Auth
-import { AuthProvider } from "./hooks/useAuth";
-import ProtectedRoute from "./components/ProtectedRoute";
+import { AuthProvider } from "./hooks/useAuth.jsx";
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
 // Components
-import Header from "./components/Header";
-import Hero from "./components/Hero";
-import Stats from "./components/Stats";
-import Features from "./components/Features";
-import PlatformComparison from "./components/PlatformComparison";
-import Testimonials from "./components/Testimonials";
-import FAQ from "./components/FAQ";
-import WellnessResources from "./components/WellnessResources";
-import ContactCTA from "./components/ContactCTA";
-import Footer from "./components/Footer";
-import TherapistFinder from "./components/TherapistFinder";
+import Header from "./components/Header.jsx";
+import Hero from "./components/Hero.jsx";
+import Stats from "./components/Stats.jsx";
+import Features from "./components/Features.jsx";
+import PlatformComparison from "./components/PlatformComparison.jsx";
+import Testimonials from "./components/Testimonials.jsx";
+import FAQ from "./components/FAQ.jsx";
+import WellnessResources from "./components/WellnessResources.jsx";
+import ContactCTA from "./components/ContactCTA.jsx";
+import Footer from "./components/Footer.jsx";
+import TherapistFinder from "./components/TherapistFinder.jsx";
 // Pages
-import BookingPage from "./pages/BookingPage";
-import BookingConfirmation from "./pages/BookingConfirmation";
-import Dashboard from "./pages/Dashboard";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import UpdatePasswordPage from "./pages/UpdatePasswordPage";
+import BookingPage from "./pages/BookingPage.jsx";
+import BookingConfirmation from "./pages/BookingConfirmation.jsx";
+import Dashboard from "./pages/Dashboard.jsx";
+import LoginPage from "./pages/LoginPage.jsx";
+import SignUpPage from "./pages/SignUpPage.jsx";
+import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage.jsx";
 
 // ─── Home Page ────────────────────────────────────────────────────────────────
 function HomePage() {
