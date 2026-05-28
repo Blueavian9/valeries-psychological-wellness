@@ -1,4 +1,4 @@
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Hero() {
@@ -64,8 +64,7 @@ export default function Hero() {
               <span>24/7 Support</span>
             </div>
           </div>
-        </div>
-        <Link to="/book">Book a Session</Link>
+        </div>
       </div>
     </section>
   );
