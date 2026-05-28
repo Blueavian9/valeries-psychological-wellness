@@ -28,6 +28,8 @@ import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
 import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage.jsx";
+import BlogPage from "./pages/BlogPage.jsx";
+import BlogPreview from "./components/BlogPreview.jsx";
 
 // ─── Home Page ────────────────────────────────────────────────────────────────
 function HomePage() {
@@ -41,6 +43,7 @@ function HomePage() {
       <Testimonials />
       <WellnessResources />
       <FAQ />
+      <BlogPreview />
       <ContactCTA />
     </>
   );
@@ -80,6 +83,9 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/update-password" element={<UpdatePasswordPage />} />
             <Route path="/find-therapist" element={<TherapistFinder />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/blog/:slug" element={<BlogPage />} />
+
             {/*
               ── Booking: OPEN to guests (no ProtectedRoute) ──
               /booking                → user picks service themselves
@@ -89,7 +95,9 @@ function App() {
             */}
             <Route path="/booking" element={<BookingPage />} />
             <Route path="/booking/:serviceId" element={<BookingPage />} />
-            <Route path="/booking/confirmation" element={<BookingConfirmation />}
+            <Route
+              path="/booking/confirmation"
+              element={<BookingConfirmation />}
             />
           </Route>
         </Routes>

@@ -40,6 +40,12 @@ export default function Header() {
           </div>
           <div className="hidden md:flex space-x-8 items-center">
             <Link
+  to="/blog"
+  className="text-white/90 hover:text-[#C4B5FD] transition font-medium"
+>
+  Blog
+</Link>
+            <Link
               to="/booking"
               className="text-white/90 hover:text-[#C4B5FD] transition font-medium"
             >
