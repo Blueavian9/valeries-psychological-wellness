@@ -4,7 +4,7 @@ import { Calendar, Clock, ArrowRight } from "lucide-react";
 
 const AUTHOR = {
   name: "Valerie Munoz, Psy.Doc.",
-  title: "Licensed Therapist & Wellness Advocate",
+  title: "Licensed Marriage & Family Therapist & Wellness Advocate",
   photo: "/valerie-munoz.jpg",
   bio: "Dr. Valerie Munoz is a licensed therapist with over 15 years of experience helping individuals and families achieve holistic wellness through integrative, compassionate care.",
 };
@@ -160,7 +160,10 @@ export default function BlogPage() {
                         {AUTHOR.name}
                       </p>
                       <p className="text-xs text-[#6D6A85]">
-                        Licensed Therapist
+                        Licensed No. LMFT159034 Valid Until: 10/31/2027
+                      </p>
+                      <p className="text-sm font-semibold text-[#1E1B4B]">
+                        Certificate No. 495612 Issue Date: 10/23/2025
                       </p>
                     </div>
                   </div>
