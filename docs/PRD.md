@@ -15,6 +15,7 @@
 | 🔄 | In Progress |
 | ⬜ | Pending |
 | 🚫 | Cut — not needed to get hired |
+| 🚨 | Urgent / Blocking |
 
 ---
 
@@ -23,7 +24,7 @@
 | Phase | Status |
 |-------|--------|
 | PHASE 1: Backend Setup | ✅ COMPLETED |
-| PHASE 2: Authentication | ✅ COMPLETED |
+| PHASE 2: Authentication | 🔄 REVISITING — login broken, adding magic link |
 | PHASE 3: Data Migration | ✅ COMPLETED |
 | PHASE 4: Stripe Payments | ✅ COMPLETED |
 | PHASE 5: Email Notifications | ✅ COMPLETED |
@@ -31,6 +32,32 @@
 | PHASE 7: QA Testing | 🚫 REDUCED SCOPE |
 | PHASE 8: Security Hardening | 🚫 REDUCED SCOPE |
 | PHASE 9: Job Search Execution | 🔄 IN PROGRESS |
+
+---
+
+## 🚨 ACTIVE INCIDENT — Jul 13, 2026
+
+**Symptom:** Client (Valerie) cannot log into her dashboard on the live app. Cesar could not recall/locate working credentials.
+
+**Diagnosis in progress:**
+- Leading hypothesis: Supabase free-tier project **auto-paused** from inactivity (documented risk below, known since Jun 9). This would break *all* auth/data calls, not just Valerie's — would present exactly as "can't log in."
+- Verification step: load `https://www.valeriemunozpsyc.com/booking` and check for "Failed to load services" error → confirms pause without needing dashboard access.
+- **Not yet confirmed** as of this update — next session should check this first.
+
+**Compounding issue:** Cesar got locked out of his own **Supabase dashboard** (developer account, separate from the app's login) via a broken/rejected TOTP 2FA code. Support ticket submission also had issues. Attempted "Force sign out and clear cookies" recovery path.
+
+**🚨 SECURITY — CREDENTIAL EXPOSURE:** During troubleshooting, 2FA backup codes, a TOTP secret, and a test account password were pasted into an LLM chat session in plaintext. **All must be treated as compromised.** Once dashboard access is restored:
+- [ ] Regenerate Supabase account TOTP secret + backup codes
+- [ ] Rotate/delete the exposed test login credential if it's a real account on the live app
+- [ ] Confirm GitHub PAT rotation (still pending from Jun 9 — see Audit Log)
+
+**Resolution plan (once dashboard access restored):**
+1. Confirm/rule out auto-pause; resume project if paused
+2. Full credential rotation per above
+3. Add **magic link (passwordless) login** via `supabase.auth.signInWithOtp` alongside existing `signInWithPassword` flow in `useAuth.jsx` — small addition, not a rewrite, since auth is already native Supabase Auth
+4. Full end-to-end login retest — signup, login, booking — before contract is signed
+
+**Do not sign client contract until end-to-end login is manually verified working.**
 
 ---
 
@@ -46,7 +73,7 @@
 
 ---
 
-## PHASE 2: Authentication ✅ COMPLETED
+## PHASE 2: Authentication 🔄 REVISITING
 - ✅ useAuth.jsx with role fetching hook
 - ✅ AuthProvider wrapping App
 - ✅ ProtectedRoute with role-based redirects
@@ -54,7 +81,8 @@
 - ✅ UpdatePasswordPage.jsx — fixed auth bug (removed verifyOtp, uses onAuthStateChange PASSWORD_RECOVERY)
 - ✅ Supabase URL Configuration verified (Site URL + Redirect URLs)
 - ✅ Role-based access: client / therapist / admin
-- ✅ All auth flows tested end-to-end
+- ⬜ **NEW:** Add magic link (passwordless) sign-in option — reduces password friction for Valerie/staff/clients
+- 🚨 Login currently broken for client — see Active Incident above
 
 ---
 
@@ -136,6 +164,7 @@
 - ⬜ Verify Stripe test payment works
 - ⬜ Confirm confirmation email arrives
 - ⬜ Mobile check (375px + 768px in DevTools)
+- 🚨 **BLOCKED:** Login must work before any of the above can be tested
 
 ---
 
@@ -147,6 +176,8 @@
 - ✅ STRIPE_SECRET_KEY absent from client bundle (grep confirmed)
 - ✅ .env.local in .gitignore
 - ⬜ Confirm no API keys in built bundle (npm run build → check dist/)
+- 🚨 **NEW:** Rotate Supabase 2FA TOTP/backup codes + any exposed test credentials (see Active Incident)
+- ⬜ Confirm new GitHub PAT was actually generated (Jun 9 item still unchecked)
 
 ---
 
@@ -162,7 +193,7 @@
 - ✅ Therapy app added to LinkedIn Featured section
 
 ### ⬜ This Week — Critical Path to Interviews
-- ⬜ Record 2-minute demo video of therapy app
+- ⬜ Record 2-minute demo video of therapy app (blocked until login fixed)
 - ⬜ Write README for React-Tailwind-Portfolio repo
 - ⬜ Begin 5 job applications per day
 
@@ -182,27 +213,30 @@
 | Stripe live mode activation | Valerie | ⏳ Waiting |
 | Stripe live keys sent to developer | Valerie | ⏳ Waiting |
 | Supabase Pro upgrade ($25/mo) | Valerie | ⏳ Waiting — project auto-pauses on free tier |
-| Contract signed | Both | ⏳ Printed, awaiting signature |
+| Contract signed | Both | 🚨 **HOLD — do not sign until login verified working** |
 
 > ⚠️ Supabase free tier auto-pauses after 7 days inactive.
 > The `/booking` page will show "Failed to load services" until Valerie upgrades to Pro.
+> **This is the leading suspect for the current login failure — unconfirmed as of Jul 13.**
 
 ---
 
-## CRITICAL PATH — NEXT 7 DAYS
+## CRITICAL PATH — NEXT SESSION
 
-| Day | Task | Status |
-|-----|------|--------|
-| Today | Rotate GitHub PAT (old one exposed) | 🔄 |
-| Today | Verify Vercel env vars still intact | ⬜ |
-| Today | Resume Supabase project (if paused) | ⬜ |
-| Day 2 | Receive Stripe live keys from Valerie | ⏳ |
-| Day 2 | Swap Stripe keys in Vercel + Supabase | ⬜ |
-| Day 2 | End-to-end booking flow test | ⬜ |
-| Day 2 | Mobile check (375px + 768px) | ⬜ |
-| Day 3 | Contract signed | ⏳ |
-| Day 3 | Start 5 applications/day | ⬜ |
-| Day 7 | Review — any callbacks? | ⬜ |
+| Task | Status |
+|-----|--------|
+| Check `/booking` page for "Failed to load services" (confirms/rules out auto-pause) | ⬜ |
+| Regain Supabase dashboard access (2FA lockout) | 🔄 |
+| Rotate exposed 2FA backup codes / TOTP secret | ⬜ |
+| Rotate/remove exposed test credential if real | ⬜ |
+| Resume Supabase project if paused | ⬜ |
+| Confirm new GitHub PAT generated (90-day expiry) | ⬜ |
+| Add magic link auth to useAuth.jsx (`signInWithOtp`) | ⬜ |
+| Update LoginPage.jsx UI with magic link option | ⬜ |
+| Full end-to-end login retest (client + staff + admin roles) | ⬜ |
+| End-to-end booking flow test | ⬜ |
+| Mobile check (375px + 768px) | ⬜ |
+| Contract signed — only after above verified | ⏳ |
 
 ---
 
@@ -211,9 +245,10 @@
 | Agent | Task | Status |
 |-------|------|--------|
 | ✅ Done | Phases 1–6 + UI rebrand + Blog | COMPLETE |
+| 🚨 Active | Login incident — diagnose + fix + add magic link | IN PROGRESS |
 | ⏳ Blocked | Stripe live mode switch | WAITING ON VALERIE |
-| 🔄 Active | Phase 9 — job applications | IN PROGRESS |
-| ⬜ Next | End-to-end QA + mobile test | QUEUED |
+| 🔄 Active | Phase 9 — job applications | IN PROGRESS (paused pending login fix) |
+| ⬜ Next | End-to-end QA + mobile test | QUEUED — blocked on login |
 | 🚫 Parked | Enterprise QA (14 agents) | POST-EMPLOYMENT |
 | 🚫 Parked | Full security hardening | POST-EMPLOYMENT |
 | 🚫 Parked | Microservices-mall visualization portal | POST-EMPLOYMENT |
@@ -253,13 +288,22 @@
 | Jun 9 | Diagnosed Supabase auto-pause — /booking broken | ✅ |
 | Jun 9 | Confirmed blog links working (Edge/tracking false alarm) | ✅ |
 | Jun 9 | GitHub PAT (ghp_*) revoked — was exposed in chat | ✅ |
-| Jun 9 | New GitHub PAT generated with 90-day expiry | ⬜ |
+| Jun 9 | New GitHub PAT generated with 90-day expiry | ⬜ still pending |
 | Jun 9 | PRD consolidated and sanitized — no credentials | ✅ |
+| Jul 13 | Local dev env broken — missing `autoprefixer` devDependency | ✅ fixed via `npm install -D autoprefixer postcss` |
+| Jul 13 | Client (Valerie) reported unable to log into dashboard | 🔄 diagnosing |
+| Jul 13 | Leading hypothesis: Supabase auto-pause causing login failure | ⬜ unconfirmed — check `/booking` next session |
+| Jul 13 | Cesar locked out of Supabase dashboard — 2FA TOTP rejected repeatedly | 🔄 in progress |
+| Jul 13 | 🚨 2FA backup codes, TOTP secret, and test password pasted into LLM chat | 🚨 must rotate all once access restored |
+| Jul 13 | Decision: add magic link (`signInWithOtp`) as passwordless login option | ⬜ planned, not yet implemented |
+| Jul 13 | Contract signing put on hold pending verified working login | 🔄 policy set |
+
+| Jul 13 | Confirmed via live /booking page: "Failed to load services: TypeError: Failed to fetch" | ✅ auto-pause hypothesis CONFIRMED
 
 ---
 
 ## PROJECT STRUCTURE
-```
+
 src/
 ├── components/
 │   ├── Header.jsx
@@ -279,8 +323,7 @@ src/
 │   ├── ResetPasswordPage.jsx
 │   └── UpdatePasswordPage.jsx
 └── lib/
-    └── supabase.js
-
+└── supabase.js
 supabase/
 ├── functions/
 │   ├── create-payment-intent/
@@ -291,7 +334,8 @@ supabase/
 │   ├── notify-admin-booking/
 │   └── notify-admin-signup/
 └── schema.sql
-```
+
+
 
 ---
 
@@ -301,8 +345,9 @@ supabase/
 - STRIPE_SECRET_KEY is server-side only — confirmed absent from client bundle
 - GitHub PATs use 90-day expiry and minimum required scopes
 - All accounts protected with 2FA (Vercel, Namecheap, Supabase, GitHub)
+- 🚨 **Jul 13:** Supabase 2FA backup codes, TOTP secret, and a test credential were exposed in an LLM chat session. Treat as compromised — rotate immediately once dashboard access is restored. This file intentionally contains no actual credentials.
 
 ---
 
 *Rule: Ship beats perfect. Finish beats impressive.*  
-*Last updated: Jun 9 — Supabase pause diagnosed. GitHub PAT rotated. PRD sanitized.*
+*Last updated: Jul 13 — login incident diagnosed in progress, Supabase 2FA lockout, credential rotation pending, magic link auth planned.*
