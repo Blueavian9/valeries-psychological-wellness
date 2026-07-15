@@ -35,7 +35,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 --      (HIPAA data retention rules may apply — confirm with Valerie
 --      before building automatic deletion on account closure).
 CREATE TABLE IF NOT EXISTS profiles (
-  id UUID REFERENCES neon_auth.user(id) ON DELETE CASCADE PRIMARY KEY,
+  id UUID REFERENCES neon_auth."user"(id) ON DELETE CASCADE PRIMARY KEY,
   full_name TEXT,
   email TEXT UNIQUE,
   phone TEXT,
