@@ -729,7 +729,7 @@ export default function BookingPage() {
     start.setHours(h, parseInt(mStr), 0, 0);
     const end = new Date(start.getTime() + service.duration_minutes * 60000);
 
-    const { error } = await supabase.from("appointments").insert({
+    const { error } = await neon.from("appointments").insert({
       service_id: service.id,
       scheduled_at: start.toISOString(), // ← FIXED
       client_name: form.clientName,
@@ -763,7 +763,7 @@ export default function BookingPage() {
       start.setHours(h, parseInt(mStr), 0, 0);
       const end = new Date(start.getTime() + service.duration_minutes * 60000);
 
-      const { data: apptData, error: apptError } = await supabase
+      const { data: apptData, error: apptError } = await neon
         .from("appointments")
         .insert({
           service_id: service.id,
@@ -819,7 +819,7 @@ export default function BookingPage() {
         return;
       }
 
-      await supabase
+      await neon
         .from("appointments")
         .update({ stripe_payment_intent_id: paymentIntent.id })
         .eq("id", appointmentId);
