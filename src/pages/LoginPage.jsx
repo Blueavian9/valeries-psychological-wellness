@@ -1,28 +1,21 @@
 import { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 
 export default function LoginPage() {
-  const { signIn } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || "/dashboard";
+  const { signInWithMagicLink } = useAuth();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  function handleChange(e) {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-    setError(null);
-  }
+  const [sent, setSent] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error } = await signIn(form.email, form.password);
+    const { error } = await signInWithMagicLink(email);
 
     if (error) {
       setError(error.message);
@@ -30,7 +23,31 @@ export default function LoginPage() {
       return;
     }
 
-    navigate(from, { replace: true });
+    setSent(true);
+    setLoading(false);
+  }
+
+  if (sent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white px-6">
+        <div className="text-center max-w-md">
+          <div className="text-6xl mb-6">💌</div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-3">
+            Check your email
+          </h1>
+          <p className="text-gray-500 text-sm mb-6">
+            We sent a sign-in link to <strong>{email}</strong>. Click it to
+            continue — you can close this tab.
+          </p>
+          <button
+            onClick={() => setSent(false)}
+            className="text-[#7C3AED] hover:text-[#5B21B6] font-medium text-sm"
+          >
+            Use a different email
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -75,7 +92,8 @@ export default function LoginPage() {
               Welcome back
             </h1>
             <p className="text-gray-500 text-sm">
-              Sign in to your account to continue
+              Enter your email and we'll send you a sign-in link — no password
+              needed
             </p>
           </div>
 
@@ -93,33 +111,13 @@ export default function LoginPage() {
               <input
                 type="email"
                 name="email"
-                value={form.email}
-                onChange={handleChange}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError(null);
+                }}
                 required
                 placeholder="you@example.com"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700">
-                  Password
-                </label>
-                <Link
-                  to="/reset-password"
-                  className="text-xs text-[#7C3AED] hover:text-[#5B21B6] font-medium"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <input
-                type="password"
-                name="password"
-                value={form.password}
-                onChange={handleChange}
-                required
-                placeholder="••••••••"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#7C3AED] focus:border-transparent text-sm transition"
               />
             </div>
@@ -132,10 +130,10 @@ export default function LoginPage() {
               {loading ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Signing in...
+                  Sending link...
                 </>
               ) : (
-                "Sign in"
+                "Send sign-in link"
               )}
             </button>
           </form>

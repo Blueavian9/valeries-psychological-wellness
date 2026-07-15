@@ -26,8 +26,6 @@ import BookingConfirmation from "./pages/BookingConfirmation.jsx";
 import Dashboard from "./pages/Dashboard.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignUpPage from "./pages/SignUpPage.jsx";
-import ResetPasswordPage from "./pages/ResetPasswordPage.jsx";
-import UpdatePasswordPage from "./pages/UpdatePasswordPage.jsx";
 import BlogPage from "./pages/BlogPage.jsx";
 import BlogPreview from "./components/BlogPreview.jsx";
 
@@ -80,8 +78,6 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
-            <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/update-password" element={<UpdatePasswordPage />} />
             <Route path="/find-therapist" element={<TherapistFinder />} />
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPage />} />
