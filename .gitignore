@@ -24,3 +24,5 @@ dist-ssr
 *.sw?
 .env.local
 .vercel
+supabase/.temp/
+vite.config.js.timestamp-*
