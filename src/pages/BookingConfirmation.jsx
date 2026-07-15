@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { Check, Clock, Calendar, Loader } from "lucide-react";
-import { supabase } from "../lib/supabase";
+import { neon } from "../lib/neon";
 
 const palette = {
   cream: "#FAFAF9",
@@ -24,7 +24,7 @@ function useAppointmentStatus(appointmentId) {
     if (status === "confirmed" || attempts >= 15) return;
 
     const timer = setTimeout(async () => {
-      const { data, error } = await supabase
+      const { data, error } = await neon
         .from("appointments")
         .select(
           `
