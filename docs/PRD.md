@@ -356,6 +356,8 @@
 | Jul 15 | Loop Engineering Cycle 1 (schema migration) — corrected `neon_auth.users_sync` → `neon_auth.user` after live query confirmed this project's Better Auth model | ✅ |
 | Jul 15 | `schema.neon.sql` applied to Neon production branch via SQL Editor — "Statement executed successfully" | ✅ |
 | Jul 15 | Schema verified via live query: 7/7 tables, RLS enabled on all 7, all 10 policies present and correctly distributed | ✅ **CYCLE 1 COMPLETE — VERIFIED, NOT ASSUMED** |
+| Jul 17 | Component-by-component mock-data audit — Dashboard.jsx and TherapistFinder.jsx confirmed 100% mock (store.js / hardcoded THERAPISTS array); BookingPage.jsx confirmed genuinely wired to Supabase but hitting dead Edge Function URLs; ContactCTA.jsx confirmed clean | ✅ audit complete, ⬜ rebuilds pending |
+
 
 ---
 
