@@ -4,6 +4,8 @@ import { useAuth } from "../hooks/useAuth";
 export default function ProtectedRoute({ children, requiredRole }) {
   const { user, role, loading } = useAuth();
   const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const hasAuthError = searchParams.get("error") !== null;
 
   if (loading) {
     return (
@@ -16,7 +18,7 @@ export default function ProtectedRoute({ children, requiredRole }) {
     );
   }
 
-  if (!user) {
+  if (hasAuthError || !user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

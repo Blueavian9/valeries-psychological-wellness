@@ -284,7 +284,7 @@
 | Rotate/remove exposed test credential if real | ⬜ |
 | Confirm new GitHub PAT generated (90-day expiry) | ⬜ |
 | Check `supabase.tar.gz` / `.temp/*` for embedded credentials | ⬜ |
-| Full end-to-end login retest (client + staff + admin roles) on Neon | ⬜ |
+| Full end-to-end login retest (client + staff + admin roles) on Neon | 🔄 auth guard verified for invalid-token case; still need real login test for staff/admin roles |
 | End-to-end booking flow test on new stack | ⬜ |
 | Mobile check (375px + 768px) | ⬜ |
 | Contract signed — only after above verified | ⏳ |
@@ -357,6 +357,7 @@
 | Jul 15 | `schema.neon.sql` applied to Neon production branch via SQL Editor — "Statement executed successfully" | ✅ |
 | Jul 15 | Schema verified via live query: 7/7 tables, RLS enabled on all 7, all 10 policies present and correctly distributed | ✅ **CYCLE 1 COMPLETE — VERIFIED, NOT ASSUMED** |
 | Jul 17 | Component-by-component mock-data audit — Dashboard.jsx and TherapistFinder.jsx confirmed 100% mock (store.js / hardcoded THERAPISTS array); BookingPage.jsx confirmed genuinely wired to Supabase but hitting dead Edge Function URLs; ContactCTA.jsx confirmed clean | ✅ audit complete, ⬜ rebuilds pending |
+| Jul 18 | ProtectedRoute.jsx security bug fixed — dashboard was rendering even when magic-link token was invalid (?error=INVALID_TOKEN bypassed the auth guard). Added hasAuthError check alongside !user check. Verified via direct browser test: /dashboard?error=INVALID_TOKEN now correctly redirects to /login | ✅ fixed and verified |
 
 
 ---
