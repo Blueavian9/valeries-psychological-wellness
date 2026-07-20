@@ -284,7 +284,7 @@
 | Rotate/remove exposed test credential if real | ⬜ |
 | Confirm new GitHub PAT generated (90-day expiry) | ⬜ |
 | Check `supabase.tar.gz` / `.temp/*` for embedded credentials | ⬜ |
-| Full end-to-end login retest (client + staff + admin roles) on Neon | 🔄 auth guard verified for invalid-token case; still need real login test for staff/admin roles |
+| Full end-to-end login retest (client + staff + admin roles) on Neon | ⬜ |
 | End-to-end booking flow test on new stack | ⬜ |
 | Mobile check (375px + 768px) | ⬜ |
 | Contract signed — only after above verified | ⏳ |
