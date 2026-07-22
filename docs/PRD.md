@@ -25,7 +25,7 @@
 | Phase | Status |
 |-------|--------|
 | PHASE 1: Backend Setup | ✅ COMPLETED (Supabase) |
-| PHASE 2: Authentication | 🔄 REVISITING — login broken, **migrating to Neon Auth** |
+| PHASE 2: Authentication | 🔄 REVISITING — Neon Auth rewrite confirmed done; end-to-end login still unverified |
 | PHASE 3: Data Migration | ✅ COMPLETED (Supabase) — 🔄 re-migrating to Neon |
 | PHASE 4: Stripe Payments | ✅ COMPLETED (Supabase Edge Fn) — 🔄 migrating to Vercel Functions |
 | PHASE 5: Email Notifications | ✅ COMPLETED (Supabase Edge Fn) — 🔄 migrating to Vercel Functions |
@@ -33,7 +33,7 @@
 | PHASE 7: QA Testing | 🚫 REDUCED SCOPE |
 | PHASE 8: Security Hardening | 🚫 REDUCED SCOPE |
 | PHASE 9: Job Search Execution | 🔄 IN PROGRESS |
-| **PHASE 10: Neon + Vercel Functions Migration** | 🔄 **NEW — IN PROGRESS** |
+| **PHASE 10: Neon + Vercel Functions Migration** | 🔄 **IN PROGRESS — auth swap done, low-risk functions next** |
 
 ---
 
@@ -60,7 +60,7 @@
 
 ---
 
-## PHASE 10: Neon + Vercel Functions Migration 🔄 NEW — IN PROGRESS
+## PHASE 10: Neon + Vercel Functions Migration 🔄 IN PROGRESS
 
 **Scope:** Full cutover. Neon replaces Supabase Postgres + Supabase Auth. Vercel Functions replace all 9 Supabase Edge Functions. Vercel Cron replaces `pg_cron`.
 
@@ -83,11 +83,13 @@
 
 ### Migration order (lowest risk → highest risk)
 1. ✅ Schema migration — **VERIFIED Jul 15, 2026 via live SQL Editor queries against Neon production branch.** Corrected mid-cycle: confirmed via `information_schema.tables` query that this project runs `neon_auth.user` (Better Auth model), not `neon_auth.users_sync` — schema.neon.sql updated accordingly before apply. Verification query confirmed: 7/7 tables present (`profiles`, `therapists`, `services`, `appointments`, `contact_submissions`, `quiz_results`, `payments`), RLS enabled (`rls_enabled = true`) on all 7, all 10 expected RLS policies present and correctly distributed. `playing_with_neon` demo table also present in `public` schema — harmless leftover from initial Neon onboarding, not part of our schema, no action needed.
-2. ⬜ Auth swap — `useAuth.jsx`, `ProtectedRoute.jsx`, Login/SignUp/Reset/UpdatePassword pages → Neon Auth SDK. Profile-row creation moves from a DB trigger (not possible against `neon_auth.users_sync`) to app-level upsert on signup.
+2. ✅ Auth swap — **confirmed Jul 22, 2026 via direct read of `useAuth.jsx` and `ProtectedRoute.jsx` on disk.** Both are rewritten against the Neon Auth SDK (`neon.auth.useSession()`, `neon.from("profiles")`, `signInWithMagicLink()`, role helpers) and `ProtectedRoute.jsx` includes the Jul 18 `hasAuthError` fix. **Not yet done:** profile-row creation is still DB-trigger-shaped in intent — `useAuth.jsx` only *reads* the profile row (`.select("*").eq("id", user.id).single()`); there is no insert/upsert-on-signup logic in this file. That piece (likely belongs in `SignUpPage.jsx`, not yet audited) is still outstanding. Login/SignUp/Reset/UpdatePassword pages themselves have not yet been individually re-audited against the new session shape.
 3. ⬜ Low-risk functions → Vercel Functions: `send-email`, `send-booking-confirmation`, `send-contact-reply`, `notify-admin-booking`, `notify-admin-signup`, `admin-notify`
 4. ⬜ Reminder cron → Vercel Cron replacing `pg_cron` job (`20260416000000_cron_send_reminder.sql`)
 5. ⬜ Payment-critical → `create-payment-intent` + `stripe-webhook` to Vercel Functions; **new Stripe webhook URL + signing secret**, fully tested in Stripe test mode before touching live keys
-6. ⬜ Cutover — flip env vars/DNS in production, verify, then retire/archive Supabase project (do not delete immediately — keep as rollback for a defined window)
+6. ⬜ Cutover → flip env vars/DNS in production, verify, then retire/archive Supabase project (do not delete immediately — keep as rollback for a defined window)
+
+**Env vars:** `VITE_NEON_AUTH_URL` and `VITE_NEON_DATA_API_URL` confirmed live in Vercel Production (Jul 21) — prior save had silently failed; production console verified clean on www.valeriemunozpsyc.com after hard refresh.
 
 ### Known structural differences to account for (Supabase → Neon)
 - `auth.users` → `neon_auth.users_sync` — async-synced (~1s lag), **soft-deleted** (`deleted_at`), not directly insertable
@@ -97,7 +99,7 @@
 
 ---
 
-## PHASE 1: Backend Setup ✅ COMPLETED (Supabase — being superseded by Phase 10)
+## PHASE 1: Backend Setup ✅ COMPLETED (Supabase — superseded by Phase 10)
 - ✅ src/lib/supabase.js created
 - ✅ src/hooks/useAuth.jsx created
 - ✅ src/hooks/useAppointments.jsx created
@@ -106,23 +108,18 @@
 - ✅ Supabase project created and healthy (now paused, see Active Incident)
 - ✅ @supabase/supabase-js installed
 - ✅ supabase/schema.sql deployed
-- 🔄 **NEW:** Neon project created, schema drafted — see PHASE 10
+- ✅ Neon project created, schema applied and verified — see PHASE 10
 
 ---
 
-## PHASE 2: Authentication 🔄 REVISITING — MIGRATING TO NEON AUTH
-- ✅ useAuth.jsx with role fetching hook (Supabase version — being replaced)
-- ✅ AuthProvider wrapping App
-- ✅ ProtectedRoute with role-based redirects
-- ✅ LoginPage.jsx, SignUpPage.jsx, ResetPasswordPage.jsx built
-- ✅ UpdatePasswordPage.jsx — fixed auth bug (removed verifyOtp, uses onAuthStateChange PASSWORD_RECOVERY)
-- ✅ Supabase URL Configuration verified (Site URL + Redirect URLs)
-- ✅ Role-based access: client / therapist / admin
-- ⬜ Rewrite `useAuth.jsx` against Neon Auth SDK
-- ⬜ Rewrite `ProtectedRoute.jsx` for Neon Auth session shape
-- ⬜ Move profile-row creation from DB trigger to app-level upsert on signup
-- ⬜ Add magic link (passwordless) sign-in option (still planned, now against Neon Auth)
-- 🚨 Login currently broken for client — resolved by completing Phase 10, not by fixing Supabase access
+## PHASE 2: Authentication 🔄 REVISITING — NEON AUTH REWRITE CONFIRMED DONE, VERIFICATION PENDING
+- ✅ `useAuth.jsx` rewritten against Neon Auth SDK — confirmed via file read Jul 22
+- ✅ `ProtectedRoute.jsx` rewritten for Neon Auth session shape — confirmed via file read Jul 22, including the Jul 18 `hasAuthError` fix
+- ⬜ Move profile-row creation from DB trigger to app-level upsert on signup — not found in `useAuth.jsx`
+- ✅ Magic link (passwordless) sign-in option — `signInWithMagicLink()` exists
+- ✅ Dashboard route typo found and fixed Jul 22 — App.jsx route corrected from `/dashboard/*.` to `/dashboard/*`
+- ⬜ Re-audit LoginPage.jsx / SignUpPage.jsx / ResetPasswordPage.jsx / UpdatePasswordPage.jsx against Neon Auth session shape (not yet done)
+- 🚨 Login wiring appears done at the hook/route level, but full login→dashboard flow is still UNVERIFIED end-to-end (blocked partly by Phase 3 mock data, partly by untested nested dashboard routing — see below)
 
 ---
 
@@ -133,7 +130,7 @@
 - ✅ Dashboard connected to Supabase
 - ✅ TherapistFinder connected to Supabase
 - ✅ ContactCTA connected to Supabase
-- ⬜ Re-point all of the above at Neon once schema + auth migration land
+- ⬜ Re-point all of the above at Neon once schema + auth migration land — **confirmed Jul 22: `Dashboard.jsx` and `TherapistFinder.jsx` still 100% on hardcoded/mock data (`store.js`, `THERAPISTS` array) — no Neon calls present in either file yet. Jul 17 audit finding still accurate, unchanged.**
 - ⬜ Re-seed therapist/services data into Neon
 
 ---
@@ -162,7 +159,7 @@
 - ✅ send-contact-reply Edge Function deployed (Supabase — migrating)
 - ✅ notify-admin-booking Edge Function deployed (Supabase — migrating)
 - ✅ notify-admin-signup Edge Function deployed (Supabase — migrating)
-- ✅ admin-notify shared function deployed (Supabase — migrating) — **was missing from this PRD until Jul 13 audit**
+- ✅ admin-notify shared function deployed (Supabase — migrating) — was missing from this PRD until Jul 13 audit
 - ✅ HIPAA: no PHI in Edge Function logs — re-verify once on Vercel Functions
 - ⬜ All 9 functions redeployed as Vercel Functions
 - ⬜ Vercel Cron configured for reminder job
@@ -170,7 +167,7 @@
 ---
 
 ## PHASE 6: Production Deployment ✅ COMPLETED
-- ✅ Vercel env vars configured (4 keys) — will need Neon connection string + Neon Auth keys added
+- ✅ Vercel env vars configured — Neon connection string + Neon Auth keys (`VITE_NEON_AUTH_URL`, `VITE_NEON_DATA_API_URL`) confirmed live Jul 21
 - ✅ Custom domain: valeriemunozpsyc.com
 - ✅ SSL certificate active
 - ✅ Smoke test passed (5 routes)
@@ -193,6 +190,7 @@
 - ✅ Stripe Activation Guide delivered to Valerie
 - ✅ Client contract drafted ($6,500 + royalty structure)
 - ✅ Platform costs communicated to Valerie — **needs update: Neon free tier removes the $25/mo Supabase Pro line item**
+- ✅ Fixed stray `/dashboard/*.` route typo in App.jsx → `/dashboard/*` — **confirmed live on origin/main Jul 22 via `git show HEAD:src/App.jsx`**
 
 ### 🚫 Deferred Post-Employment
 - 🚫 Social media icons (Valerie has no accounts yet)
@@ -211,7 +209,8 @@
 - ⬜ Verify Stripe test payment works (blocked on Phase 10)
 - ⬜ Confirm confirmation email arrives (blocked on Phase 10)
 - ⬜ Mobile check (375px + 768px in DevTools)
-- 🚨 **BLOCKED:** Neon + Vercel Functions migration must complete before any of the above can be tested
+- ⬜ **NEW:** Browser-test nested dashboard routes (`/dashboard/calendar`, `/dashboard/clients`, `/dashboard/services`) post route-typo fix — code-level fix confirmed pushed, but not yet verified working in a live browser session
+- 🚨 **BLOCKED:** Neon + Vercel Functions migration must complete before most of the above can be tested
 
 ---
 
@@ -273,9 +272,14 @@
 | Task | Status |
 |-----|--------|
 | ~~Check `/booking` page for "Failed to load services"~~ | ✅ done, confirmed |
-| Apply Neon-compatible schema to Neon project | ⬜ |
-| Rewrite `useAuth.jsx` + `ProtectedRoute.jsx` for Neon Auth | ⬜ |
-| Move profile creation to app-level upsert | ⬜ |
+| Apply Neon-compatible schema to Neon project | ✅ verified Jul 15 |
+| Confirm `VITE_NEON_AUTH_URL` / `VITE_NEON_DATA_API_URL` live in Vercel Production | ✅ Jul 21 |
+| Rewrite `useAuth.jsx` + `ProtectedRoute.jsx` for Neon Auth | ✅ confirmed via file read Jul 22 |
+| Fix stray `/dashboard/*.` route typo in App.jsx | ✅ fixed and pushed Jul 22 |
+| Browser-test nested dashboard routes post route fix | ⬜ **NEW — not yet verified live** |
+| Re-audit LoginPage/SignUpPage/ResetPasswordPage/UpdatePasswordPage against Neon session shape | ⬜ **NEW** |
+| Move profile creation to app-level upsert (likely in SignUpPage.jsx) | ⬜ |
+| Re-point Dashboard.jsx / TherapistFinder.jsx off store.js mock data onto Neon | ⬜ confirmed still 100% mock Jul 22 |
 | Migrate low-risk email functions to Vercel Functions | ⬜ |
 | Migrate reminder job to Vercel Cron | ⬜ |
 | Migrate `create-payment-intent` + `stripe-webhook` to Vercel Functions | ⬜ |
@@ -296,7 +300,7 @@
 | Agent | Task | Status |
 |-------|------|--------|
 | ✅ Done | Phases 1–6 + UI rebrand + Blog | COMPLETE |
-| 🚨 Active | Phase 10 — Neon + Vercel Functions migration | IN PROGRESS |
+| 🚨 Active | Phase 10 — Neon + Vercel Functions migration | IN PROGRESS — schema + auth swap done |
 | ⏳ Blocked | Stripe live mode switch | WAITING ON VALERIE |
 | 🔄 Active | Phase 9 — job applications | IN PROGRESS (paused pending Phase 10) |
 | ⬜ Next | End-to-end QA + mobile test | QUEUED — blocked on Phase 10 |
@@ -358,7 +362,9 @@
 | Jul 15 | Schema verified via live query: 7/7 tables, RLS enabled on all 7, all 10 policies present and correctly distributed | ✅ **CYCLE 1 COMPLETE — VERIFIED, NOT ASSUMED** |
 | Jul 17 | Component-by-component mock-data audit — Dashboard.jsx and TherapistFinder.jsx confirmed 100% mock (store.js / hardcoded THERAPISTS array); BookingPage.jsx confirmed genuinely wired to Supabase but hitting dead Edge Function URLs; ContactCTA.jsx confirmed clean | ✅ audit complete, ⬜ rebuilds pending |
 | Jul 18 | ProtectedRoute.jsx security bug fixed — dashboard was rendering even when magic-link token was invalid (?error=INVALID_TOKEN bypassed the auth guard). Added hasAuthError check alongside !user check. Verified via direct browser test: /dashboard?error=INVALID_TOKEN now correctly redirects to /login | ✅ fixed and verified |
-
+| Jul 21 | Confirmed VITE_NEON_AUTH_URL and VITE_NEON_DATA_API_URL live in Vercel Production env vars (prior save had silently failed); production console verified clean on www.valeriemunozpsyc.com after hard refresh | ✅ |
+| Jul 22 | Audited `useAuth.jsx`, `ProtectedRoute.jsx`, `App.jsx`, `Dashboard.jsx`, and `TherapistFinder.jsx`; confirmed the Neon Auth rewrite is in place, the dashboard route typo is fixed, and the mock-data wiring remains outstanding | ✅ audit complete |
+| Jul 22 | Fixed `/dashboard/*.` → `/dashboard/*` in App.jsx; committed and pushed to origin/main (confirmed via `git show HEAD:src/App.jsx`) | ✅ fixed and pushed — **browser verification of nested dashboard routes still outstanding** |
 
 ---
 
@@ -374,25 +380,26 @@ src/
 │   ├── Features.jsx
 │   ├── Footer.jsx
 │   ├── PlatformComparison.jsx
-│   ├── ProtectedRoute.jsx
+│   ├── ProtectedRoute.jsx   ← Neon Auth version, confirmed Jul 22
 │   ├── Stats.jsx
 │   ├── Testimonials.jsx
-│   ├── TherapistFinder.jsx
+│   ├── TherapistFinder.jsx   ← still 100% mock data, confirmed Jul 22
 │   └── WellnessResources.jsx
 ├── hooks/
-│   ├── useAuth.jsx
+│   ├── useAuth.jsx   ← Neon Auth version, confirmed Jul 22 (profile read-only, no upsert yet)
 │   └── useAppointments.jsx
 ├── pages/
 │   ├── BlogPage.jsx
 │   ├── BookingConfirmation.jsx
 │   ├── BookingPage.jsx
-│   ├── Dashboard.jsx
+│   ├── Dashboard.jsx   ← still 100% mock data (store.js), confirmed Jul 22
 │   ├── LoginPage.jsx
 │   ├── SignUpPage.jsx
 │   ├── ResetPasswordPage.jsx
 │   └── UpdatePasswordPage.jsx
 ├── services/
 │   └── store.js
+├── App.jsx   ← dashboard route typo fixed Jul 22
 └── lib/
     └── supabase.js   ← to be replaced by lib/neon.js (or similar) during migration
 
@@ -413,7 +420,7 @@ supabase/  ← being phased out, retained as rollback during migration
 │   └── 20260416120000_phase5_cron_and_admin_triggers.sql
 └── schema.sql
 
-schema.neon.sql  ← NEW, migrated schema for Neon (drafted Jul 13)
+schema.neon.sql  ← migrated schema for Neon, drafted Jul 13, applied + verified Jul 15
 
 api/  ← NEW, will hold Vercel Functions replacing supabase/functions/*
 (not yet created)
@@ -432,4 +439,4 @@ api/  ← NEW, will hold Vercel Functions replacing supabase/functions/*
 ---
 
 *Rule: Ship beats perfect. Finish beats impressive.*  
-*Last updated: Jul 13 — decision locked to migrate fully to Neon + Vercel Functions; Neon project created; schema drafted; migration order defined; credential rotation and repo hygiene items still outstanding independent of migration.*
+*Last updated: Jul 22 — Neon Auth rewrite (useAuth.jsx, ProtectedRoute.jsx) confirmed done via direct file read; dashboard route typo found and fixed; env vars confirmed live in production; Dashboard.jsx/TherapistFinder.jsx confirmed still on mock data; profile-row upsert still outstanding; credential rotation and repo hygiene items still outstanding.*
