@@ -14,6 +14,7 @@ export const neon = createClient({
   auth: {
     url: authUrl,
     adapter: BetterAuthReactAdapter(),
+    allowAnonymous: true,
   },
   dataApi: {
     url: dataApiUrl,
