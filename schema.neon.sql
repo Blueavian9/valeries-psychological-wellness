@@ -182,6 +182,9 @@ CREATE POLICY "Users can view own profile" ON profiles
 CREATE POLICY "Users can update own profile" ON profiles
   FOR UPDATE USING (auth.user_id() = id::text);
 
+CREATE POLICY "Users can insert own profile" ON profiles
+  FOR INSERT WITH CHECK (auth.user_id() = id::text);
+
 -- Therapists: public read
 CREATE POLICY "Anyone can view therapists" ON therapists
   FOR SELECT USING (TRUE);

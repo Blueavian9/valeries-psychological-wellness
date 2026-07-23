@@ -27,13 +27,29 @@ export function AuthProvider({ children }) {
       .single()
       .then(({ data, error }) => {
         if (cancelled) return;
-        if (error) {
-          console.error("[useAuth] fetchProfile error:", error);
-          setProfile(null);
-        } else {
+
+        if (data) {
           setProfile(data);
+          setProfileLoading(false);
+          return;
         }
-        setProfileLoading(false);
+
+        // No profile row yet — first login after signup, create it
+        neon
+          .from("profiles")
+          .upsert({ id: user.id, email: user.email, role: "client" }, { onConflict: "id" })
+          .select()
+          .single()
+          .then(({ data: created, error: upsertError }) => {
+            if (cancelled) return;
+            if (upsertError) {
+              console.error("[useAuth] profile upsert error:", upsertError);
+              setProfile(null);
+            } else {
+              setProfile(created);
+            }
+            setProfileLoading(false);
+          });
       });
 
     return () => {
